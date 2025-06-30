@@ -8,6 +8,7 @@ import { spacing, componentSpacing, touchTargets, iconSizes } from './tokens/spa
 import { typographyPresets } from './tokens/typography';
 import {
   glassEffects,
+  skiaBlurEffects,
   animationDurations,
   animationSprings,
   animationEasings,
@@ -24,6 +25,7 @@ export interface Theme {
   readonly componentSpacing: typeof componentSpacing;
   readonly typography: typeof typographyPresets;
   readonly glass: typeof glassEffects;
+  readonly skiaBlur: typeof skiaBlurEffects;
   readonly animation: {
     readonly durations: typeof animationDurations;
     readonly springs: typeof animationSprings;
@@ -59,6 +61,7 @@ export const createTheme = (isDark: boolean): Theme => ({
   componentSpacing,
   typography: typographyPresets,
   glass: glassEffects,
+  skiaBlur: skiaBlurEffects,
   animation: {
     durations: animationDurations,
     springs: animationSprings,

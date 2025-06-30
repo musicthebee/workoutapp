@@ -1,7 +1,0 @@
-node_modules/
-ios/
-android/
-coverage/
-.expo/
-.vscode/
-*.log

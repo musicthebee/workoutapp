@@ -4,6 +4,7 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
+  runOnJS,
 } from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
@@ -44,10 +45,16 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
     );
   }, [value, duration, animatedValue, theme]);
   
-  const animatedProps = useAnimatedProps(() => ({
-    text: format(animatedValue.value),
-    defaultValue: format(animatedValue.value),
-  }));
+  // Create a worklet-compatible format function
+  const animatedProps = useAnimatedProps(() => {
+    'worklet';
+    // For now, just use basic string conversion in the worklet
+    const roundedValue = Math.round(animatedValue.value);
+    return {
+      text: roundedValue.toString(),
+      defaultValue: roundedValue.toString(),
+    };
+  });
   
   return (
     <AnimatedTextInput

@@ -12,7 +12,7 @@ import { RootNavigator } from '@/navigation/RootNavigator';
  * Main application component
  * Sets up all providers in the correct order
  */
-export const App: React.FC = () => {
+const App: React.FC = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -29,3 +29,5 @@ export const App: React.FC = () => {
     </GestureHandlerRootView>
   );
 };
+
+export default App;

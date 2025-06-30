@@ -1,38 +1,13 @@
 overwrite: true
-schema: 
-  - ${HASURA_ENDPOINT}:
-      headers:
-        x-hasura-admin-secret: ${HASURA_ADMIN_SECRET}
-documents: 
-  - "src/**/*.graphql"
-  - "src/**/*.gql"
+schema: "${HASURA_ENDPOINT}"
+documents: "src/api/queries/**/*.graphql"
 generates:
-  src/types/generated/graphql.ts:
+  src/api/generated/graphql.ts:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-react-apollo
     config:
-      # Keep snake_case from database
-      namingConvention: keep
-      # Generate hooks for queries/mutations
-      withHooks: true
-      withComponent: false
-      withHOC: false
-      # Strict typing
-      strictScalars: true
-      scalars:
-        uuid: string
-        timestamptz: string
-        numeric: number
-        jsonb: any
-      # Array types
-      arrayInputCoercion: false
-      # Enums
-      enumsAsTypes: false
-      # Avoid any types
+      skipTypename: true
+      enumsAsTypes: true
       avoidOptionals: false
       maybeValue: T | null
-      # Documentation
-      documentMode: graphQLTag
-      gqlImport: graphql-tag#gql

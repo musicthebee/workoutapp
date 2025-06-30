@@ -25,6 +25,34 @@ export const glassEffects = {
   },
 } as const;
 
+// Skia-specific blur effects
+export const skiaBlurEffects = {
+  light: {
+    blur: 8,              // Skia blur is more efficient, lower values
+    blurType: 'normal' as const,  // Changed from 'gaussian' to 'normal'
+    tileMode: 'clamp' as const,
+    backdropScale: 0.5,   // Downsample for performance
+    colorBoost: 1.1,      // Color enhancement
+    gradientOpacity: 0.8, // Gradient overlay strength
+  },
+  medium: {
+    blur: 12,
+    blurType: 'normal' as const,
+    tileMode: 'clamp' as const,
+    backdropScale: 0.5,
+    colorBoost: 1.15,
+    gradientOpacity: 0.6,
+  },
+  heavy: {
+    blur: 16,
+    blurType: 'normal' as const,
+    tileMode: 'clamp' as const,
+    backdropScale: 0.4,   // More aggressive downsampling
+    colorBoost: 1.2,
+    gradientOpacity: 0.4,
+  },
+} as const;
+
 // Animation durations (ms)
 export const animationDurations = {
   instant: 0,
@@ -155,6 +183,7 @@ export const zIndices = {
 
 // Type exports
 export type GlassEffect = keyof typeof glassEffects;
+export type SkiaBlurEffect = keyof typeof skiaBlurEffects;
 export type AnimationDuration = keyof typeof animationDurations;
 export type AnimationSpring = keyof typeof animationSprings;
 export type AnimationEasing = keyof typeof animationEasings;

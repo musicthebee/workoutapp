@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,8 +10,7 @@ import type { RootStackParamList, TabParamList } from '@/types';
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen } from '@/screens/AtomsShowcaseScreen';
-import { WorkoutExampleScreen } from '@/screens/WorkoutExampleScreen';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, DiagnosticScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
@@ -37,7 +36,7 @@ const TabNavigator: React.FC = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+          let iconName: string = 'home';
           
           switch (route.name) {
             case 'HomeTab':
@@ -91,8 +90,8 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="ProfileTab" 
-        component={() => <PlaceholderScreen title="Profile" />}
-        options={{ title: 'Profile' }}
+        component={DiagnosticScreen}
+        options={{ title: 'Diagnostic' }}
       />
     </Tab.Navigator>
   );
@@ -103,16 +102,25 @@ const TabNavigator: React.FC = () => {
  */
 export const RootNavigator: React.FC = () => {
   const theme = useTheme();
-  const { user, loading } = useAuth();
+  const { user, loading, signInWithEmailAndPassword } = useAuth();
+  
+  // Auto-login for development
+  React.useEffect(() => {
+    if (!loading && !user) {
+      // Automatically sign in with test user for development
+      signInWithEmailAndPassword('test@example.com', 'password123')
+        .catch(err => console.error('Auto-login failed:', err));
+    }
+  }, [loading, user, signInWithEmailAndPassword]);
   
   // Show loading screen while checking auth
   if (loading) {
     return <PlaceholderScreen title="Loading..." />;
   }
   
-  // Show auth screen if not logged in
+  // Show auth screen if not logged in (this should not happen with auto-login)
   if (!user) {
-    return <PlaceholderScreen title="Login Required" />;
+    return <PlaceholderScreen title="Logging in..." />;
   }
   
   return (
