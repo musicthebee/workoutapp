@@ -1,0 +1,235 @@
+# Get user's workouts
+query GetWorkouts($user_id: uuid!) {
+  workout(
+    where: {
+      _or: [
+        { user_id: { _eq: $user_id } }
+        { user_id: { _is_null: true } }
+      ]
+      is_archived: { _eq: false }
+    }
+    order_by: { updated_at: desc }
+  ) {
+    id
+    user_id
+    source_id
+    name
+    description
+    category
+    difficulty
+    estimated_duration_minutes
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    created_at
+    updated_at
+    workout_exercises(order_by: { exercise_order: asc }) {
+      exercise_id
+      exercise_order
+      sets
+      reps
+      duration_seconds
+      rest_seconds
+      exercise {
+        id
+        name
+        muscle_groups
+        equipment
+        measurement_type
+      }
+    }
+  }
+}
+
+# Get single workout by ID
+query GetWorkoutById($id: uuid!) {
+  workout_by_pk(id: $id) {
+    id
+    user_id
+    source_id
+    name
+    description
+    category
+    difficulty
+    estimated_duration_minutes
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    created_at
+    updated_at
+    workout_exercises(order_by: { exercise_order: asc }) {
+      exercise_id
+      exercise_order
+      sets
+      reps
+      duration_seconds
+      rest_seconds
+      exercise {
+        id
+        name
+        muscle_groups
+        equipment
+        instructions
+        measurement_type
+      }
+    }
+  }
+}
+
+# Create new workout
+mutation CreateWorkout($object: workout_insert_input!) {
+  insert_workout_one(object: $object) {
+    id
+    user_id
+    source_id
+    name
+    description
+    category
+    difficulty
+    estimated_duration_minutes
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    created_at
+    updated_at
+  }
+}
+
+# Update existing workout
+mutation UpdateWorkout($id: uuid!, $set: workout_set_input!) {
+  update_workout_by_pk(pk_columns: { id: $id }, _set: $set) {
+    id
+    name
+    description
+    category
+    difficulty
+    estimated_duration_minutes
+    is_favorite
+    updated_at
+  }
+}
+
+# Add exercise to workout (living workouts!)
+mutation AddExerciseToWorkout(
+  $workout_id: uuid!
+  $exercise_id: uuid!
+  $exercise_order: numeric!
+  $sets: Int!
+  $reps: Int
+  $duration_seconds: Int
+  $rest_seconds: Int!
+) {
+  insert_workout_exercise_one(
+    object: {
+      workout_id: $workout_id
+      exercise_id: $exercise_id
+      exercise_order: $exercise_order
+      sets: $sets
+      reps: $reps
+      duration_seconds: $duration_seconds
+      rest_seconds: $rest_seconds
+    }
+  ) {
+    workout_id
+    exercise_id
+    exercise_order
+    sets
+    reps
+    duration_seconds
+    rest_seconds
+  }
+}
+
+# Update exercise in workout
+mutation UpdateWorkoutExercise(
+  $workout_id: uuid!
+  $exercise_id: uuid!
+  $set: workout_exercise_set_input!
+) {
+  update_workout_exercise_by_pk(
+    pk_columns: { workout_id: $workout_id, exercise_id: $exercise_id }
+    _set: $set
+  ) {
+    workout_id
+    exercise_id
+    exercise_order
+    sets
+    reps
+    duration_seconds
+    rest_seconds
+  }
+}
+
+# Remove exercise from workout
+mutation RemoveExerciseFromWorkout($workout_id: uuid!, $exercise_id: uuid!) {
+  delete_workout_exercise_by_pk(
+    workout_id: $workout_id
+    exercise_id: $exercise_id
+  ) {
+    workout_id
+    exercise_id
+  }
+}
+
+# Copy workout from library
+mutation CopyWorkoutFromLibrary($user_id: uuid!, $source_id: uuid!) {
+  insert_workout_one(
+    object: {
+      user_id: $user_id
+      source_id: $source_id
+      # Copy all fields from source via trigger
+    }
+  ) {
+    id
+    user_id
+    source_id
+    name
+    description
+    category
+    difficulty
+    estimated_duration_minutes
+    created_at
+    updated_at
+  }
+}
+
+# Toggle favorite status
+mutation ToggleFavoriteWorkout($id: uuid!, $is_favorite: Boolean!) {
+  update_workout_by_pk(
+    pk_columns: { id: $id }
+    _set: { is_favorite: $is_favorite }
+  ) {
+    id
+    is_favorite
+  }
+}
+
+# Archive workout (soft delete)
+mutation ArchiveWorkout($id: uuid!) {
+  update_workout_by_pk(
+    pk_columns: { id: $id }
+    _set: { is_archived: true }
+  ) {
+    id
+    is_archived
+  }
+}
+
+# Start workout performance
+mutation StartWorkoutPerformance($user_id: uuid!, $workout_id: uuid!) {
+  insert_workout_performance_one(
+    object: {
+      user_id: $user_id
+      workout_id: $workout_id
+      started_at: "now()"
+    }
+  ) {
+    id
+    user_id
+    workout_id
+    started_at
+  }
+}

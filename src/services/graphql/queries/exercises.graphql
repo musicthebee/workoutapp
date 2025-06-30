@@ -1,0 +1,158 @@
+# Get user's exercises (owned + library visible to them)
+query GetExercises($user_id: uuid!) {
+  exercise(
+    where: {
+      _or: [
+        { user_id: { _eq: $user_id } }
+        { user_id: { _is_null: true } }
+      ]
+      is_archived: { _eq: false }
+    }
+    order_by: { name: asc }
+  ) {
+    id
+    user_id
+    source_id
+    name
+    muscle_groups
+    category
+    equipment
+    instructions
+    measurement_type
+    default_sets
+    default_reps
+    default_duration_seconds
+    default_rest_seconds
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    notes
+    created_at
+    updated_at
+  }
+}
+
+# Get single exercise by ID
+query GetExerciseById($id: uuid!) {
+  exercise_by_pk(id: $id) {
+    id
+    user_id
+    source_id
+    name
+    muscle_groups
+    category
+    equipment
+    instructions
+    measurement_type
+    default_sets
+    default_reps
+    default_duration_seconds
+    default_rest_seconds
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    notes
+    created_at
+    updated_at
+  }
+}
+
+# Create new exercise
+mutation CreateExercise($object: exercise_insert_input!) {
+  insert_exercise_one(object: $object) {
+    id
+    user_id
+    source_id
+    name
+    muscle_groups
+    category
+    equipment
+    instructions
+    measurement_type
+    default_sets
+    default_reps
+    default_duration_seconds
+    default_rest_seconds
+    is_favorite
+    is_archived
+    is_ai_generated
+    ai_prompt
+    notes
+    created_at
+    updated_at
+  }
+}
+
+# Update existing exercise
+mutation UpdateExercise($id: uuid!, $set: exercise_set_input!) {
+  update_exercise_by_pk(pk_columns: { id: $id }, _set: $set) {
+    id
+    user_id
+    source_id
+    name
+    muscle_groups
+    category
+    equipment
+    instructions
+    measurement_type
+    default_sets
+    default_reps
+    default_duration_seconds
+    default_rest_seconds
+    is_favorite
+    is_archived
+    notes
+    updated_at
+  }
+}
+
+# Copy exercise from library
+mutation CopyExerciseFromLibrary($user_id: uuid!, $source_id: uuid!) {
+  insert_exercise_one(
+    object: {
+      user_id: $user_id
+      source_id: $source_id
+      # Copy all fields from source via trigger
+    }
+  ) {
+    id
+    user_id
+    source_id
+    name
+    muscle_groups
+    category
+    equipment
+    instructions
+    measurement_type
+    default_sets
+    default_reps
+    default_duration_seconds
+    default_rest_seconds
+    created_at
+    updated_at
+  }
+}
+
+# Toggle favorite status
+mutation ToggleFavoriteExercise($id: uuid!, $is_favorite: Boolean!) {
+  update_exercise_by_pk(
+    pk_columns: { id: $id }
+    _set: { is_favorite: $is_favorite }
+  ) {
+    id
+    is_favorite
+  }
+}
+
+# Archive exercise (soft delete)
+mutation ArchiveExercise($id: uuid!) {
+  update_exercise_by_pk(
+    pk_columns: { id: $id }
+    _set: { is_archived: true }
+  ) {
+    id
+    is_archived
+  }
+}
