@@ -33,6 +33,12 @@ export const TextBase: React.FC<TextBaseProps> = ({
   const theme = useTheme();
   const typography = theme.typography[variant];
   
+  // Safety check for undefined typography variant
+  if (!typography) {
+    console.warn(`TextBase: Unknown typography variant "${variant}"`);
+    return null;
+  }
+  
   // Map color to theme color
   const textColor = {
     primary: theme.colors.text_primary,
@@ -51,7 +57,7 @@ export const TextBase: React.FC<TextBaseProps> = ({
         {
           fontSize: typography.font_size,
           lineHeight: typography.font_size * typography.line_height,
-          fontWeight: typography.font_weight,
+          fontWeight: typography.font_weight as TextStyle['fontWeight'],
           letterSpacing: typography.letter_spacing,
           color: textColor,
           textAlign: align,

@@ -48,7 +48,7 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     width: withSpring(
       dimensions.width * clampedProgress,
-      theme.animation.springs.normal
+      theme.animation.springs.smooth
     ),
   }));
   

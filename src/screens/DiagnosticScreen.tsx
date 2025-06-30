@@ -207,7 +207,7 @@ export const DiagnosticScreen: React.FC = () => {
             <Spacer size="md" />
             
             <LinearGradient
-              colors={theme.gradients.primary}
+              colors={[...theme.gradients.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.gradientContainer}

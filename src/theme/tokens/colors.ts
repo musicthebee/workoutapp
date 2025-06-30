@@ -111,6 +111,10 @@ export const lightThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
+  
+  // Additional semantic colors
+  muted: baseColors.neutral_400,
+  danger: baseColors.error_main,
 } as const;
 
 // Dark theme colors
@@ -163,6 +167,10 @@ export const darkThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
+  
+  // Additional semantic colors
+  muted: baseColors.neutral_400,
+  danger: baseColors.error_main,
 } as const;
 
 // Type exports

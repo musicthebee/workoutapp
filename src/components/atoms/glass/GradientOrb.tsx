@@ -176,8 +176,10 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
     { position: { x: -50, y: 400 }, animationType: 'rotate', colors: ['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0.1)', 'transparent'] },
   ],
 }) => {
+  const theme = useTheme();
+  
   return (
-    <Animated.View style={styles.container}>
+    <Animated.View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Animated.View style={styles.orbContainer} pointerEvents="none">
         {orbs.map((orb, index) => (
           <GradientOrb key={index} {...orb} />

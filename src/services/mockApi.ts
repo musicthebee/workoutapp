@@ -143,7 +143,11 @@ export const mockApi = {
   // Auth
   async getCurrentUser(): Promise<{ id: UUID; name: string; email: string }> {
     await delay();
-    return mockDatabase.currentUser;
+    return {
+      id: mockDatabase.currentUser.id,
+      name: mockDatabase.currentUser.name || 'Unknown User',
+      email: mockDatabase.currentUser.email,
+    };
   },
 
   // Exercises
@@ -284,8 +288,13 @@ export const mockApi = {
       description: input.description || null,
       estimated_duration_minutes: input.estimated_duration_minutes || null,
       workout_exercises: input.exercises ? input.exercises.map(e => ({
-        ...e,
-        workout_id: workoutId
+        workout_id: workoutId,
+        exercise_id: e.exercise_id,
+        exercise_order: e.exercise_order,
+        sets: e.sets,
+        reps: e.reps ?? null,
+        duration_seconds: e.duration_seconds ?? null,
+        rest_seconds: e.rest_seconds,
       })) : [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

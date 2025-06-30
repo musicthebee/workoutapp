@@ -3,6 +3,17 @@
  * Re-exports all types for easy importing throughout the app
  */
 
+import { ViewProps } from 'react-native';
+
+export interface BaseComponentProps extends ViewProps {
+  testID?: string;
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: ViewProps['accessibilityRole'];
+}
+
+
 // Common types
 export * from './common';
 

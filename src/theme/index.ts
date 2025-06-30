@@ -16,6 +16,7 @@ import {
   borderWidths,
   shadows,
   zIndices,
+  gradients,
 } from './tokens/effects';
 
 // Theme interface
@@ -51,6 +52,7 @@ export interface Theme {
     };
   };
   readonly zIndices: typeof zIndices;
+  readonly gradients: typeof gradients;
   readonly isDark: boolean;
 }
 
@@ -87,6 +89,7 @@ export const createTheme = (isDark: boolean): Theme => ({
     },
   },
   zIndices,
+  gradients,
   isDark,
 });
 

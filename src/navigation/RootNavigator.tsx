@@ -5,12 +5,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/contexts/AuthContext';
+import { useThemeControls } from '@/hooks';
 import type { RootStackParamList, TabParamList } from '@/types';
 
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, DiagnosticScreen } from '@/screens';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, DiagnosticScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
@@ -31,6 +32,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
  */
 const TabNavigator: React.FC = () => {
   const theme = useTheme();
+  const { isDark, toggleTheme } = useThemeControls();
   
   return (
     <Tab.Navigator
@@ -46,13 +48,13 @@ const TabNavigator: React.FC = () => {
               iconName = focused ? 'barbell' : 'barbell-outline';
               break;
             case 'WorkoutsTab':
-              iconName = focused ? 'list' : 'list-outline';
+              iconName = focused ? 'diamond' : 'diamond-outline';
               break;
             case 'HistoryTab':
-              iconName = focused ? 'time' : 'time-outline';
+              iconName = focused ? 'sunny' : 'sunny-outline';
               break;
             case 'ProfileTab':
-              iconName = focused ? 'person' : 'person-outline';
+              iconName = focused ? 'moon' : 'moon-outline';
               break;
           }
           
@@ -80,18 +82,30 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="WorkoutsTab" 
-        component={() => <PlaceholderScreen title="Workouts" />}
-        options={{ title: 'Workouts' }}
+        component={GlassShowcaseScreen}
+        options={{ title: 'Glass' }}
       />
       <Tab.Screen 
         name="HistoryTab" 
-        component={() => <PlaceholderScreen title="History" />}
-        options={{ title: 'History' }}
+        component={() => {
+          // Switch to light theme when this tab is accessed
+          React.useEffect(() => {
+            if (isDark) toggleTheme();
+          }, []);
+          return <GlassShowcaseScreen />;
+        }}
+        options={{ title: 'Light' }}
       />
       <Tab.Screen 
         name="ProfileTab" 
-        component={DiagnosticScreen}
-        options={{ title: 'Diagnostic' }}
+        component={() => {
+          // Switch to dark theme when this tab is accessed
+          React.useEffect(() => {
+            if (!isDark) toggleTheme();
+          }, []);
+          return <GlassShowcaseScreen />;
+        }}
+        options={{ title: 'Dark' }}
       />
     </Tab.Navigator>
   );
@@ -133,7 +147,10 @@ export const RootNavigator: React.FC = () => {
         },
         headerTintColor: theme.colors.text_primary,
         headerTitleStyle: {
-          ...theme.typography.heading_4,
+          fontSize: theme.typography.heading_4.font_size,
+          lineHeight: theme.typography.heading_4.font_size * theme.typography.heading_4.line_height,
+          fontWeight: theme.typography.heading_4.font_weight,
+          letterSpacing: theme.typography.heading_4.letter_spacing,
         },
         cardStyle: {
           backgroundColor: theme.colors.background,

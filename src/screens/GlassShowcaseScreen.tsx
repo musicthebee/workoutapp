@@ -46,34 +46,30 @@ export const GlassShowcaseScreen: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   
   // Animation values
-  const backgroundScale = useSharedValue(1.2);
   const formOpacity = useSharedValue(0);
   const formScale = useSharedValue(0.9);
   const cardScale = useSharedValue(1);
   
   useEffect(() => {
     // Entry animations
-    backgroundScale.value = withTiming(1, { duration: 1000 });
     formOpacity.value = withDelay(300, withTiming(1, { duration: 800 }));
-    formScale.value = withDelay(300, withSpring(1, theme.animation.easing.spring.responsive));
-  }, [backgroundScale, formOpacity, formScale, theme]);
+    formScale.value = withDelay(300, withSpring(1, theme.animation.springs.responsive));
+  }, [formOpacity, formScale, theme]);
   
   const formAnimatedStyle = useAnimatedStyle(() => ({
     opacity: formOpacity.value,
     transform: [{ scale: formScale.value }],
   }));
   
-  const backgroundAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: backgroundScale.value }],
-  }));
   
   const handleCardPress = (index: number) => {
     setSelectedCard(index);
     cardScale.value = withSequence(
       withTiming(0.95, { duration: 100 }),
-      withSpring(1, theme.animation.easing.spring.bouncy)
+      withSpring(1, theme.animation.springs.bouncy)
     );
   };
+  
   
   return (
     <GradientBackground
@@ -157,7 +153,7 @@ export const GlassShowcaseScreen: React.FC = () => {
                   ]}
                 >
                   <LinearGradient
-                    colors={theme.gradients.primary}
+                    colors={[...theme.gradients.primary]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.gradientButton}
@@ -212,7 +208,7 @@ export const GlassShowcaseScreen: React.FC = () => {
                         color={theme.colors.primary} 
                       />
                       <Spacer size="sm" />
-                      <TextBase variant="heading_5" align="center">
+                      <TextBase variant="heading_4" align="center">
                         {variant.charAt(0).toUpperCase() + variant.slice(1)}
                       </TextBase>
                       <TextBase variant="caption" color="secondary" align="center">

@@ -47,7 +47,7 @@ export const Grid: React.FC<GridProps> = ({
         <View
           key={index}
           style={{
-            width: itemWidth,
+            width: itemWidth as any,
             paddingHorizontal: gapValue / 2,
             marginBottom: gapValue,
           }}

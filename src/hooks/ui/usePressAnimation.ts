@@ -17,13 +17,13 @@ export const usePressAnimation = () => {
   }));
   
   const onPressIn = (): void => {
-    scale.value = withSpring(0.95, theme.animation.springs.fast);
-    opacity.value = withSpring(0.8, theme.animation.springs.fast);
+    scale.value = withSpring(0.95, theme.animation.springs.responsive);
+    opacity.value = withSpring(0.8, theme.animation.springs.responsive);
   };
   
   const onPressOut = (): void => {
-    scale.value = withSpring(1, theme.animation.springs.normal);
-    opacity.value = withSpring(1, theme.animation.springs.normal);
+    scale.value = withSpring(1, theme.animation.springs.smooth);
+    opacity.value = withSpring(1, theme.animation.springs.smooth);
   };
   
   return {
