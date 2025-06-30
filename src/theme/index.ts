@@ -20,7 +20,7 @@ import {
 
 // Theme interface
 export interface Theme {
-  readonly colors: typeof lightThemeColors;
+  readonly colors: typeof lightThemeColors | typeof darkThemeColors;
   readonly spacing: typeof spacing;
   readonly componentSpacing: typeof componentSpacing;
   readonly typography: typeof typographyPresets;

@@ -1,7 +1,6 @@
-export { GlassBase } from './GlassBase';
-export { GlassBaseFallback } from './GlassBaseFallback';
+// src/components/atoms/glass/index.ts
+export { GlassBase, GlassBaseFallback } from './GlassBase';
 export type { GlassBaseProps } from './GlassBase';
-export type { GlassBaseFallbackProps } from './GlassBaseFallback';
 
-// Feature flag for easy switching
-export const USE_SKIA_GLASS = true;
+export { GradientOrb, GradientBackground } from './GradientOrb';
+export type { GradientOrbProps, GradientBackgroundProps } from './GradientOrb';

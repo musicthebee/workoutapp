@@ -1,53 +1,43 @@
+// src/components/atoms/glass/GlassBase.tsx
 import React, { useEffect } from 'react';
 import {
   View,
   StyleProp,
   ViewStyle,
   StyleSheet,
-  useColorScheme,
+  Platform,
 } from 'react-native';
-import {
-  Canvas,
-  Blur,
-  BackdropFilter,
-  Fill,
-  LinearGradient,
-  Box,
-  BoxShadow,
-  vec,
-  Paint,
-  ColorMatrix,
-  Turbulence,
-  DisplacementMap,
-  Skia,
-} from '@shopify/react-native-skia';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
   withSequence,
+  interpolate,
+  Extrapolate,
 } from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
+import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
+import { glassEffects } from '@/theme/tokens/effects';
 import type { BaseComponentProps } from '@/types';
 
-/**
- * Glass Base Props
- */
 export interface GlassBaseProps extends BaseComponentProps {
   variant: 'light' | 'medium' | 'heavy';
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   shimmer?: boolean;
-  gradient?: boolean;
-  noise?: boolean;
+  glow?: boolean;
+  animated?: boolean;
 }
 
-/**
- * Glass Base Component
- * Premium glassmorphism with rich visual effects
- */
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView) as React.ComponentType<
+  Animated.AnimateProps<React.ComponentProps<typeof BlurView>>
+>;
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+
 export const GlassBase: React.FC<GlassBaseProps> = ({
   variant,
   children,
@@ -56,212 +46,173 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
   accessible = true,
   accessibilityLabel,
   shimmer = false,
-  gradient = true,
-  noise = false,
+  glow = true,
+  animated = false,
 }) => {
   const theme = useTheme();
-  const colorScheme = useColorScheme();
-  const glassConfig = theme.glass[variant];
-  const skiaConfig = theme.skiaBlur[variant];
+  const isDark = theme.isDark;
   
-  // Animation for shimmer effect
+  // Animation values
   const shimmerProgress = useSharedValue(0);
+  const glowAnimation = useSharedValue(0);
+  const breathingScale = useSharedValue(1);
   
+  // Get glass styles
+  const glassStyles = glassMorphism({ variant, isDark });
+  const gradientConfig = gradient.glass(isDark)[variant];
+  
+  // Get blur amount from glass styles
+  // @ts-ignore - accessing custom blurAmount property
+  const blurAmount = glassStyles.blurAmount;
+  
+  // Start animations
   useEffect(() => {
     if (shimmer) {
       shimmerProgress.value = withRepeat(
+        withTiming(1, { duration: 3000 }),
+        -1,
+        true
+      );
+    }
+    
+    if (glow) {
+      glowAnimation.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 2000 }),
-          withTiming(0, { duration: 2000 })
+          withTiming(0.3, { duration: 2000 })
         ),
         -1,
         false
       );
     }
-  }, [shimmer, shimmerProgress]);
+    
+    if (animated) {
+      breathingScale.value = withRepeat(
+        withSequence(
+          withTiming(1.02, { duration: 3000 }),
+          withTiming(1, { duration: 3000 })
+        ),
+        -1,
+        false
+      );
+    }
+  }, [shimmer, glow, animated, shimmerProgress, glowAnimation, breathingScale]);
   
-  const shimmerStyle = useAnimatedStyle(() => ({
-    opacity: shimmer ? 0.3 + shimmerProgress.value * 0.2 : 1,
+  // Animated styles
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: animated ? [{ scale: breathingScale.value }] : [],
+  }));
+  
+  const glowAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      glowAnimation.value,
+      [0, 1],
+      [0.3, 0.6],
+      Extrapolate.CLAMP
+    ),
+    shadowOpacity: interpolate(
+      glowAnimation.value,
+      [0, 1],
+      [0.1, 0.3],
+      Extrapolate.CLAMP
+    ),
+  }));
+  
+  const shimmerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: shimmer ? interpolate(
+      shimmerProgress.value,
+      [0, 0.5, 1],
+      [0, 0.3, 0],
+      Extrapolate.CLAMP
+    ) : 0,
   }));
   
   // Flatten style to get dimensions
   const flatStyle = StyleSheet.flatten([
     {
       borderRadius: theme.borders.radii.md,
-      overflow: 'hidden',
+      overflow: 'hidden' as const,
     },
+    glassStyles,
     style,
   ]);
   
   const borderRadius = (flatStyle.borderRadius as number) || theme.borders.radii.md;
   
-  // Enhanced color matrix based on color scheme
-  const colorMatrix = colorScheme === 'dark' ? [
-    0.9, 0, 0, 0, 0,
-    0, 0.9, 0, 0, 0,
-    0, 0, 1.1, 0, 0,
-    0, 0, 0, 1, 0,
-  ] : [
-    1.1, 0, 0, 0, 0,
-    0, 1.1, 0, 0, 0,
-    0, 0, 1.2, 0, 0,
-    0, 0, 0, 1, 0,
-  ];
-  
-  // Create paint for shadow effects
-  const shadowPaint = Skia.Paint();
-  shadowPaint.setColorFilter(
-    Skia.ColorFilter.MakeBlend(
-      Skia.Color(theme.isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.2)'),
-      5 // BlendMode.Multiply
-    )
-  );
-  
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
         flatStyle,
-        {
-          // Add shadow for depth
-          shadowColor: theme.isDark ? '#000' : '#000',
-          shadowOffset: {
-            width: 0,
-            height: variant === 'heavy' ? 8 : variant === 'medium' ? 4 : 2,
-          },
-          shadowOpacity: variant === 'heavy' ? 0.3 : variant === 'medium' ? 0.2 : 0.1,
-          shadowRadius: variant === 'heavy' ? 16 : variant === 'medium' ? 8 : 4,
-          elevation: variant === 'heavy' ? 12 : variant === 'medium' ? 6 : 3,
-        }
+        containerAnimatedStyle,
       ]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
-      {/* Backdrop blur layer with effects */}
-      <View style={StyleSheet.absoluteFillObject}>
-        <Canvas style={StyleSheet.absoluteFillObject}>
-          <BackdropFilter
-            filter={
-              <Blur blur={skiaConfig.blur} />
-            }
-          >
-            <Fill />
-            <ColorMatrix matrix={colorMatrix} />
-          </BackdropFilter>
-          
-          {/* Noise texture for glass texture */}
-          {noise && (
-            <>
-              <Turbulence 
-                freqX={0.01} 
-                freqY={0.01} 
-                octaves={2} 
-                seed={5}
-              />
-              <DisplacementMap channelX="g" channelY="a" scale={2}>
-                <Turbulence 
-                  freqX={0.01} 
-                  freqY={0.01} 
-                  octaves={2} 
-                  seed={5}
-                />
-              </DisplacementMap>
-            </>
-          )}
-          
-          {/* Inner shadow using Box and BoxShadow */}
-          <Box
-            box={Skia.RRectXY(
-              Skia.XYWHRect(0, 0, 300, 300), // Will be clipped by container
-              borderRadius,
-              borderRadius
-            )}
-          >
-            <BoxShadow
-              dx={0}
-              dy={-2}
-              blur={4}
-              color={theme.isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.8)'}
-              inner
-            />
-            <BoxShadow
-              dx={0}
-              dy={2}
-              blur={4}
-              color={theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
-              inner
-            />
-            <Paint paint={shadowPaint} />
-          </Box>
-        </Canvas>
-      </View>
-      
-      {/* Gradient overlay for depth */}
-      {gradient && (
-        <View style={StyleSheet.absoluteFillObject}>
-          <Canvas style={StyleSheet.absoluteFillObject}>
-            <LinearGradient
-              start={vec(0, 0)}
-              end={vec(0, 100)}
-              colors={
-                theme.isDark
-                  ? ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.02)']
-                  : ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.4)']
-              }
-            />
-          </Canvas>
-        </View>
-      )}
-      
-      {/* Tint layer */}
-      <View
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            backgroundColor: theme.isDark 
-              ? `rgba(0, 0, 0, ${glassConfig.tint_opacity * 0.8})`
-              : `rgba(255, 255, 255, ${glassConfig.tint_opacity})`,
-          },
-        ]}
+      {/* Blur layer */}
+      <AnimatedBlurView
+        style={StyleSheet.absoluteFillObject}
+        blurType={isDark ? 'dark' : 'light'}
+        blurAmount={blurAmount}
+        reducedTransparencyFallbackColor={
+          isDark ? 'rgba(10, 10, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+        }
       />
       
-      {/* Shimmer effect */}
-      {shimmer && (
+      {/* Gradient overlay */}
+      <AnimatedLinearGradient
+        colors={gradientConfig.colors}
+        start={gradientConfig.start}
+        end={gradientConfig.end}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      {/* Glow effect */}
+      {glow && (
         <Animated.View
           style={[
             StyleSheet.absoluteFillObject,
-            shimmerStyle,
+            glowAnimatedStyle,
             {
-              backgroundColor: theme.isDark
-                ? 'rgba(255, 255, 255, 0.05)'
-                : 'rgba(255, 255, 255, 0.3)',
+              borderRadius,
+              borderWidth: 1,
+              borderColor: isDark
+                ? 'rgba(255, 255, 255, 0.2)'
+                : 'rgba(255, 255, 255, 0.4)',
             },
           ]}
           pointerEvents="none"
         />
       )}
       
-      {/* Border with glow effect */}
-      <View
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            borderRadius,
-            borderWidth: theme.borders.widths.thin,
-            borderColor: theme.isDark
-              ? `rgba(255, 255, 255, ${glassConfig.border_opacity * 1.5})`
-              : `rgba(255, 255, 255, ${glassConfig.border_opacity * 2})`,
-          },
-        ]}
-        pointerEvents="none"
-      />
+      {/* Shimmer effect */}
+      {shimmer && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            shimmerAnimatedStyle,
+          ]}
+          pointerEvents="none"
+        >
+          <LinearGradient
+            colors={[
+              'transparent',
+              'rgba(255,255,255,0.3)',
+              'transparent',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </Animated.View>
+      )}
       
       {/* Content */}
       <View style={styles.content}>
         {children}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -274,3 +225,150 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
+
+// Fallback for Android if BlurView has issues
+export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
+  variant,
+  children,
+  style,
+  testID,
+  accessible = true,
+  accessibilityLabel,
+  shimmer = false,
+  glow = true,
+  animated = false,
+}) => {
+  const theme = useTheme();
+  const isDark = theme.isDark;
+  
+  // Get glass styles with higher opacity for fallback
+  const glassStyles = glassMorphism({ 
+    variant, 
+    isDark,
+    tintOpacity: glassEffects[variant].tint_opacity * 1.5, // More opaque for fallback
+  });
+  const gradientConfig = gradient.glass(isDark)[variant];
+  
+  // Animation values
+  const shimmerProgress = useSharedValue(0);
+  const glowAnimation = useSharedValue(0);
+  
+  useEffect(() => {
+    if (shimmer) {
+      shimmerProgress.value = withRepeat(
+        withTiming(1, { duration: 3000 }),
+        -1,
+        true
+      );
+    }
+    
+    if (glow) {
+      glowAnimation.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 2000 }),
+          withTiming(0.3, { duration: 2000 })
+        ),
+        -1,
+        false
+      );
+    }
+  }, [shimmer, glow, shimmerProgress, glowAnimation]);
+  
+  const glowAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      glowAnimation.value,
+      [0, 1],
+      [0.3, 0.6],
+      Extrapolate.CLAMP
+    ),
+  }));
+  
+  const shimmerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: shimmer ? interpolate(
+      shimmerProgress.value,
+      [0, 0.5, 1],
+      [0, 0.3, 0],
+      Extrapolate.CLAMP
+    ) : 0,
+  }));
+  
+  const flatStyle = StyleSheet.flatten([
+    {
+      borderRadius: theme.borders.radii.md,
+      overflow: 'hidden' as const,
+    },
+    glassStyles,
+    style,
+  ]);
+  
+  const borderRadius = (flatStyle.borderRadius as number) || theme.borders.radii.md;
+  
+  return (
+    <View
+      style={[styles.container, flatStyle]}
+      testID={testID}
+      accessible={accessible}
+      accessibilityLabel={accessibilityLabel}
+    >
+      {/* Gradient background */}
+      <LinearGradient
+        colors={gradientConfig.colors}
+        start={gradientConfig.start}
+        end={gradientConfig.end}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      {/* Glow effect */}
+      {glow && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            glowAnimatedStyle,
+            {
+              borderRadius,
+              borderWidth: 1,
+              borderColor: isDark
+                ? 'rgba(255, 255, 255, 0.2)'
+                : 'rgba(255, 255, 255, 0.4)',
+            },
+          ]}
+          pointerEvents="none"
+        />
+      )}
+      
+      {/* Shimmer effect */}
+      {shimmer && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            shimmerAnimatedStyle,
+          ]}
+          pointerEvents="none"
+        >
+          <LinearGradient
+            colors={[
+              'transparent',
+              'rgba(255,255,255,0.3)',
+              'transparent',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </Animated.View>
+      )}
+      
+      {/* Content */}
+      <View style={styles.content}>
+        {children}
+      </View>
+    </View>
+  );
+};
+
+// Export the appropriate component based on platform
+export default Platform.select({
+  ios: GlassBase,
+  android: GlassBaseFallback, // Use fallback on Android if BlurView has issues
+  default: GlassBase,
+}) as React.FC<GlassBaseProps>;

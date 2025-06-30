@@ -64,7 +64,7 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Barbell Bench Press',
-      muscle_groups: ['chest', 'triceps', 'shoulders'],
+      muscle_groups: ['chest', 'triceps', 'shoulders'] as string[],
       category: 'strength',
       equipment: 'barbell',
       instructions: 'Lie on bench, lower bar to chest with control, press up powerfully.',
@@ -86,7 +86,7 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Pull-ups',
-      muscle_groups: ['back', 'biceps'],
+      muscle_groups: ['back', 'biceps'] as string[],
       category: 'strength',
       equipment: 'bodyweight',
       instructions: 'Hang from bar, pull up until chin over bar.',
@@ -168,6 +168,8 @@ export const mockApi = {
     
     const newExercise: Exercise = {
       ...input,
+      muscle_groups: [...input.muscle_groups], // Convert readonly array to mutable
+      measurement_type: input.measurement_type as 'reps' | 'duration' | 'distance',
       id: `ex_${Date.now()}`,
       source_id: input.source_id || null,
       created_at: new Date().toISOString(),
@@ -201,6 +203,8 @@ export const mockApi = {
     mockDatabase.exercises[index] = {
       ...exercise,
       ...updates,
+      muscle_groups: updates.muscle_groups ? [...updates.muscle_groups] : exercise.muscle_groups,
+      measurement_type: updates.measurement_type ? updates.measurement_type as 'reps' | 'duration' | 'distance' : exercise.measurement_type,
       updated_at: new Date().toISOString(),
     };
     
@@ -272,13 +276,17 @@ export const mockApi = {
   async createWorkout(input: CreateWorkoutInput): Promise<Workout> {
     await delay();
     
+    const workoutId = `w_${Date.now()}`;
     const newWorkout: Workout = {
       ...input,
-      id: `w_${Date.now()}`,
+      id: workoutId,
       source_id: input.source_id || null,
       description: input.description || null,
       estimated_duration_minutes: input.estimated_duration_minutes || null,
-      workout_exercises: input.exercises || [],
+      workout_exercises: input.exercises ? input.exercises.map(e => ({
+        ...e,
+        workout_id: workoutId
+      })) : [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       is_favorite: false,
@@ -327,6 +335,7 @@ export const mockApi = {
     }
     
     const newExercise: WorkoutExercise = {
+      workout_id: workoutId,
       exercise_id: exerciseId,
       exercise_order: order,
       sets: config.sets,
@@ -382,6 +391,10 @@ export const mockApi = {
     mockDatabase.performances[index] = {
       ...mockDatabase.performances[index]!,
       ...data,
+      exercise_performances: data.exercise_performances.map(ep => ({
+        ...ep,
+        set_performances: [...ep.set_performances]
+      })),
       completed_at: data.completed_at,
     };
     
@@ -398,7 +411,7 @@ export const mockApi = {
       user_id: request.user_id,
       source_id: null,
       name: `AI Exercise: ${request.prompt?.slice(0, 20) || 'Generated'}...`,
-      muscle_groups: request.constraints?.muscle_groups || ['full_body'],
+      muscle_groups: request.constraints?.muscle_groups ? [...request.constraints.muscle_groups] : ['full_body'],
       category: 'strength',
       equipment: request.constraints?.equipment?.[0] || 'bodyweight',
       instructions: `AI Generated: Based on your request "${request.prompt || 'custom exercise'}"...`,
@@ -450,7 +463,7 @@ export const seedMockData = {
         user_id: null,
         source_id: null,
         name: `Exercise ${i + 1}`,
-        muscle_groups: [muscleGroups[i % muscleGroups.length]!],
+        muscle_groups: [muscleGroups[i % muscleGroups.length]!] as string[],
         category: categories[i % categories.length]!,
         equipment: equipment[i % equipment.length]!,
         instructions: `Instructions for exercise ${i + 1}`,

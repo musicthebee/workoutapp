@@ -136,7 +136,11 @@ export const exerciseValidation: FormValidation<{
   },
   default_reps: {
     rules: [
-      validationRules.inRange(1, 100, 'Reps must be between 1 and 100'),
+      {
+        validate: (value: number | null | undefined): boolean => 
+          value === null || value === undefined || (value >= 1 && value <= 100),
+        message: 'Reps must be between 1 and 100',
+      },
     ],
   },
   default_rest_seconds: {
@@ -162,7 +166,11 @@ export const workoutValidation: FormValidation<{
   },
   description: {
     rules: [
-      validationRules.maxLength(500),
+      {
+        validate: (value: string | undefined): boolean => 
+          value === undefined || value.length <= 500,
+        message: 'Must be no more than 500 characters',
+      },
     ],
   },
   category: {

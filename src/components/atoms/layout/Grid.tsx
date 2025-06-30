@@ -28,8 +28,8 @@ export const Grid: React.FC<GridProps> = ({
   const theme = useTheme();
   const gapValue = gap ? theme.spacing[gap] : 0;
   
-  // Calculate item width accounting for gaps
-  const itemWidth = `${(100 - (gapValue * (columns - 1))) / columns}%`;
+  // Calculate item width as percentage
+  const itemWidth = `${100 / columns}%`;
   
   return (
     <View
