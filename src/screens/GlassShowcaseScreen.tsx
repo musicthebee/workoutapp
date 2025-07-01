@@ -29,6 +29,8 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import {
   GlassBase,
+  GlassBaseAndroid,
+  GlassBaseAndroidRich,
   ButtonBase,
   TextBase,
   Spacer,
@@ -228,7 +230,7 @@ export const GlassShowcaseScreen: React.FC = () => {
             <TextBase variant="heading_4">Interactive Elements</TextBase>
             <Spacer size="md" />
             
-            <GlassBase variant="light" style={styles.interactiveCard}>
+            <GlassBaseAndroidRich variant="light" style={styles.interactiveCard}>
               {/* Input fields */}
               <View style={[styles.inputContainer, glassMorphism({ variant: 'light', isDark })]}>
                 <Icon name="user" size={20} color={theme.colors.muted} />
@@ -255,7 +257,7 @@ export const GlassShowcaseScreen: React.FC = () => {
                   <View style={[styles.toggleThumb, { backgroundColor: theme.colors.primary }]} />
                 </View>
               </Flex>
-            </GlassBase>
+            </GlassBaseAndroidRich>
           </Animated.View>
           
           <Spacer size="xl" />
