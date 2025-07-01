@@ -46,6 +46,9 @@ const createStyles = (theme: any) => StyleSheet.create({
   themeToggle: {
     padding: theme.spacing.sm,
     borderRadius: theme.borders.radii.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   heroCard: {
     padding: theme.spacing.xxl,
@@ -68,16 +71,17 @@ const createStyles = (theme: any) => StyleSheet.create({
   },
   cardsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.md,
+    justifyContent: 'space-between',
+    gap: theme.spacing.sm,
   },
   gridCard: {
-    width: (screenWidth - theme.spacing.md * 4) / 2.5,
+    flex: 1,
     aspectRatio: 1,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.md,
     borderRadius: theme.borders.radii.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    maxWidth: (screenWidth - theme.spacing.lg * 2 - theme.spacing.sm * 2) / 3,
   },
   selectedCard: {
     borderWidth: theme.borders.widths.medium,
@@ -92,9 +96,9 @@ const createStyles = (theme: any) => StyleSheet.create({
     alignItems: 'center',
     padding: theme.spacing.md,
     gap: theme.spacing.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
     borderWidth: theme.borders.widths.thin,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
   },
   inputPlaceholder: {
     flex: 1,
@@ -103,9 +107,9 @@ const createStyles = (theme: any) => StyleSheet.create({
     width: theme.sizes.touchTargets.small,
     height: theme.spacing.xl,
     padding: theme.spacing.xxxs,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
     borderWidth: theme.borders.widths.thin,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
   },
   toggleThumb: {
     width: theme.spacing.xl - theme.spacing.xxs,
@@ -200,10 +204,7 @@ export const GlassShowcaseScreen: React.FC = () => {
               <TextBase variant="heading_2">Glass Showcase</TextBase>
               <TouchableOpacity
                 onPress={toggleTheme}
-                style={[
-                  styles.themeToggle,
-                  glassMorphism({ variant: 'light', isDark }),
-                ]}
+                style={styles.themeToggle}
               >
                 <Icon 
                   name={isDark ? 'sun' : 'moon'} 
