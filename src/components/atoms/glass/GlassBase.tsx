@@ -315,8 +315,8 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
         style={StyleSheet.absoluteFillObject}
       />
       
-      {/* Glow effect */}
-      {glow && (
+      {/* Glow effect - disabled on Android to prevent borders */}
+      {false && glow && (
         <Animated.View
           style={[
             StyleSheet.absoluteFillObject,

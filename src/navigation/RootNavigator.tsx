@@ -51,10 +51,10 @@ const TabNavigator: React.FC = () => {
               iconName = focused ? 'diamond' : 'diamond-outline';
               break;
             case 'HistoryTab':
-              iconName = focused ? 'sunny' : 'sunny-outline';
+              iconName = focused ? 'time' : 'time-outline';
               break;
             case 'ProfileTab':
-              iconName = focused ? 'moon' : 'moon-outline';
+              iconName = focused ? 'person' : 'person-outline';
               break;
           }
           
@@ -87,25 +87,13 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="HistoryTab" 
-        component={() => {
-          // Switch to light theme when this tab is accessed
-          React.useEffect(() => {
-            if (isDark) toggleTheme();
-          }, []);
-          return <GlassShowcaseScreen />;
-        }}
-        options={{ title: 'Light' }}
+        component={() => <PlaceholderScreen title="History" />}
+        options={{ title: 'History' }}
       />
       <Tab.Screen 
         name="ProfileTab" 
-        component={() => {
-          // Switch to dark theme when this tab is accessed
-          React.useEffect(() => {
-            if (!isDark) toggleTheme();
-          }, []);
-          return <GlassShowcaseScreen />;
-        }}
-        options={{ title: 'Dark' }}
+        component={() => <PlaceholderScreen title="Profile" />}
+        options={{ title: 'Profile' }}
       />
     </Tab.Navigator>
   );

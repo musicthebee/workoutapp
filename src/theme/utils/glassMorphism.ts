@@ -1,5 +1,5 @@
 // src/theme/utils/glassMorphism.ts
-import { ViewStyle } from 'react-native';
+import { ViewStyle, Platform } from 'react-native';
 import { glassEffects } from '../tokens/effects';
 
 export interface GlassMorphismOptions {
@@ -23,35 +23,42 @@ export const glassMorphism = ({
 }: GlassMorphismOptions = {}): ViewStyle => {
   const glass = glassEffects[variant];
   
-  // Dynamic values based on theme
   const blur = blurAmount ?? glass.blur_amount;
   const tint = tintOpacity ?? glass.tint_opacity;
   const border = borderOpacity ?? glass.border_opacity;
   const shadow = shadowOpacity ?? glass.shadow_opacity;
   
-  // Tint colors - use customTint if provided
+  // Platform-specific implementations
+  if (Platform.OS === 'android') {
+    // Android: Simple subtle background, no elevation/shadows that cause thick borders
+    const backgroundColor = isDark
+      ? `rgba(255, 255, 255, 0.03)` // Very subtle white on dark
+      : `rgba(255, 255, 255, 0.15)`; // Subtle white on light
+    
+    return {
+      backgroundColor,
+      borderWidth: 0,
+      borderRadius: 12,
+      // No elevation, shadows, or other effects that create thick borders
+      overflow: 'hidden' as const,
+    };
+  }
+  
+  // iOS: Can use borders and blur effects
   const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
   const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
   const tintColor = isDark ? darkTint : lightTint;
   
-  // Border colors
   const borderColor = isDark 
-    ? `rgba(255, 255, 255, ${border * 2})`
-    : `rgba(255, 255, 255, ${border * 3})`;
+    ? `rgba(255, 255, 255, ${border * 0.2})`
+    : `rgba(255, 255, 255, ${border * 0.3})`;
   
   return {
-    // Glass background - use the calculated tintColor
     backgroundColor: tintColor,
-    
-    // Include blur amount for use with BlurView
     // @ts-ignore - custom property for blur configuration
     blurAmount: blur,
-    
-    // Border for definition
     borderWidth: 1,
     borderColor,
-    
-    // Shadow for depth
     shadowColor: isDark ? '#000' : '#000',
     shadowOffset: {
       width: 0,
@@ -60,8 +67,6 @@ export const glassMorphism = ({
     shadowOpacity: shadow,
     shadowRadius: variant === 'heavy' ? 16 : variant === 'medium' ? 8 : 4,
     elevation: variant === 'heavy' ? 12 : variant === 'medium' ? 6 : 3,
-    
-    // Ensure overflow is visible for shadow
     overflow: 'visible' as const,
   };
 };
@@ -106,22 +111,22 @@ export const gradient = {
   glass: (isDark: boolean) => ({
     light: {
       colors: isDark
-        ? ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.02)', 'rgba(0,0,0,0.1)']
-        : ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)'],
+        ? ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.01)', 'rgba(255,255,255,0.01)', 'transparent']
+        : ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)', 'rgba(255,255,255,0.02)', 'transparent'],
       start: { x: 0, y: 0 },
-      end: { x: 0, y: 1 },
+      end: { x: 1, y: 1 },
     },
     medium: {
       colors: isDark
-        ? ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(0,0,0,0.15)']
-        : ['rgba(255,255,255,0.6)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)'],
+        ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)', 'transparent']
+        : ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)', 'transparent'],
       start: { x: 0, y: 0 },
       end: { x: 0, y: 1 },
     },
     heavy: {
       colors: isDark
-        ? ['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)', 'rgba(0,0,0,0.2)']
-        : ['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)'],
+        ? ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.03)', 'transparent']
+        : ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)', 'transparent'],
       start: { x: 0, y: 0 },
       end: { x: 0, y: 1 },
     },
