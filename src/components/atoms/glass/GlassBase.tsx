@@ -206,7 +206,7 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
   );
 };
 
-// Fallback for Android if BlurView has issues
+// Fallback for Android - Enhanced with better glass effect
 export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
   variant,
   children,
@@ -215,23 +215,67 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
   accessible = true,
   accessibilityLabel,
   shimmer = false,
-  glow = true,
+  glow = false, // Disable glow on Android by default
   animated = false,
 }) => {
   const theme = useTheme();
   const isDark = theme.isDark;
   
-  // Get glass styles with higher opacity for fallback
-  const glassStyles = glassMorphism({ 
-    variant, 
-    isDark,
-    tintOpacity: theme.glass[variant].tint_opacity * 1.5, // More opaque for fallback
-  });
-  const gradientConfig = gradient.glass(isDark)[variant];
+  // Get Android-optimized glass styles
+  const getAndroidGlassStyle = (): ViewStyle => {
+    // Base colors with higher opacity for Android
+    const baseColors = {
+      light: {
+        dark: 'rgba(255, 255, 255, 0.08)',
+        light: 'rgba(255, 255, 255, 0.85)',
+      },
+      medium: {
+        dark: 'rgba(255, 255, 255, 0.12)',
+        light: 'rgba(255, 255, 255, 0.75)',
+      },
+      heavy: {
+        dark: 'rgba(255, 255, 255, 0.18)',
+        light: 'rgba(255, 255, 255, 0.65)',
+      },
+    };
+    
+    return {
+      backgroundColor: isDark ? baseColors[variant].dark : baseColors[variant].light,
+      borderRadius: theme.borders.radii.md,
+      // No borders or elevation to avoid artifacts
+      overflow: 'hidden' as const,
+    };
+  };
+  
+  const glassStyles = getAndroidGlassStyle();
+  
+  // Simplified gradient for Android
+  const androidGradientConfig = {
+    light: {
+      colors: isDark
+        ? ['rgba(255,255,255,0.05)', 'transparent']
+        : ['rgba(255,255,255,0.2)', 'transparent'],
+      start: { x: 0, y: 0 },
+      end: { x: 1, y: 1 },
+    },
+    medium: {
+      colors: isDark
+        ? ['rgba(255,255,255,0.08)', 'transparent']
+        : ['rgba(255,255,255,0.15)', 'transparent'],
+      start: { x: 0, y: 0 },
+      end: { x: 0.5, y: 1 },
+    },
+    heavy: {
+      colors: isDark
+        ? ['rgba(255,255,255,0.1)', 'transparent']
+        : ['rgba(255,255,255,0.1)', 'transparent'],
+      start: { x: 0, y: 0 },
+      end: { x: 0.3, y: 1 },
+    },
+  };
   
   // Animation values
   const shimmerProgress = useSharedValue(0);
-  const glowAnimation = useSharedValue(0);
   const breathingScale = useSharedValue(1);
   
   useEffect(() => {
@@ -240,17 +284,6 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
         withTiming(1, { duration: 3000 }),
         -1,
         true
-      );
-    }
-    
-    if (glow) {
-      glowAnimation.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 2000 }),
-          withTiming(0.3, { duration: 2000 })
-        ),
-        -1,
-        false
       );
     }
     
@@ -264,19 +297,10 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
         false
       );
     }
-  }, [shimmer, glow, animated, shimmerProgress, glowAnimation, breathingScale]);
+  }, [shimmer, animated, shimmerProgress, breathingScale]);
   
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     transform: animated ? [{ scale: breathingScale.value }] : [],
-  }));
-  
-  const glowAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      glowAnimation.value,
-      [0, 1],
-      [0.3, 0.6],
-      Extrapolate.CLAMP
-    ),
   }));
   
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
@@ -307,31 +331,16 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
-      {/* Gradient background */}
+      {/* Single gradient layer for Android */}
       <LinearGradient
-        colors={gradientConfig.colors}
-        start={gradientConfig.start}
-        end={gradientConfig.end}
-        style={StyleSheet.absoluteFillObject}
+        colors={androidGradientConfig[variant].colors}
+        start={androidGradientConfig[variant].start}
+        end={androidGradientConfig[variant].end}
+        style={[
+          StyleSheet.absoluteFillObject,
+          { borderRadius },
+        ]}
       />
-      
-      {/* Glow effect - disabled on Android to prevent borders */}
-      {false && glow && (
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFillObject,
-            glowAnimatedStyle,
-            {
-              borderRadius,
-              borderWidth: 1,
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.2)'
-                : 'rgba(255, 255, 255, 0.4)',
-            },
-          ]}
-          pointerEvents="none"
-        />
-      )}
       
       {/* Shimmer effect */}
       {shimmer && (
@@ -339,13 +348,14 @@ export const GlassBaseFallback: React.FC<GlassBaseProps> = ({
           style={[
             StyleSheet.absoluteFillObject,
             shimmerAnimatedStyle,
+            { borderRadius },
           ]}
           pointerEvents="none"
         >
           <LinearGradient
             colors={[
               'transparent',
-              'rgba(255,255,255,0.3)',
+              'rgba(255,255,255,0.2)',
               'transparent',
             ]}
             start={{ x: 0, y: 0 }}
@@ -380,8 +390,9 @@ const styles = StyleSheet.create({
 // Export the appropriate component based on platform
 const GlassComponent = Platform.select({
   ios: GlassBase,
-  android: GlassBaseFallback, // Use fallback on Android if BlurView has issues
+  android: GlassBaseFallback,
   default: GlassBase,
 }) as React.FC<GlassBaseProps>;
 
 export default GlassComponent;
+

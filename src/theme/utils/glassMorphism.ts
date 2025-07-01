@@ -30,21 +30,31 @@ export const glassMorphism = ({
   
   // Platform-specific implementations
   if (Platform.OS === 'android') {
-    // Android: Simple subtle background, no elevation/shadows that cause thick borders
-    const backgroundColor = isDark
-      ? `rgba(255, 255, 255, 0.03)` // Very subtle white on dark
-      : `rgba(255, 255, 255, 0.15)`; // Subtle white on light
+    // Android: Enhanced glass effect without borders/elevation
+    const androidTints = {
+      light: {
+        dark: `rgba(255, 255, 255, ${0.08})`,
+        light: `rgba(255, 255, 255, ${0.85})`,
+      },
+      medium: {
+        dark: `rgba(255, 255, 255, ${0.12})`,
+        light: `rgba(255, 255, 255, ${0.75})`,
+      },
+      heavy: {
+        dark: `rgba(255, 255, 255, ${0.18})`,
+        light: `rgba(255, 255, 255, ${0.65})`,
+      },
+    };
     
     return {
-      backgroundColor,
-      borderWidth: 0,
+      backgroundColor: customTint || (isDark ? androidTints[variant].dark : androidTints[variant].light),
       borderRadius: 12,
-      // No elevation, shadows, or other effects that create thick borders
       overflow: 'hidden' as const,
+      // No borders, elevation, or shadows to prevent artifacts
     };
   }
   
-  // iOS: Can use borders and blur effects
+  // iOS: Full glass effect with borders and shadows
   const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
   const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
   const tintColor = isDark ? darkTint : lightTint;
@@ -111,24 +121,24 @@ export const gradient = {
   glass: (isDark: boolean) => ({
     light: {
       colors: isDark
-        ? ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0.01)', 'rgba(255,255,255,0.01)', 'transparent']
-        : ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)', 'rgba(255,255,255,0.02)', 'transparent'],
+        ? ['rgba(255,255,255,0.05)', 'transparent']
+        : ['rgba(255,255,255,0.2)', 'transparent'],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
     },
     medium: {
       colors: isDark
-        ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)', 'transparent']
-        : ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)', 'transparent'],
+        ? ['rgba(255,255,255,0.08)', 'transparent']
+        : ['rgba(255,255,255,0.15)', 'transparent'],
       start: { x: 0, y: 0 },
-      end: { x: 0, y: 1 },
+      end: { x: 0.5, y: 1 },
     },
     heavy: {
       colors: isDark
-        ? ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.03)', 'transparent']
-        : ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)', 'transparent'],
+        ? ['rgba(255,255,255,0.1)', 'transparent']
+        : ['rgba(255,255,255,0.1)', 'transparent'],
       start: { x: 0, y: 0 },
-      end: { x: 0, y: 1 },
+      end: { x: 0.3, y: 1 },
     },
   }),
   
