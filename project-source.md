@@ -10,12 +10,20 @@ workoutapp/
 │   │   │   │   ├── ButtonBase.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── feedback
+│   │   │   │   ├── AnimatedValue.tsxworkoutapp/
+├── src
+│   ├── components
+│   │   ├── atoms
+│   │   │   ├── base
+│   │   │   │   ├── ButtonBase.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── feedback
 │   │   │   │   ├── AnimatedValue.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   └── ProgressBase.tsx
 │   │   │   ├── glass
 │   │   │   │   ├── GlassBase.tsx
-│   │   │   │   ├── GlassBaseFallback.tsx
+│   │   │   │   ├── GradientOrb.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── input
 │   │   │   │   ├── index.ts
@@ -65,12 +73,14 @@ workoutapp/
 │   ├── contexts
 │   │   ├── ApolloProvider.tsx
 │   │   ├── AuthContext.tsx
+│   │   ├── GlassVariantContext.tsx
 │   │   ├── index.ts
 │   │   └── ThemeContext.tsx
 │   ├── hooks
 │   │   ├── data
 │   │   │   └── index.ts
 │   │   ├── ui
+│   │   │   ├── glassAnimations.ts
 │   │   │   ├── index.ts
 │   │   │   └── usePressAnimation.ts
 │   │   ├── utility
@@ -81,7 +91,7 @@ workoutapp/
 │   │   └── RootNavigator.tsx
 │   ├── screens
 │   │   ├── AtomsShowcaseScreen.tsx
-│   │   ├── DiagnosticScreen.tsx
+│   │   ├── GlassShowcaseScreen.tsx
 │   │   ├── index.ts
 │   │   └── WorkoutExampleScreen.tsx
 │   ├── services
@@ -113,6 +123,9 @@ workoutapp/
 │   │   │   ├── index.ts
 │   │   │   ├── spacing.ts
 │   │   │   └── typography.ts
+│   │   ├── utils
+│   │   │   ├── glassMorphism.ts
+│   │   │   └── index.ts
 │   │   └── index.ts
 │   ├── types
 │   │   ├── business
@@ -140,98 +153,18 @@ workoutapp/
 │   │   ├── formatters
 │   │   │   └── index.ts
 │   │   ├── helpers
-│   │   │   └── index.ts
+│   │   │   ├── componentSizing.ts
+│   │   │   ├── index.ts
+│   │   │   └── themeHelpers.ts
 │   │   ├── validators
 │   │   │   └── index.ts
 │   │   └── index.ts
 │   └── index.ts
-├── .eslintrc.js
-├── .prettierrc.js
-├── .watchmanconfig
-├── app.json
 ├── App.tsx
 ├── babel.config.js
-├── codegen.yml
-├── index.js
 ├── metro.config.js
-├── package.json
 └── tsconfig.json
 
-<file path="android/build.gradle">
-buildscript {
-    ext {
-        buildToolsVersion = "35.0.0"
-        minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 35
-        ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    }
-}
-
-apply plugin: "com.facebook.react.rootproject"
-
-</file>
-<file path="android/gradle.properties">
-# Project-wide Gradle settings.
-
-# IDE (e.g. Android Studio) users:
-# Gradle settings configured through the IDE *will override*
-# any settings specified in this file.
-
-# For more details on how to configure your build environment visit
-# http://www.gradle.org/docs/current/userguide/build_environment.html
-
-# Specifies the JVM arguments used for the daemon process.
-# The setting is particularly useful for tweaking memory settings.
-# Default value: -Xmx512m -XX:MaxMetaspaceSize=256m
-org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
-
-# When configured, Gradle will run in incubating parallel mode.
-# This option should only be used with decoupled projects. More details, visit
-# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
-# org.gradle.parallel=true
-
-# AndroidX package structure to make it clearer which packages are bundled with the
-# Android operating system, and which are packaged with your app's APK
-# https://developer.android.com/topic/libraries/support-library/androidx-rn
-android.useAndroidX=true
-
-# Use this property to specify which architecture you want to build.
-# You can also override it from the CLI using
-# ./gradlew <task> -PreactNativeArchitectures=x86_64
-reactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64
-
-# Use this property to enable support to the new architecture.
-# This will allow you to use TurboModules and the Fabric render in
-# your application. You should enable this flag either if you want
-# to write custom TurboModules/Fabric components OR use libraries that
-# are providing them.
-newArchEnabled=true
-
-# Use this property to enable or disable the Hermes JS engine.
-# If set to false, you will be using JSC instead.
-hermesEnabled=true
-
-</file>
-<file path="android/settings.gradle">
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
-plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-rootProject.name = 'FitTrack'
-include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
-
-</file>
 <file path="src/components/atoms/base/ButtonBase.tsx">
 import React from 'react';
 import {
@@ -245,6 +178,7 @@ import Animated from 'react-native-reanimated';
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { usePressAnimation } from '@/hooks/ui/usePressAnimation';
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getComponentSizing } from '@/utils/helpers';
 import type { BaseComponentProps, ButtonSize, ButtonVariant } from '@/types';
 
 /**
@@ -285,9 +219,8 @@ export const ButtonBase: React.FC<ButtonBaseProps> = ({
   // Map button variant to glass variant
   const glassVariant = variant === 'ghost' ? 'light' : 'medium';
   
-  // Get size from theme
-  const height = theme.sizes.buttons[size];
-  const paddingHorizontal = theme.spacing[size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'];
+  // Get sizing using centralized utility (eliminates duplication)
+  const { height, paddingHorizontal } = getComponentSizing('button', size, theme);
   
   // Determine if button is interactive
   const isDisabled = disabled || loading;
@@ -458,11 +391,11 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
 }) => {
   const theme = useTheme();
   
-  // Size mapping
+  // Size mapping using theme tokens
   const sizeMap = {
-    sm: { height: 4, width: 100 },
-    md: { height: 8, width: 200 },
-    lg: { height: 12, width: 300 },
+    sm: { height: theme.spacing.xxs, width: theme.spacing.xxxxxl + theme.spacing.xxs },
+    md: { height: theme.spacing.xs, width: theme.spacing.xxxxxl * 2 + theme.spacing.lg },
+    lg: { height: theme.spacing.sm, width: theme.spacing.xxxxxl * 3 + theme.spacing.xl },
   };
   
   const dimensions = sizeMap[size];
@@ -473,7 +406,7 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     width: withSpring(
       dimensions.width * clampedProgress,
-      theme.animation.springs.normal
+      theme.animation.springs.smooth
     ),
   }));
   
@@ -521,276 +454,280 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
 
 </file>
 <file path="src/components/atoms/glass/GlassBase.tsx">
-import React, { useEffect } from 'react';
+// src/components/atoms/glass/GlassBase.tsx
+import React from 'react';
 import {
   View,
   StyleProp,
   ViewStyle,
   StyleSheet,
-  useColorScheme,
+  Platform,
 } from 'react-native';
-import {
-  Canvas,
-  Blur,
-  BackdropFilter,
-  Fill,
-  LinearGradient,
-  Box,
-  BoxShadow,
-  vec,
-  Paint,
-  ColorMatrix,
-  Turbulence,
-  DisplacementMap,
-  Skia,
-} from '@shopify/react-native-skia';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-  withSequence,
-} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import Animated from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
+import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
+import { useGlassEffects } from '@/hooks/ui/glassAnimations';
+import { useGlassVariant } from '@/contexts/GlassVariantContext';
 import type { BaseComponentProps } from '@/types';
 
-/**
- * Glass Base Props
- */
 export interface GlassBaseProps extends BaseComponentProps {
-  variant: 'light' | 'medium' | 'heavy';
+  variant?: 'light' | 'medium' | 'heavy'; // Now optional - uses global variant if not specified
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   shimmer?: boolean;
-  gradient?: boolean;
-  noise?: boolean;
+  glow?: boolean;
+  animated?: boolean;
 }
 
 /**
- * Glass Base Component
- * Premium glassmorphism with rich visual effects
+ * Unified Glass Base Component
+ * Consolidates all glass implementations with proper hook usage and DRY principles
+ * Handles platform differences cleanly without code duplication
  */
 export const GlassBase: React.FC<GlassBaseProps> = ({
-  variant,
+  variant: propVariant,
   children,
   style,
   testID,
   accessible = true,
   accessibilityLabel,
   shimmer = false,
-  gradient = true,
-  noise = false,
+  glow = false,
+  animated = false,
 }) => {
   const theme = useTheme();
-  const colorScheme = useColorScheme();
-  const glassConfig = theme.glass[variant];
-  const skiaConfig = theme.skiaBlur[variant];
+  const isDark = theme.isDark;
+  const { selectedVariant } = useGlassVariant();
   
-  // Animation for shimmer effect
-  const shimmerProgress = useSharedValue(0);
+  // Use prop variant if provided, otherwise use global selected variant
+  const variant = propVariant || selectedVariant;
   
-  useEffect(() => {
-    if (shimmer) {
-      shimmerProgress.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 2000 }),
-          withTiming(0, { duration: 2000 })
-        ),
-        -1,
-        false
-      );
-    }
-  }, [shimmer, shimmerProgress]);
+  // Use the glass animation hooks that were previously unused
+  const glassEffects = useGlassEffects({
+    shimmer,
+    glow,
+    breathing: animated,
+  });
   
-  const shimmerStyle = useAnimatedStyle(() => ({
-    opacity: shimmer ? 0.3 + shimmerProgress.value * 0.2 : 1,
-  }));
+  // Enhanced Android glass styles with borders, elevation, and shadows
+  const getAndroidGlassStyle = (): ViewStyle => {
+    // Solid backgrounds to prevent banding
+    const solidBackgrounds = {
+      light: {
+        dark: '#1a1a1a',
+        light: '#ffffff',
+      },
+      medium: {
+        dark: '#1f1f1f',
+        light: '#fafafa',
+      },
+      heavy: {
+        dark: '#242424',
+        light: '#f5f5f5',
+      },
+    };
+
+    // Android native elevation for shadows
+    const elevationLevels = {
+      light: 2,
+      medium: 4,
+      heavy: 6,
+    };
+
+    // Subtle borders
+    const borderColors = {
+      dark: 'rgba(255, 255, 255, 0.08)',
+      light: 'rgba(0, 0, 0, 0.05)',
+    };
+
+    return {
+      backgroundColor: isDark ? solidBackgrounds[variant].dark : solidBackgrounds[variant].light,
+      elevation: elevationLevels[variant],
+      borderWidth: theme.borders.widths.thin,
+      borderColor: isDark ? borderColors.dark : borderColors.light,
+      borderRadius: theme.borders.radii.md,
+      overflow: 'hidden' as const,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: elevationLevels[variant] / 2 },
+      shadowOpacity: theme.shadows.glass[variant].shadowOpacity,
+      shadowRadius: elevationLevels[variant],
+    };
+  };
+
+  // Get Android gradient configuration
+  const getAndroidGradientConfig = () => {
+    const alphaGradients = {
+      light: {
+        colors: isDark
+          ? ['rgba(255,255,255,0.03)', 'rgba(255,255,255,0)']
+          : ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)'],
+        start: { x: 0, y: 0 },
+        end: { x: 1, y: 0.5 },
+      },
+      medium: {
+        colors: isDark
+          ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)']
+          : ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)'],
+        start: { x: 0, y: 0 },
+        end: { x: 0.7, y: 0.7 },
+      },
+      heavy: {
+        colors: isDark
+          ? ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0)']
+          : ['rgba(255,255,255,0.6)', 'rgba(255,255,255,0)'],
+        start: { x: 0, y: 0 },
+        end: { x: 1, y: 1 },
+      },
+    };
+    return alphaGradients[variant];
+  };
+
+  // Get platform-specific glass styles
+  const glassStyles = Platform.OS === 'android' 
+    ? getAndroidGlassStyle()
+    : glassMorphism({ variant, isDark });
+  const blurAmount = theme.glass[variant].blur_amount;
   
   // Flatten style to get dimensions
   const flatStyle = StyleSheet.flatten([
-    {
-      borderRadius: theme.borders.radii.md,
-      overflow: 'hidden',
-    },
+    styles.base,
+    glassStyles,
     style,
   ]);
   
   const borderRadius = (flatStyle.borderRadius as number) || theme.borders.radii.md;
-  
-  // Enhanced color matrix based on color scheme
-  const colorMatrix = colorScheme === 'dark' ? [
-    0.9, 0, 0, 0, 0,
-    0, 0.9, 0, 0, 0,
-    0, 0, 1.1, 0, 0,
-    0, 0, 0, 1, 0,
-  ] : [
-    1.1, 0, 0, 0, 0,
-    0, 1.1, 0, 0, 0,
-    0, 0, 1.2, 0, 0,
-    0, 0, 0, 1, 0,
-  ];
-  
-  // Create paint for shadow effects
-  const shadowPaint = Skia.Paint();
-  shadowPaint.setColorFilter(
-    Skia.ColorFilter.MakeBlend(
-      Skia.Color(theme.isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.2)'),
-      5 // BlendMode.Multiply
-    )
-  );
-  
+
+  // Platform-specific rendering with shared logic
+  const renderPlatformLayer = () => {
+    if (Platform.OS === 'ios') {
+      // iOS: Use BlurView with gradient overlay
+      const glassGradients = gradient.glass(isDark);
+      const gradientConfig = glassGradients[variant];
+      
+      return (
+        <>
+          <BlurView
+            style={StyleSheet.absoluteFillObject}
+            blurType={isDark ? 'dark' : 'light'}
+            blurAmount={blurAmount}
+            reducedTransparencyFallbackColor={
+              isDark ? 'rgba(10, 10, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+            }
+          />
+          <LinearGradient
+            colors={gradientConfig.colors}
+            start={gradientConfig.start}
+            end={gradientConfig.end}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </>
+      );
+    }
+    
+    // Android: Enhanced glass with gradients
+    const gradientConfig = getAndroidGradientConfig();
+    return (
+      <>
+        {/* Inner shadow for depth */}
+        <View 
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderRadius: theme.borders.radii.md,
+            borderWidth: theme.borders.widths.thin,
+            borderColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)',
+          }}
+          pointerEvents="none" 
+        />
+        
+        {/* Glass gradient overlay */}
+        <LinearGradient
+          colors={gradientConfig.colors}
+          start={gradientConfig.start}
+          end={gradientConfig.end}
+          style={StyleSheet.absoluteFillObject}
+          pointerEvents="none"
+        />
+      </>
+    );
+  };
+
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
         flatStyle,
-        {
-          // Add shadow for depth
-          shadowColor: theme.isDark ? '#000' : '#000',
-          shadowOffset: {
-            width: 0,
-            height: variant === 'heavy' ? 8 : variant === 'medium' ? 4 : 2,
-          },
-          shadowOpacity: variant === 'heavy' ? 0.3 : variant === 'medium' ? 0.2 : 0.1,
-          shadowRadius: variant === 'heavy' ? 16 : variant === 'medium' ? 8 : 4,
-          elevation: variant === 'heavy' ? 12 : variant === 'medium' ? 6 : 3,
-        }
+        animated && glassEffects.breathing.animatedStyle,
       ]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
-      {/* Backdrop blur layer with effects */}
-      <View style={StyleSheet.absoluteFillObject}>
-        <Canvas style={StyleSheet.absoluteFillObject}>
-          <BackdropFilter
-            filter={
-              <Blur blur={skiaConfig.blur} />
-            }
-          >
-            <Fill />
-            <ColorMatrix matrix={colorMatrix} />
-          </BackdropFilter>
-          
-          {/* Noise texture for glass texture */}
-          {noise && (
-            <>
-              <Turbulence 
-                freqX={0.01} 
-                freqY={0.01} 
-                octaves={2} 
-                seed={5}
-              />
-              <DisplacementMap channelX="g" channelY="a" scale={2}>
-                <Turbulence 
-                  freqX={0.01} 
-                  freqY={0.01} 
-                  octaves={2} 
-                  seed={5}
-                />
-              </DisplacementMap>
-            </>
-          )}
-          
-          {/* Inner shadow using Box and BoxShadow */}
-          <Box
-            box={Skia.RRectXY(
-              Skia.XYWHRect(0, 0, 300, 300), // Will be clipped by container
-              borderRadius,
-              borderRadius
-            )}
-          >
-            <BoxShadow
-              dx={0}
-              dy={-2}
-              blur={4}
-              color={theme.isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.8)'}
-              inner
-            />
-            <BoxShadow
-              dx={0}
-              dy={2}
-              blur={4}
-              color={theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
-              inner
-            />
-            <Paint paint={shadowPaint} />
-          </Box>
-        </Canvas>
-      </View>
+      {/* Platform-specific background layer */}
+      {renderPlatformLayer()}
       
-      {/* Gradient overlay for depth */}
-      {gradient && (
-        <View style={StyleSheet.absoluteFillObject}>
-          <Canvas style={StyleSheet.absoluteFillObject}>
-            <LinearGradient
-              start={vec(0, 0)}
-              end={vec(0, 100)}
-              colors={
-                theme.isDark
-                  ? ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.02)']
-                  : ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.4)']
-              }
-            />
-          </Canvas>
-        </View>
-      )}
-      
-      {/* Tint layer */}
-      <View
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            backgroundColor: theme.isDark 
-              ? `rgba(0, 0, 0, ${glassConfig.tint_opacity * 0.8})`
-              : `rgba(255, 255, 255, ${glassConfig.tint_opacity})`,
-          },
-        ]}
-      />
-      
-      {/* Shimmer effect */}
-      {shimmer && (
+      {/* Glow effect using hooks */}
+      {glow && (
         <Animated.View
           style={[
             StyleSheet.absoluteFillObject,
-            shimmerStyle,
+            glassEffects.glow.animatedStyle,
             {
-              backgroundColor: theme.isDark
-                ? 'rgba(255, 255, 255, 0.05)'
-                : 'rgba(255, 255, 255, 0.3)',
+              borderRadius,
+              borderWidth: 1,
+              borderColor: isDark
+                ? 'rgba(255, 255, 255, 0.2)'
+                : 'rgba(255, 255, 255, 0.4)',
             },
           ]}
           pointerEvents="none"
         />
       )}
       
-      {/* Border with glow effect */}
-      <View
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            borderRadius,
-            borderWidth: theme.borders.widths.thin,
-            borderColor: theme.isDark
-              ? `rgba(255, 255, 255, ${glassConfig.border_opacity * 1.5})`
-              : `rgba(255, 255, 255, ${glassConfig.border_opacity * 2})`,
-          },
-        ]}
-        pointerEvents="none"
-      />
+      {/* Shimmer effect using hooks */}
+      {shimmer && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            glassEffects.shimmer.animatedStyle,
+            { borderRadius },
+          ]}
+          pointerEvents="none"
+        >
+          <LinearGradient
+            colors={[
+              'transparent',
+              'rgba(255,255,255,0.3)',
+              'transparent',
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </Animated.View>
+      )}
       
       {/* Content */}
       <View style={styles.content}>
         {children}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
+  },
+  base: {
+    borderRadius: 12,
+    overflow: 'hidden' as const,
   },
   content: {
     position: 'relative',
@@ -798,136 +735,223 @@ const styles = StyleSheet.create({
   },
 });
 
+export default GlassBase;
 </file>
-<file path="src/components/atoms/glass/GlassBaseFallback.tsx">
-import React from 'react';
-import {
-  View,
-  StyleProp,
-  ViewStyle,
-  Platform,
-  StyleSheet,
-} from 'react-native';
-import { BlurView } from '@react-native-community/blur';
-
+<file path="src/components/atoms/glass/GradientOrb.tsx">
+// src/components/atoms/glass/GradientOrb.tsx
+import React, { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+  withDelay,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/theme/hooks/useTheme';
-import type { BaseComponentProps } from '@/types';
 
-/**
- * Glass Base Fallback Props
- */
-export interface GlassBaseFallbackProps extends BaseComponentProps {
-  variant: 'light' | 'medium' | 'heavy';
-  children: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+
+export interface GradientOrbProps {
+  size?: number;
+  colors?: string[];
+  position?: { x: number; y: number };
+  animationType?: 'float' | 'pulse' | 'rotate' | 'none';
+  duration?: number;
+  delay?: number;
 }
 
-/**
- * Glass Base Fallback Component
- * Original implementation using platform-specific approach
- * Use this if Skia has issues or for comparison
- */
-export const GlassBaseFallback: React.FC<GlassBaseFallbackProps> = ({
-  variant,
-  children,
-  style,
-  testID,
-  accessible = true,
-  accessibilityLabel,
+export const GradientOrb: React.FC<GradientOrbProps> = ({
+  size = 300,
+  colors,
+  position = { x: 0, y: 0 },
+  animationType = 'float',
+  duration = 6000,
+  delay = 0,
 }) => {
   const theme = useTheme();
-  const glassConfig = theme.glass[variant];
+  const isDark = theme.isDark;
   
-  // Platform-specific implementation
-  if (Platform.OS === 'ios') {
-    return (
-      <BlurView
-        style={[
-          styles.container,
-          {
-            borderRadius: theme.borders.radii.md,
-            borderWidth: theme.borders.widths.hairline,
-            borderColor: theme.colors.glass_border,
-            overflow: 'hidden',
-          },
-          style,
-        ]}
-        blurType={theme.isDark ? 'dark' : 'light'}
-        blurAmount={glassConfig.blur_amount}
-        testID={testID}
-        accessible={accessible}
-        accessibilityLabel={accessibilityLabel}
-      >
-        <View
-          style={[
-            styles.tintLayer,
-            {
-              backgroundColor: theme.isDark 
-                ? theme.colors.glass_heavy
-                : theme.colors.glass_light,
-              opacity: glassConfig.tint_opacity,
-            },
-          ]}
-        />
-        <View style={styles.content}>
-          {children}
-        </View>
-      </BlurView>
-    );
-  }
+  // Default colors based on theme
+  const defaultColors = isDark
+    ? ['rgba(99, 102, 241, 0.3)', 'rgba(99, 102, 241, 0.1)', 'transparent']
+    : ['rgba(99, 102, 241, 0.2)', 'rgba(99, 102, 241, 0.05)', 'transparent'];
   
-  // Android fallback - enhanced translucency
+  const orbColors = colors || defaultColors;
+  
+  // Animation values
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const rotation = useSharedValue(0);
+  const opacity = useSharedValue(0.8);
+  
+  useEffect(() => {
+    // Start animations based on type
+    if (animationType === 'float') {
+      translateX.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(20, { duration: duration / 2 }),
+            withTiming(-20, { duration: duration / 2 })
+          ),
+          -1,
+          true
+        )
+      );
+      
+      translateY.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(-30, { duration: duration / 2 }),
+            withTiming(30, { duration: duration / 2 })
+          ),
+          -1,
+          true
+        )
+      );
+      
+      scale.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(1.1, { duration: duration / 2 }),
+            withTiming(1, { duration: duration / 2 })
+          ),
+          -1,
+          true
+        )
+      );
+    } else if (animationType === 'pulse') {
+      scale.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(1.2, { duration: duration / 2 }),
+            withTiming(0.8, { duration: duration / 2 })
+          ),
+          -1,
+          true
+        )
+      );
+      
+      opacity.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(1, { duration: duration / 2 }),
+            withTiming(0.5, { duration: duration / 2 })
+          ),
+          -1,
+          true
+        )
+      );
+    } else if (animationType === 'rotate') {
+      rotation.value = withDelay(
+        delay,
+        withRepeat(
+          withTiming(360, { duration }),
+          -1,
+          false
+        )
+      );
+    }
+  }, [animationType, duration, delay, translateX, translateY, scale, rotation, opacity]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+      { rotate: `${rotation.value}deg` },
+    ],
+    opacity: opacity.value,
+  }));
+  
   return (
-    <View
+    <AnimatedLinearGradient
+      colors={orbColors}
+      start={{ x: 0.5, y: 0.5 }}
+      end={{ x: 1, y: 1 }}
       style={[
-        styles.container,
+        styles.orb,
         {
-          backgroundColor: theme.isDark
-            ? `rgba(0, 0, 0, ${0.7 * glassConfig.tint_opacity})`
-            : `rgba(255, 255, 255, ${0.9 * glassConfig.tint_opacity})`,
-          borderRadius: theme.borders.radii.md,
-          borderWidth: theme.borders.widths.hairline,
-          borderColor: theme.colors.glass_border,
-          // Enhanced Android styling
-          elevation: variant === 'heavy' ? 8 : variant === 'medium' ? 4 : 2,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: glassConfig.shadow_opacity,
-          shadowRadius: 8,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          left: position.x,
+          top: position.y,
         },
-        style,
+        animatedStyle,
       ]}
-      testID={testID}
-      accessible={accessible}
-      accessibilityLabel={accessibilityLabel}
-    >
+      pointerEvents="none"
+    />
+  );
+};
+
+// Background container with multiple orbs
+export interface GradientBackgroundProps {
+  children: React.ReactNode;
+  orbs?: Array<{
+    size?: number;
+    colors?: string[];
+    position?: { x: number; y: number };
+    animationType?: 'float' | 'pulse' | 'rotate' | 'none';
+    duration?: number;
+    delay?: number;
+  }>;
+}
+
+export const GradientBackground: React.FC<GradientBackgroundProps> = ({
+  children,
+  orbs = [
+    { position: { x: -100, y: -100 }, animationType: 'float' },
+    { position: { x: 200, y: 100 }, animationType: 'pulse', colors: ['rgba(249, 115, 22, 0.3)', 'rgba(249, 115, 22, 0.1)', 'transparent'] },
+    { position: { x: -50, y: 400 }, animationType: 'rotate', colors: ['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0.1)', 'transparent'] },
+  ],
+}) => {
+  const theme = useTheme();
+  
+  return (
+    <Animated.View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Animated.View style={styles.orbContainer} pointerEvents="none">
+        {orbs.map((orb, index) => (
+          <GradientOrb key={index} {...orb} />
+        ))}
+      </Animated.View>
       {children}
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     position: 'relative',
   },
-  tintLayer: {
+  orbContainer: {
     ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
   },
-  content: {
-    position: 'relative',
-    zIndex: 1,
+  orb: {
+    position: 'absolute',
   },
 });
 
 </file>
 <file path="src/components/atoms/glass/index.ts">
-export { GlassBase } from './GlassBase';
-export { GlassBaseFallback } from './GlassBaseFallback';
+// src/components/atoms/glass/index.ts
+export { default as GlassBase } from './GlassBase';
 export type { GlassBaseProps } from './GlassBase';
-export type { GlassBaseFallbackProps } from './GlassBaseFallback';
 
-// Feature flag for easy switching
-export const USE_SKIA_GLASS = true;
+export { GradientOrb, GradientBackground } from './GradientOrb';
+export type { GradientOrbProps, GradientBackgroundProps } from './GradientOrb';
 
 </file>
 <file path="src/components/atoms/input/index.ts">
@@ -948,6 +972,7 @@ import {
 
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getComponentSizing } from '@/utils/helpers';
 import type { BaseComponentProps, InputSize, InputVariant } from '@/types';
 
 /**
@@ -979,12 +1004,9 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
 }, ref) => {
   const theme = useTheme();
   
-  // Get size from theme
-  const height = theme.sizes.inputs[size];
-  const paddingHorizontal = theme.spacing[size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'];
-  
-  // Typography based on size
-  const typography = theme.typography[size === 'sm' ? 'body_small' : size === 'md' ? 'body_medium' : 'body_large'];
+  // Get sizing using centralized utility (eliminates duplication)
+  const { height, paddingHorizontal, typography } = getComponentSizing('input', size, theme);
+  const typographyConfig = theme.typography[typography];
   
   // Keyboard type based on variant
   const keyboardType = variant === 'numeric' ? 'numeric' : 'default';
@@ -1011,7 +1033,7 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
         style={[
           {
             flex: 1,
-            fontSize: typography.font_size,
+            fontSize: typographyConfig.font_size,
             color: theme.colors.text_primary,
             padding: 0, // Remove default padding
           },
@@ -1141,8 +1163,8 @@ export const Grid: React.FC<GridProps> = ({
   const theme = useTheme();
   const gapValue = gap ? theme.spacing[gap] : 0;
   
-  // Calculate item width accounting for gaps
-  const itemWidth = `${(100 - (gapValue * (columns - 1))) / columns}%`;
+  // Calculate item width as percentage
+  const itemWidth = `${100 / columns}%`;
   
   return (
     <View
@@ -1160,7 +1182,7 @@ export const Grid: React.FC<GridProps> = ({
         <View
           key={index}
           style={{
-            width: itemWidth,
+            width: itemWidth as any,
             paddingHorizontal: gapValue / 2,
             marginBottom: gapValue,
           }}
@@ -1232,6 +1254,7 @@ import React from 'react';
 import { Text, TextProps, StyleProp, TextStyle } from 'react-native';
 
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getTextStyle } from '@/utils/helpers';
 import type { BaseComponentProps, TextVariant, TextColor } from '@/types';
 
 /**
@@ -1261,33 +1284,17 @@ export const TextBase: React.FC<TextBaseProps> = ({
   ...restProps
 }) => {
   const theme = useTheme();
-  const typography = theme.typography[variant];
   
-  // Map color to theme color
-  const textColor = {
-    primary: theme.colors.text_primary,
-    secondary: theme.colors.text_secondary,
-    tertiary: theme.colors.text_tertiary,
-    inverse: theme.colors.text_inverse,
-    error: theme.colors.error,
-    success: theme.colors.success,
-    warning: theme.colors.warning,
-    info: theme.colors.info,
-  }[color];
+  // Use centralized theme helper (eliminates duplication)
+  const textStyle = getTextStyle(variant, color, align, theme);
+  
+  if (!textStyle) {
+    return null;
+  }
   
   return (
     <Text
-      style={[
-        {
-          fontSize: typography.font_size,
-          lineHeight: typography.font_size * typography.line_height,
-          fontWeight: typography.font_weight,
-          letterSpacing: typography.letter_spacing,
-          color: textColor,
-          textAlign: align,
-        },
-        style,
-      ]}
+      style={[textStyle, style]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
@@ -1733,8 +1740,47 @@ export const mockAuth = {
 };
 
 </file>
-<file path="src/contexts/index.ts">
+<file path="src/contexts/GlassVariantContext.tsx">
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export type GlassVariant = 'light' | 'medium' | 'heavy';
+
+interface GlassVariantContextType {
+  selectedVariant: GlassVariant;
+  setSelectedVariant: (variant: GlassVariant) => void;
+}
+
+const GlassVariantContext = createContext<GlassVariantContextType | undefined>(undefined);
+
+interface GlassVariantProviderProps {
+  children: ReactNode;
+}
+
+export const GlassVariantProvider: React.FC<GlassVariantProviderProps> = ({ children }) => {
+  const [selectedVariant, setSelectedVariant] = useState<GlassVariant>('medium');
+
+  return (
+    <GlassVariantContext.Provider value={{ selectedVariant, setSelectedVariant }}>
+      {children}
+    </GlassVariantContext.Provider>
+  );
+};
+
+export const useGlassVariant = (): GlassVariantContextType => {
+  const context = useContext(GlassVariantContext);
+  
+  if (!context) {
+    throw new Error('useGlassVariant must be used within GlassVariantProvider');
+  }
+  
+  return context;
+};
+</file>
+<file path="src/contexts/index.ts">
+export { AuthContext } from './AuthContext';
+export { ThemeContext } from './ThemeContext';
+export { ApolloProvider } from './ApolloProvider';
+export { GlassVariantProvider, useGlassVariant } from './GlassVariantContext';
 </file>
 <file path="src/contexts/ThemeContext.tsx">
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
@@ -1837,11 +1883,254 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
 </file>
 <file path="src/hooks/data/index.ts">
+// Data hooks - placeholder
+// TODO: Implement data fetching and state management hooks
+// Example: useApi, useQuery, useWorkouts, etc.
+
+// export * from './useApi';
+// export * from './useWorkouts';
+// export * from './useExercises';
+</file>
+<file path="src/hooks/ui/glassAnimations.ts">
+import { useEffect } from 'react';
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withRepeat,
+  withSequence,
+  withSpring,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
+import { useTheme } from '@/theme/hooks/useTheme';
+
+/**
+ * Shimmer animation for glass effects
+ */
+export const useShimmerAnimation = (enabled = true, duration = 3000) => {
+  const progress = useSharedValue(0);
+  
+  useEffect(() => {
+    if (enabled) {
+      progress.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    } else {
+      progress.value = 0;
+    }
+  }, [enabled, duration, progress]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      [0, 0.3, 0],
+      Extrapolate.CLAMP
+    ),
+  }));
+  
+  return { progress, animatedStyle };
+};
+
+/**
+ * Glow pulse animation for glass borders
+ */
+export const useGlowAnimation = (enabled = true) => {
+  const theme = useTheme();
+  const intensity = useSharedValue(0);
+  
+  useEffect(() => {
+    if (enabled) {
+      intensity.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 2000 }),
+          withTiming(0.3, { duration: 2000 })
+        ),
+        -1,
+        false
+      );
+    } else {
+      intensity.value = 0;
+    }
+  }, [enabled, intensity]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    shadowOpacity: interpolate(
+      intensity.value,
+      [0, 1],
+      [0.1, 0.3],
+      Extrapolate.CLAMP
+    ),
+    borderColor: theme.isDark
+      ? `rgba(255, 255, 255, ${interpolate(intensity.value, [0, 1], [0.1, 0.3])})`
+      : `rgba(255, 255, 255, ${interpolate(intensity.value, [0, 1], [0.3, 0.6])})`,
+  }));
+  
+  return { intensity, animatedStyle };
+};
+
+/**
+ * Breathing animation for subtle glass movement
+ */
+export const useBreathingAnimation = (enabled = true) => {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+  
+  useEffect(() => {
+    if (enabled) {
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.02, { duration: 3000 }),
+          withTiming(1, { duration: 3000 })
+        ),
+        -1,
+        false
+      );
+      
+      opacity.value = withRepeat(
+        withSequence(
+          withTiming(0.95, { duration: 3000 }),
+          withTiming(1, { duration: 3000 })
+        ),
+        -1,
+        false
+      );
+    } else {
+      scale.value = withSpring(1);
+      opacity.value = withSpring(1);
+    }
+  }, [enabled, scale, opacity]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+  
+  return { scale, opacity, animatedStyle };
+};
+
+/**
+ * Parallax animation for glass layers
+ */
+export const useParallaxAnimation = (scrollOffset: any, factor = 0.5) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(
+          scrollOffset.value,
+          [-100, 0, 100],
+          [50 * factor, 0, -50 * factor],
+          Extrapolate.CLAMP
+        ),
+      },
+    ],
+  }));
+  
+  return animatedStyle;
+};
+
+/**
+ * Color shift animation for dynamic glass tints
+ */
+export const useColorShiftAnimation = (enabled = true) => {
+  const theme = useTheme();
+  const hue = useSharedValue(0);
+  
+  useEffect(() => {
+    if (enabled) {
+      hue.value = withRepeat(
+        withTiming(360, { duration: 10000 }),
+        -1,
+        false
+      );
+    } else {
+      hue.value = 0;
+    }
+  }, [enabled, hue]);
+  
+  const animatedStyle = useAnimatedStyle(() => {
+    const hueRotate = hue.value;
+    // This would need a color manipulation library in practice
+    // For now, we'll just adjust opacity as a placeholder
+    return {
+      opacity: interpolate(
+        Math.sin((hueRotate * Math.PI) / 180),
+        [-1, 1],
+        [0.8, 1],
+        Extrapolate.CLAMP
+      ),
+    };
+  });
+  
+  return { hue, animatedStyle };
+};
+
+/**
+ * Frost animation for glass texture
+ */
+export const useFrostAnimation = (enabled = true) => {
+  const frost = useSharedValue(0);
+  
+  useEffect(() => {
+    if (enabled) {
+      frost.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 5000 }),
+          withTiming(0, { duration: 5000 })
+        ),
+        -1,
+        false
+      );
+    } else {
+      frost.value = 0;
+    }
+  }, [enabled, frost]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      frost.value,
+      [0, 1],
+      [0, 0.1],
+      Extrapolate.CLAMP
+    ),
+  }));
+  
+  return { frost, animatedStyle };
+};
+
+/**
+ * Combined glass effects animation
+ */
+export const useGlassEffects = (options: {
+  shimmer?: boolean;
+  glow?: boolean;
+  breathing?: boolean;
+  colorShift?: boolean;
+  frost?: boolean;
+} = {}) => {
+  const shimmer = useShimmerAnimation(options.shimmer);
+  const glow = useGlowAnimation(options.glow);
+  const breathing = useBreathingAnimation(options.breathing);
+  const colorShift = useColorShiftAnimation(options.colorShift);
+  const frost = useFrostAnimation(options.frost);
+  
+  return {
+    shimmer,
+    glow,
+    breathing,
+    colorShift,
+    frost,
+  };
+};
 
 </file>
 <file path="src/hooks/ui/index.ts">
 // src/hooks/ui/index.ts
 export { usePressAnimation } from './usePressAnimation';
+export * from './glassAnimations';
 
 </file>
 <file path="src/hooks/ui/usePressAnimation.ts">
@@ -1864,13 +2153,13 @@ export const usePressAnimation = () => {
   }));
   
   const onPressIn = (): void => {
-    scale.value = withSpring(0.95, theme.animation.springs.fast);
-    opacity.value = withSpring(0.8, theme.animation.springs.fast);
+    scale.value = withSpring(0.95, theme.animation.springs.responsive);
+    opacity.value = withSpring(0.8, theme.animation.springs.responsive);
   };
   
   const onPressOut = (): void => {
-    scale.value = withSpring(1, theme.animation.springs.normal);
-    opacity.value = withSpring(1, theme.animation.springs.normal);
+    scale.value = withSpring(1, theme.animation.springs.smooth);
+    opacity.value = withSpring(1, theme.animation.springs.smooth);
   };
   
   return {
@@ -1882,17 +2171,26 @@ export const usePressAnimation = () => {
 
 </file>
 <file path="src/hooks/utility/index.ts">
+// Utility hooks - placeholder  
+// TODO: Implement utility hooks for common operations
+// Example: useDebounce, useLocalStorage, useKeyboard, etc.
 
+// export * from './useDebounce';
+// export * from './useLocalStorage';
+// export * from './useKeyboard';
 </file>
 <file path="src/hooks/index.ts">
 // src/hooks/index.ts
 // Main hooks export file
 export * from './ui';
-// export * from './data'; // Uncomment when data hooks are created
-// export * from './utility'; // Uncomment when utility hooks are created
+export * from './data';
+export * from './utility';
 
 // Re-export theme hook for convenience
 export { useTheme, useThemeControls, useThemeToken, useThemeValue } from '@/theme/hooks/useTheme';
+
+// Re-export glass variant hook for convenience  
+export { useGlassVariant } from '@/contexts/GlassVariantContext';
 </file>
 <file path="src/navigation/index.ts">
 
@@ -1905,12 +2203,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/contexts/AuthContext';
+import { useThemeControls } from '@/hooks';
 import type { RootStackParamList, TabParamList } from '@/types';
 
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, DiagnosticScreen } from '@/screens';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
@@ -1931,6 +2230,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
  */
 const TabNavigator: React.FC = () => {
   const theme = useTheme();
+  const { isDark, toggleTheme } = useThemeControls();
   
   return (
     <Tab.Navigator
@@ -1946,7 +2246,7 @@ const TabNavigator: React.FC = () => {
               iconName = focused ? 'barbell' : 'barbell-outline';
               break;
             case 'WorkoutsTab':
-              iconName = focused ? 'list' : 'list-outline';
+              iconName = focused ? 'diamond' : 'diamond-outline';
               break;
             case 'HistoryTab':
               iconName = focused ? 'time' : 'time-outline';
@@ -1980,8 +2280,8 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="WorkoutsTab" 
-        component={() => <PlaceholderScreen title="Workouts" />}
-        options={{ title: 'Workouts' }}
+        component={GlassShowcaseScreen}
+        options={{ title: 'Glass' }}
       />
       <Tab.Screen 
         name="HistoryTab" 
@@ -1990,8 +2290,8 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="ProfileTab" 
-        component={DiagnosticScreen}
-        options={{ title: 'Diagnostic' }}
+        component={() => <PlaceholderScreen title="Profile" />}
+        options={{ title: 'Profile' }}
       />
     </Tab.Navigator>
   );
@@ -2033,7 +2333,10 @@ export const RootNavigator: React.FC = () => {
         },
         headerTintColor: theme.colors.text_primary,
         headerTitleStyle: {
-          ...theme.typography.heading_4,
+          fontSize: theme.typography.heading_4.font_size,
+          lineHeight: theme.typography.heading_4.font_size * theme.typography.heading_4.line_height,
+          fontWeight: theme.typography.heading_4.font_weight,
+          letterSpacing: theme.typography.heading_4.letter_spacing,
         },
         cardStyle: {
           backgroundColor: theme.colors.background,
@@ -2408,9 +2711,9 @@ export const AtomsShowcaseScreen: React.FC = () => {
           <TextBase variant="body_medium">Flex Layout (Row)</TextBase>
           <Spacer size="sm" />
           <Flex direction="row" justify="between" align="center" gap="md">
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.primary }} />
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.secondary }} />
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.success }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.primary }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.secondary }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.success }} />
           </Flex>
           
           <Spacer size="lg" />
@@ -2418,16 +2721,16 @@ export const AtomsShowcaseScreen: React.FC = () => {
           <TextBase variant="body_medium">Grid Layout (2 columns)</TextBase>
           <Spacer size="sm" />
           <Grid columns={2} gap="md">
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 1</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 2</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 3</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 4</TextBase>
             </GlassBase>
           </Grid>
@@ -2463,236 +2766,394 @@ export const AtomsShowcaseScreen: React.FC = () => {
 };
 
 </file>
-<file path="src/screens/DiagnosticScreen.tsx">
-import React, { useState } from 'react';
-import { ScrollView, View, Platform } from 'react-native';
+<file path="src/screens/GlassShowcaseScreen.tsx">
+// src/screens/GlassShowcaseScreen.tsx
+import React, { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  View,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring 
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withSequence,
+  withDelay,
+  withRepeat,
+  interpolate,
+  Extrapolate,
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  Layout,
 } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/Feather';
 
 import {
   GlassBase,
-  GlassBaseFallback,
   ButtonBase,
   TextBase,
   Spacer,
   Flex,
 } from '@/components/atoms';
-import { useTheme } from '@/hooks';
+import { GradientBackground, GradientOrb } from '@/components/atoms/glass/GradientOrb';
+import { useTheme, useThemeControls } from '@/hooks';
+import { useGlassVariant } from '@/contexts/GlassVariantContext';
+import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
 
-/**
- * Diagnostic Screen
- * Helps verify Skia and Reanimated are working correctly
- */
-export const DiagnosticScreen: React.FC = () => {
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+// Factory function to create styles with theme tokens
+const createStyles = (theme: any) => StyleSheet.create({
+  themeToggle: {
+    padding: theme.spacing.sm,
+    borderRadius: theme.borders.radii.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  heroCard: {
+    padding: theme.spacing.xxl,
+    borderRadius: theme.borders.radii.xl,
+  },
+  actionButton: {
+    borderRadius: theme.borders.radii.md,
+    overflow: 'hidden',
+  },
+  secondaryButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+  },
+  gradientButton: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+  },
+  cardsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: theme.spacing.sm,
+  },
+  gridCard: {
+    flex: 1,
+    aspectRatio: 1,
+    padding: theme.spacing.md,
+    borderRadius: theme.borders.radii.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    maxWidth: (screenWidth - theme.spacing.lg * 2 - theme.spacing.sm * 2) / 3,
+  },
+  selectedCard: {
+    borderWidth: theme.borders.widths.medium,
+    borderColor: 'rgba(99, 102, 241, 0.5)',
+  },
+  interactiveCard: {
+    padding: theme.spacing.lg,
+    borderRadius: theme.borders.radii.lg,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    gap: theme.spacing.sm,
+    backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+  },
+  inputPlaceholder: {
+    flex: 1,
+  },
+  toggle: {
+    width: theme.sizes.touchTargets.small,
+    height: theme.spacing.xl,
+    padding: theme.spacing.xxxs,
+    backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: theme.isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)',
+  },
+  toggleThumb: {
+    width: theme.spacing.xl - theme.spacing.xxs,
+    height: theme.spacing.xl - theme.spacing.xxs,
+    borderRadius: (theme.spacing.xl - theme.spacing.xxs) / 2,
+    marginLeft: theme.spacing.md + theme.spacing.xxs,
+  },
+  performanceGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
+  },
+  performanceCard: {
+    width: (screenWidth - theme.spacing.lg * 4) / 4,
+    aspectRatio: 1,
+    borderRadius: theme.borders.radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+export const GlassShowcaseScreen: React.FC = () => {
   const theme = useTheme();
-  const [useSkia, setUseSkia] = useState(true);
-  const scale = useSharedValue(1);
+  const { isDark, toggleTheme } = useThemeControls();
+  const { selectedVariant, setSelectedVariant } = useGlassVariant();
+  const styles = createStyles(theme);
   
-  // Test Reanimated
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+  // Animation values
+  const formOpacity = useSharedValue(0);
+  const formScale = useSharedValue(0.9);
+  const cardScale = useSharedValue(1);
+  
+  useEffect(() => {
+    // Entry animations
+    formOpacity.value = withDelay(300, withTiming(1, { duration: 800 }));
+    formScale.value = withDelay(300, withSpring(1, theme.animation.springs.responsive));
+  }, [formOpacity, formScale, theme]);
+  
+  const formAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: formOpacity.value,
+    transform: [{ scale: formScale.value }],
   }));
   
-  const testAnimation = () => {
-    scale.value = withSpring(scale.value === 1 ? 1.2 : 1);
+  
+  const handleCardPress = (index: number) => {
+    const variants = ['light', 'medium', 'heavy'] as const;
+    const newVariant = variants[index];
+    setSelectedVariant(newVariant);
+    cardScale.value = withSequence(
+      withTiming(0.95, { duration: 100 }),
+      withSpring(1, theme.animation.springs.bouncy)
+    );
   };
   
-  // Component to use
-  const GlassComponent = useSkia ? GlassBase : GlassBaseFallback;
   
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView
-        contentContainerStyle={{
-          padding: theme.spacing.lg,
-        }}
-      >
-        <TextBase variant="heading_2" align="center">
-          Setup Diagnostic
-        </TextBase>
-        <Spacer size="md" />
-        <TextBase variant="body_medium" color="secondary" align="center">
-          Platform: {Platform.OS} {Platform.Version}
-        </TextBase>
-        <Spacer size="xl" />
-        
-        {/* Skia Glass Test */}
-        <TextBase variant="heading_4">1. Glass Effect Test</TextBase>
-        <Spacer size="sm" />
-        <TextBase variant="caption" color="secondary">
-          Currently using: {useSkia ? 'Skia' : 'Fallback'}
-        </TextBase>
-        <Spacer size="md" />
-        
-        <Flex gap="md">
-          <GlassComponent variant="light" style={{ padding: theme.spacing.md }}>
-            <TextBase variant="body_medium">Light Glass</TextBase>
-            <TextBase variant="caption" color="secondary">
-              {useSkia ? 'Should blur on both platforms' : 'iOS blur, Android translucent'}
-            </TextBase>
-          </GlassComponent>
+    <GradientBackground
+      orbs={[
+        { 
+          position: { x: -100, y: -100 }, 
+          size: 400,
+          animationType: 'float',
+          colors: theme.gradients.primary.map(c => c + '30'),
+        },
+        { 
+          position: { x: screenWidth - 200, y: 200 }, 
+          size: 300,
+          animationType: 'pulse',
+          colors: theme.gradients.secondary.map(c => c + '30'),
+          delay: 1000,
+        },
+        { 
+          position: { x: 50, y: screenHeight - 300 }, 
+          size: 350,
+          animationType: 'rotate',
+          colors: theme.gradients.accent.map(c => c + '30'),
+          delay: 2000,
+        },
+      ]}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{
+            padding: theme.spacing.lg,
+            minHeight: screenHeight,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header */}
+          <Animated.View entering={FadeInDown.duration(600).springify()}>
+            <Flex direction="row" justify="between" align="center">
+              <TextBase variant="heading_2">Glass Showcase</TextBase>
+              <TouchableOpacity
+                onPress={toggleTheme}
+                style={styles.themeToggle}
+              >
+                <Icon 
+                  name={isDark ? 'sun' : 'moon'} 
+                  size={24} 
+                  color={theme.colors.primary} 
+                />
+              </TouchableOpacity>
+            </Flex>
+          </Animated.View>
           
-          <GlassComponent variant="medium" style={{ padding: theme.spacing.md }}>
-            <TextBase variant="body_medium">Medium Glass</TextBase>
-            <TextBase variant="caption" color="secondary">
-              Blur amount: {useSkia ? theme.skiaBlur.medium.blur : theme.glass.medium.blur_amount}
-            </TextBase>
-          </GlassComponent>
+          <Spacer size="xl" />
           
-          <GlassComponent variant="heavy" style={{ padding: theme.spacing.md }}>
-            <TextBase variant="body_medium">Heavy Glass</TextBase>
-            <TextBase variant="caption" color="secondary">
-              Most blur effect
-            </TextBase>
-          </GlassComponent>
-          
-          <ButtonBase
-            variant="primary"
-            size="md"
-            onPress={() => setUseSkia(!useSkia)}
-          >
-            <TextBase variant="button_medium" color="inverse">
-              Switch to {useSkia ? 'Fallback' : 'Skia'}
-            </TextBase>
-          </ButtonBase>
-        </Flex>
-        
-        <Spacer size="xl" />
-        
-        {/* Reanimated Test */}
-        <TextBase variant="heading_4">2. Animation Test</TextBase>
-        <Spacer size="sm" />
-        <TextBase variant="caption" color="secondary">
-          Tests if Reanimated is working
-        </TextBase>
-        <Spacer size="md" />
-        
-        <Flex align="center" gap="md">
-          <Animated.View style={animatedStyle}>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.xl }}>
-              <TextBase variant="body_large" align="center">
-                Tap to Animate
+          {/* Hero Card */}
+          <Animated.View style={formAnimatedStyle}>
+            <GlassBase
+              style={styles.heroCard}
+              glow={true}
+              shimmer={true}
+              animated={true}
+            >
+              <TextBase variant="heading_3" align="center">
+                Premium Glassmorphism
               </TextBase>
+              <Spacer size="md" />
+              <TextBase variant="body_medium" color="secondary" align="center">
+                Beautiful glass effects with blur, gradients, and animations
+              </TextBase>
+              <Spacer size="lg" />
+              
+              {/* Action buttons */}
+              <Flex direction="row" gap="md" justify="center">
+                <TouchableOpacity style={styles.actionButton}>
+                  <LinearGradient
+                    colors={[...theme.gradients.primary]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.gradientButton}
+                  >
+                    <TextBase variant="button_small" color="inverse">
+                      Get Started
+                    </TextBase>
+                  </LinearGradient>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={[styles.actionButton, styles.secondaryButton]}>
+                  <TextBase variant="button_small">Learn More</TextBase>
+                </TouchableOpacity>
+              </Flex>
             </GlassBase>
           </Animated.View>
           
-          <ButtonBase
-            variant="primary"
-            size="lg"
-            onPress={testAnimation}
-          >
-            <TextBase variant="button_large" color="inverse">
-              Test Animation
+          <Spacer size="xl" />
+          
+          {/* Glass Cards Grid */}
+          <Animated.View entering={FadeInUp.delay(600).duration(800).springify()}>
+            <Flex direction="row" justify="between" align="center">
+              <TextBase variant="heading_4">Glass Variants</TextBase>
+              <TextBase variant="caption" color="secondary">
+                Active: {selectedVariant.charAt(0).toUpperCase() + selectedVariant.slice(1)}
+              </TextBase>
+            </Flex>
+            <Spacer size="md" />
+            
+            <View style={styles.cardsGrid}>
+              {['light', 'medium', 'heavy'].map((variant, index) => {
+                const isSelected = selectedVariant === variant;
+                return (
+                  <Animated.View
+                    key={variant}
+                    entering={FadeInUp.delay(800 + index * 100).springify()}
+                    layout={Layout.springify()}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleCardPress(index)}
+                      activeOpacity={0.8}
+                    >
+                      <GlassBase
+                        variant={variant as 'light' | 'medium' | 'heavy'}
+                        style={[
+                          styles.gridCard,
+                          isSelected && styles.selectedCard,
+                        ]}
+                        glow={isSelected}
+                      >
+                      <Icon 
+                        name={index === 0 ? 'sun' : index === 1 ? 'cloud' : 'moon'}
+                        size={theme.sizes.icons.lg} 
+                        color={theme.colors.primary} 
+                      />
+                      <Spacer size="sm" />
+                      <TextBase variant="body_medium" align="center">
+                        {variant.charAt(0).toUpperCase() + variant.slice(1)}
+                      </TextBase>
+                      <TextBase variant="caption" color="secondary" align="center">
+                        Blur: {theme.glass[variant as keyof typeof theme.glass].blur_amount}
+                      </TextBase>
+                    </GlassBase>
+                  </TouchableOpacity>
+                </Animated.View>
+                );
+              })}
+            </View>
+          </Animated.View>
+          
+          <Spacer size="xl" />
+          
+          {/* Interactive Demo */}
+          <Animated.View entering={FadeInUp.delay(1000).duration(800).springify()}>
+            <TextBase variant="heading_4">Interactive Elements</TextBase>
+            <Spacer size="md" />
+            
+            <GlassBase style={styles.interactiveCard}>
+              {/* Input fields - using simple styling to avoid double glass stacking */}
+              <View style={[styles.inputContainer, { borderRadius: theme.borders.radii.md }]}>
+                <Icon name="user" size={20} color={theme.colors.muted} />
+                <TextBase variant="body_medium" style={styles.inputPlaceholder}>
+                  Username
+                </TextBase>
+              </View>
+              
+              <Spacer size="md" />
+              
+              <View style={[styles.inputContainer, { borderRadius: theme.borders.radii.md }]}>
+                <Icon name="lock" size={20} color={theme.colors.muted} />
+                <TextBase variant="body_medium" style={styles.inputPlaceholder}>
+                  Password
+                </TextBase>
+              </View>
+              
+              <Spacer size="lg" />
+              
+              {/* Toggle switches */}
+              <Flex direction="row" justify="between" align="center">
+                <TextBase variant="body_medium">Enable Notifications</TextBase>
+                <View style={[styles.toggle, { borderRadius: theme.borders.radii.full }]}>
+                  <View style={[styles.toggleThumb, { backgroundColor: theme.colors.primary }]} />
+                </View>
+              </Flex>
+            </GlassBase>
+          </Animated.View>
+          
+          <Spacer size="xl" />
+          
+          {/* Performance Test Grid */}
+          <Animated.View entering={FadeInUp.delay(1200).duration(800).springify()}>
+            <TextBase variant="heading_4">Performance Test</TextBase>
+            <TextBase variant="caption" color="secondary">
+              Multiple glass layers with animations
             </TextBase>
-          </ButtonBase>
-        </Flex>
-        
-        <Spacer size="xl" />
-        
-        {/* Status Check */}
-        <TextBase variant="heading_4">3. Status Check</TextBase>
-        <Spacer size="md" />
-        
-        <GlassBase variant="light" style={{ padding: theme.spacing.md }}>
-          <Flex gap="sm">
-            <CheckItem 
-              label="Skia Installed" 
-              check={() => {
-                try {
-                  require('@shopify/react-native-skia');
-                  return true;
-                } catch {
-                  return false;
-                }
-              }}
-            />
-            <CheckItem 
-              label="Reanimated Installed" 
-              check={() => {
-                try {
-                  require('react-native-reanimated');
-                  return true;
-                } catch {
-                  return false;
-                }
-              }}
-            />
-            <CheckItem 
-              label="Glass Effects Visible" 
-              check={() => true} // User must verify visually
-              manual
-            />
-            <CheckItem 
-              label="Animations Working" 
-              check={() => true} // User must verify visually
-              manual
-            />
-            <CheckItem 
-              label="Platform" 
-              check={() => Platform.OS}
-              info
-            />
-          </Flex>
-        </GlassBase>
-        
-        <Spacer size="xl" />
-        
-        {/* Instructions */}
-        <GlassBase variant="light" style={{ padding: theme.spacing.md }}>
-          <TextBase variant="body_small">
-            If glass blur or animations aren't working:{'\n\n'}
-            1. Clean build: cd android && ./gradlew clean{'\n'}
-            2. Reset cache: npx react-native start --reset-cache{'\n'}
-            3. Rebuild app: yarn android{'\n\n'}
-            Glass blur should work on BOTH platforms with Skia.
-          </TextBase>
-        </GlassBase>
-        
-        <Spacer size="xxxl" />
-      </ScrollView>
-    </SafeAreaView>
+            <Spacer size="md" />
+            
+            <View style={styles.performanceGrid}>
+              {Array.from({ length: 12 }).map((_, i) => (
+                <GlassBase
+                  key={i}
+                  variant={i % 3 === 0 ? 'light' : i % 3 === 1 ? 'medium' : 'heavy'}
+                  style={styles.performanceCard}
+                  glow={i % 4 === 0}
+                  shimmer={i % 3 === 0}
+                >
+                  <TextBase variant="caption" align="center">{i + 1}</TextBase>
+                </GlassBase>
+              ))}
+            </View>
+          </Animated.View>
+          
+          <Spacer size="xxxl" />
+        </ScrollView>
+      </SafeAreaView>
+    </GradientBackground>
   );
 };
 
-// Helper component
-const CheckItem: React.FC<{ 
-  label: string; 
-  check: () => boolean | string;
-  manual?: boolean;
-  info?: boolean;
-}> = ({ label, check, manual, info }) => {
-  const result = check();
-  const theme = useTheme();
-  
-  return (
-    <Flex direction="row" justify="between">
-      <TextBase variant="body_small">{label}</TextBase>
-      {manual ? (
-        <TextBase variant="body_small" color="warning">Manual Check</TextBase>
-      ) : info ? (
-        <TextBase variant="body_small" color="info">{result}</TextBase>
-      ) : (
-        <TextBase 
-          variant="body_small" 
-          color={result ? 'success' : 'error'}
-        >
-          {result ? '✓' : '✗'}
-        </TextBase>
-      )}
-    </Flex>
-  );
-};
 
 </file>
 <file path="src/screens/index.ts">
 // Export all screens
 export { AtomsShowcaseScreen } from './AtomsShowcaseScreen';
 export { WorkoutExampleScreen } from './WorkoutExampleScreen';
-export { DiagnosticScreen } from './DiagnosticScreen';
+export { GlassShowcaseScreen } from './GlassShowcaseScreen';
 
 </file>
 <file path="src/screens/WorkoutExampleScreen.tsx">
@@ -2775,7 +3236,7 @@ export const WorkoutExampleScreen: React.FC = () => {
                 <TextBase variant="body_large">10 × 135 lbs</TextBase>
               </Flex>
               
-              <View style={{ width: 1, backgroundColor: theme.colors.divider }} />
+              <View style={{ width: theme.borders.widths.thin, backgroundColor: theme.colors.divider }} />
               
               <Flex align="center">
                 <TextBase variant="caption" color="tertiary">TARGET</TextBase>
@@ -3531,7 +3992,7 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Barbell Bench Press',
-      muscle_groups: ['chest', 'triceps', 'shoulders'],
+      muscle_groups: ['chest', 'triceps', 'shoulders'] as string[],
       category: 'strength',
       equipment: 'barbell',
       instructions: 'Lie on bench, lower bar to chest with control, press up powerfully.',
@@ -3553,7 +4014,7 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Pull-ups',
-      muscle_groups: ['back', 'biceps'],
+      muscle_groups: ['back', 'biceps'] as string[],
       category: 'strength',
       equipment: 'bodyweight',
       instructions: 'Hang from bar, pull up until chin over bar.',
@@ -3610,7 +4071,11 @@ export const mockApi = {
   // Auth
   async getCurrentUser(): Promise<{ id: UUID; name: string; email: string }> {
     await delay();
-    return mockDatabase.currentUser;
+    return {
+      id: mockDatabase.currentUser.id,
+      name: mockDatabase.currentUser.name || 'Unknown User',
+      email: mockDatabase.currentUser.email,
+    };
   },
 
   // Exercises
@@ -3635,6 +4100,8 @@ export const mockApi = {
     
     const newExercise: Exercise = {
       ...input,
+      muscle_groups: [...input.muscle_groups], // Convert readonly array to mutable
+      measurement_type: input.measurement_type as 'reps' | 'duration' | 'distance',
       id: `ex_${Date.now()}`,
       source_id: input.source_id || null,
       created_at: new Date().toISOString(),
@@ -3668,6 +4135,8 @@ export const mockApi = {
     mockDatabase.exercises[index] = {
       ...exercise,
       ...updates,
+      muscle_groups: updates.muscle_groups ? [...updates.muscle_groups] : exercise.muscle_groups,
+      measurement_type: updates.measurement_type ? updates.measurement_type as 'reps' | 'duration' | 'distance' : exercise.measurement_type,
       updated_at: new Date().toISOString(),
     };
     
@@ -3739,13 +4208,22 @@ export const mockApi = {
   async createWorkout(input: CreateWorkoutInput): Promise<Workout> {
     await delay();
     
+    const workoutId = `w_${Date.now()}`;
     const newWorkout: Workout = {
       ...input,
-      id: `w_${Date.now()}`,
+      id: workoutId,
       source_id: input.source_id || null,
       description: input.description || null,
       estimated_duration_minutes: input.estimated_duration_minutes || null,
-      workout_exercises: input.exercises || [],
+      workout_exercises: input.exercises ? input.exercises.map(e => ({
+        workout_id: workoutId,
+        exercise_id: e.exercise_id,
+        exercise_order: e.exercise_order,
+        sets: e.sets,
+        reps: e.reps ?? null,
+        duration_seconds: e.duration_seconds ?? null,
+        rest_seconds: e.rest_seconds,
+      })) : [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       is_favorite: false,
@@ -3794,6 +4272,7 @@ export const mockApi = {
     }
     
     const newExercise: WorkoutExercise = {
+      workout_id: workoutId,
       exercise_id: exerciseId,
       exercise_order: order,
       sets: config.sets,
@@ -3849,6 +4328,10 @@ export const mockApi = {
     mockDatabase.performances[index] = {
       ...mockDatabase.performances[index]!,
       ...data,
+      exercise_performances: data.exercise_performances.map(ep => ({
+        ...ep,
+        set_performances: [...ep.set_performances]
+      })),
       completed_at: data.completed_at,
     };
     
@@ -3865,7 +4348,7 @@ export const mockApi = {
       user_id: request.user_id,
       source_id: null,
       name: `AI Exercise: ${request.prompt?.slice(0, 20) || 'Generated'}...`,
-      muscle_groups: request.constraints?.muscle_groups || ['full_body'],
+      muscle_groups: request.constraints?.muscle_groups ? [...request.constraints.muscle_groups] : ['full_body'],
       category: 'strength',
       equipment: request.constraints?.equipment?.[0] || 'bodyweight',
       instructions: `AI Generated: Based on your request "${request.prompt || 'custom exercise'}"...`,
@@ -3917,7 +4400,7 @@ export const seedMockData = {
         user_id: null,
         source_id: null,
         name: `Exercise ${i + 1}`,
-        muscle_groups: [muscleGroups[i % muscleGroups.length]!],
+        muscle_groups: [muscleGroups[i % muscleGroups.length]!] as string[],
         category: categories[i % categories.length]!,
         equipment: equipment[i % equipment.length]!,
         instructions: `Instructions for exercise ${i + 1}`,
@@ -4130,6 +4613,10 @@ export const lightThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
+  
+  // Additional semantic colors
+  muted: baseColors.neutral_400,
+  danger: baseColors.error_main,
 } as const;
 
 // Dark theme colors
@@ -4182,6 +4669,10 @@ export const darkThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
+  
+  // Additional semantic colors
+  muted: baseColors.neutral_400,
+  danger: baseColors.error_main,
 } as const;
 
 // Type exports
@@ -4190,107 +4681,159 @@ export type ColorName = keyof ThemeColors;
 
 </file>
 <file path="src/theme/tokens/effects.ts">
+// src/theme/tokens/effects.ts
 /**
  * Visual effects tokens
  * Glass effects, animations, borders, shadows
  */
 
-// Glass morphism effects
+// Glass morphism effects - Based on NexAI approach
 export const glassEffects = {
   light: {
-    blur_amount: 20,
-    tint_opacity: 0.7,
-    border_opacity: 0.2,
-    shadow_opacity: 0.1,
+    blur_amount: 10,      // Lower blur for subtle effect
+    tint_opacity: 0.3,    // Low opacity for maximum translucency
+    border_opacity: 0.2,  // Visible but subtle border
+    shadow_opacity: 0.1,  // Light shadow
   },
   medium: {
-    blur_amount: 30,
-    tint_opacity: 0.5,
-    border_opacity: 0.15,
-    shadow_opacity: 0.15,
+    blur_amount: 20,      // Medium blur for balanced effect
+    tint_opacity: 0.5,    // Moderate opacity
+    border_opacity: 0.15, // Subtle border
+    shadow_opacity: 0.15, // Medium shadow
   },
   heavy: {
-    blur_amount: 40,
-    tint_opacity: 0.3,
-    border_opacity: 0.1,
-    shadow_opacity: 0.2,
+    blur_amount: 30,      // High blur for strong effect
+    tint_opacity: 0.7,    // Higher opacity but still translucent
+    border_opacity: 0.1,  // Very subtle border
+    shadow_opacity: 0.2,  // Stronger shadow
   },
 } as const;
 
-// Skia-specific blur effects
-export const skiaBlurEffects = {
-  light: {
-    blur: 8,              // Skia blur is more efficient, lower values
-    blurType: 'normal' as const,  // Changed from 'gaussian' to 'normal'
-    tileMode: 'clamp' as const,
-    backdropScale: 0.5,   // Downsample for performance
-    colorBoost: 1.1,      // Color enhancement
-    gradientOpacity: 0.8, // Gradient overlay strength
+// Animation configurations
+export const animationConfig = {
+  // Easing functions
+  easing: {
+    spring: {
+      responsive: {
+        damping: 15,
+        stiffness: 150,
+        mass: 1,
+      },
+      bouncy: {
+        damping: 10,
+        stiffness: 180,
+        mass: 0.8,
+      },
+      smooth: {
+        damping: 20,
+        stiffness: 90,
+        mass: 1.2,
+      },
+    },
+    timing: {
+      fast: { duration: 150 },
+      normal: { duration: 300 },
+      slow: { duration: 500 },
+      crawl: { duration: 1000 },
+      ambient: { duration: 3000 },
+    },
   },
-  medium: {
-    blur: 12,
-    blurType: 'normal' as const,
-    tileMode: 'clamp' as const,
-    backdropScale: 0.5,
-    colorBoost: 1.15,
-    gradientOpacity: 0.6,
-  },
-  heavy: {
-    blur: 16,
-    blurType: 'normal' as const,
-    tileMode: 'clamp' as const,
-    backdropScale: 0.4,   // More aggressive downsampling
-    colorBoost: 1.2,
-    gradientOpacity: 0.4,
-  },
-} as const;
-
-// Animation durations (ms)
-export const animationDurations = {
-  instant: 0,
-  fast: 150,
-  normal: 300,
-  slow: 500,
-  crawl: 1000,
-} as const;
-
-// Spring animations (react-native-reanimated)
-export const animationSprings = {
-  // Snappy UI responses
-  fast: {
-    damping: 20,
-    stiffness: 300,
-    mass: 0.8,
-  },
-  // Balanced feel
-  normal: {
-    damping: 15,
-    stiffness: 150,
-    mass: 1,
-  },
-  // Smooth, deliberate
-  slow: {
-    damping: 20,
-    stiffness: 90,
-    mass: 1.2,
-  },
-  // Bouncy
-  bouncy: {
-    damping: 10,
-    stiffness: 180,
-    mass: 0.8,
+  
+  // Complex animations
+  sequences: {
+    fadeInScale: {
+      from: { opacity: 0, scale: 0.9 },
+      to: { opacity: 1, scale: 1 },
+      duration: 300,
+    },
+    slideInBottom: {
+      from: { translateY: 100, opacity: 0 },
+      to: { translateY: 0, opacity: 1 },
+      duration: 400,
+    },
+    glow: {
+      loop: true,
+      sequence: [
+        { opacity: 0.3, duration: 2000 },
+        { opacity: 0.6, duration: 2000 },
+      ],
+    },
+    shimmer: {
+      loop: true,
+      from: { translateX: -200 },
+      to: { translateX: 200 },
+      duration: 3000,
+    },
   },
 } as const;
 
-// Easing curves (cubic-bezier)
-export const animationEasings = {
-  easeIn: [0.42, 0, 1, 1] as const,
-  easeOut: [0, 0, 0.58, 1] as const,
-  easeInOut: [0.42, 0, 0.58, 1] as const,
-  linear: [0, 0, 1, 1] as const,
-  easeInQuad: [0.55, 0.085, 0.68, 0.53] as const,
-  easeOutQuad: [0.25, 0.46, 0.45, 0.94] as const,
-  easeInOutQuad: [0.455, 0.03, 0.515, 0.955] as const,
+// Glass component presets (moved from glassMorphism.ts for centralization)
+export const glassPresets = {
+  card: { variant: 'light' as const, borderOpacity: 0.15 },
+  modal: { variant: 'medium' as const, shadowOpacity: 0.3 },
+  button: { variant: 'light' as const, tintOpacity: 0.3, borderOpacity: 0.2 },
+  navigation: { variant: 'heavy' as const, tintOpacity: 0.7 },
+  input: { variant: 'light' as const, tintOpacity: 0.2, borderOpacity: 0.25 },
+} as const;
+
+// Gradient definitions (consolidated from glassMorphism.ts)
+export const gradients = {
+  // Glass gradients with LinearGradient configurations
+  glass: {
+    light: {
+      colors: {
+        light: ['rgba(255,255,255,0.2)', 'transparent'],
+        dark: ['rgba(255,255,255,0.05)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 1, y: 1 },
+    },
+    medium: {
+      colors: {
+        light: ['rgba(255,255,255,0.15)', 'transparent'],
+        dark: ['rgba(255,255,255,0.08)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 0.5, y: 1 },
+    },
+    heavy: {
+      colors: {
+        light: ['rgba(255,255,255,0.1)', 'transparent'],
+        dark: ['rgba(255,255,255,0.1)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 0.3, y: 1 },
+    },
+  },
+  
+  // Orb gradients
+  orb: {
+    primary: {
+      colors: ['rgba(99, 102, 241, 0.3)', 'rgba(99, 102, 241, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
+    },
+    secondary: {
+      colors: ['rgba(249, 115, 22, 0.3)', 'rgba(249, 115, 22, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
+    },
+    accent: {
+      colors: ['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
+    },
+  },
+  
+  // Color gradients
+  primary: ['#6366F1', '#4F46E5', '#4338CA'],
+  secondary: ['#F97316', '#EA580C', '#DC2626'],
+  accent: ['#8B5CF6', '#7C3AED', '#6D28D9'],
+  success: ['#10B981', '#059669', '#047857'],
+  
+  // Special effects
+  shimmer: ['transparent', 'rgba(255,255,255,0.3)', 'transparent'],
+  glow: ['transparent', 'rgba(255,255,255,0.2)', 'transparent'],
 } as const;
 
 // Border radii
@@ -4314,7 +4857,7 @@ export const borderWidths = {
   thick: 4,
 } as const;
 
-// Shadow definitions
+// Enhanced shadow definitions
 export const shadows = {
   none: {
     shadowColor: 'transparent',
@@ -4353,11 +4896,26 @@ export const shadows = {
     shadowRadius: 24,
     elevation: 12,
   },
-  xxl: {
-    shadowOffset: { width: 0, height: 24 },
-    shadowOpacity: 0.25,
-    shadowRadius: 32,
-    elevation: 16,
+  // Glass-specific shadows
+  glass: {
+    light: {
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    medium: {
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 6,
+    },
+    heavy: {
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.2,
+      shadowRadius: 20,
+      elevation: 10,
+    },
   },
 } as const;
 
@@ -4373,12 +4931,23 @@ export const zIndices = {
   notification: 1600,
 } as const;
 
+// Skia blur effects for compatibility
+export const skiaBlurEffects = {
+  light: 10,
+  medium: 20,
+  heavy: 30,
+} as const;
+
+// Simplified exports using centralized animationConfig (removes duplication)
+export const animationDurations = animationConfig.easing.timing;
+export const animationSprings = animationConfig.easing.spring;
+export const animationEasings = animationConfig.easing;
+
 // Type exports
 export type GlassEffect = keyof typeof glassEffects;
-export type SkiaBlurEffect = keyof typeof skiaBlurEffects;
-export type AnimationDuration = keyof typeof animationDurations;
-export type AnimationSpring = keyof typeof animationSprings;
-export type AnimationEasing = keyof typeof animationEasings;
+export type GlassPreset = keyof typeof glassPresets;
+export type AnimationConfig = typeof animationConfig;
+export type Gradient = keyof typeof gradients;
 export type BorderRadius = keyof typeof borderRadii;
 export type BorderWidth = keyof typeof borderWidths;
 export type Shadow = keyof typeof shadows;
@@ -4386,7 +4955,22 @@ export type ZIndex = keyof typeof zIndices;
 
 </file>
 <file path="src/theme/tokens/index.ts">
+/**
+ * Design tokens barrel export
+ * Centralizes all theme token exports for easy importing
+ */
 
+// Export all color tokens
+export * from './colors';
+
+// Export all spacing tokens  
+export * from './spacing';
+
+// Export all typography tokens
+export * from './typography';
+
+// Export all effect tokens (glass, animations, borders, shadows, etc.)
+export * from './effects';
 </file>
 <file path="src/theme/tokens/spacing.ts">
 /**
@@ -4635,6 +5219,99 @@ export type TypographyPreset = keyof typeof typographyPresets;
 export type Typography = typeof typographyPresets[TypographyPreset];
 
 </file>
+<file path="src/theme/utils/glassMorphism.ts">
+// src/theme/utils/glassMorphism.ts
+import { ViewStyle, Platform } from 'react-native';
+import { glassEffects, glassPresets as glassPresetTokens, gradients, borderWidths, shadows } from '../tokens/effects';
+
+export interface GlassMorphismOptions {
+  variant?: 'light' | 'medium' | 'heavy';
+  isDark?: boolean;
+  blurAmount?: number;
+  tintOpacity?: number;
+  borderOpacity?: number;
+  shadowOpacity?: number;
+  customTint?: string;
+}
+
+export const glassMorphism = ({
+  variant = 'medium',
+  isDark = false,
+  blurAmount,
+  tintOpacity,
+  borderOpacity,
+  shadowOpacity,
+  customTint,
+}: GlassMorphismOptions = {}): ViewStyle => {
+  const glass = glassEffects[variant];
+  
+  const blur = blurAmount ?? glass.blur_amount;
+  const tint = tintOpacity ?? glass.tint_opacity;
+  const border = borderOpacity ?? glass.border_opacity;
+  const shadow = shadowOpacity ?? glass.shadow_opacity;
+  
+  // iOS: Full glass effect with borders and shadows
+  const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
+  const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
+  const tintColor = isDark ? darkTint : lightTint;
+  
+  const borderColor = isDark 
+    ? `rgba(255, 255, 255, ${border * 0.2})`
+    : `rgba(255, 255, 255, ${border * 0.3})`;
+  
+  return {
+    backgroundColor: tintColor,
+    // @ts-ignore - custom property for blur configuration
+    blurAmount: blur,
+    borderWidth: borderWidths.thin,
+    borderColor,
+    shadowColor: isDark ? '#000' : '#000',
+    shadowOffset: shadows.glass[variant].shadowOffset,
+    shadowOpacity: shadow,
+    shadowRadius: shadows.glass[variant].shadowRadius,
+    elevation: shadows.glass[variant].elevation,
+    overflow: 'visible' as const,
+  };
+};
+
+// Helper functions that use centralized tokens from effects.ts
+
+// Glass preset utility functions (using centralized tokens)
+export const getGlassPreset = (preset: keyof typeof glassPresetTokens, isDark: boolean): ViewStyle => {
+  const presetConfig = glassPresetTokens[preset];
+  return glassMorphism({ 
+    ...presetConfig,
+    isDark,
+  });
+};
+
+// Simplified gradient utility using centralized tokens
+export const gradient = {
+  glass: (isDark: boolean) => {
+    return Object.fromEntries(
+      Object.entries(gradients.glass).map(([variant, config]) => [
+        variant,
+        {
+          ...config,
+          colors: config.colors[isDark ? 'dark' : 'light'],
+        },
+      ])
+    );
+  },
+  orb: gradients.orb,
+};
+
+</file>
+<file path="src/theme/utils/index.ts">
+// src/theme/utils/index.ts
+export { glassMorphism, glassPresets, gradient } from './glassMorphism';
+export type { GlassMorphismOptions } from './glassMorphism';
+
+// Re-export typography, spacing, etc. from tokens
+export * from '../tokens/typography';
+export * from '../tokens/spacing';
+
+</file>
 <file path="src/theme/index.ts">
 /**
  * Main theme export
@@ -4654,11 +5331,12 @@ import {
   borderWidths,
   shadows,
   zIndices,
+  gradients,
 } from './tokens/effects';
 
 // Theme interface
 export interface Theme {
-  readonly colors: typeof lightThemeColors;
+  readonly colors: typeof lightThemeColors | typeof darkThemeColors;
   readonly spacing: typeof spacing;
   readonly componentSpacing: typeof componentSpacing;
   readonly typography: typeof typographyPresets;
@@ -4689,6 +5367,7 @@ export interface Theme {
     };
   };
   readonly zIndices: typeof zIndices;
+  readonly gradients: typeof gradients;
   readonly isDark: boolean;
 }
 
@@ -4725,6 +5404,7 @@ export const createTheme = (isDark: boolean): Theme => ({
     },
   },
   zIndices,
+  gradients,
   isDark,
 });
 
@@ -5545,7 +6225,11 @@ export const exerciseValidation: FormValidation<{
   },
   default_reps: {
     rules: [
-      validationRules.inRange(1, 100, 'Reps must be between 1 and 100'),
+      {
+        validate: (value: number | null | undefined): boolean => 
+          value === null || value === undefined || (value >= 1 && value <= 100),
+        message: 'Reps must be between 1 and 100',
+      },
     ],
   },
   default_rest_seconds: {
@@ -5571,7 +6255,11 @@ export const workoutValidation: FormValidation<{
   },
   description: {
     rules: [
-      validationRules.maxLength(500),
+      {
+        validate: (value: string | undefined): boolean => 
+          value === undefined || value.length <= 500,
+        message: 'Must be no more than 500 characters',
+      },
     ],
   },
   category: {
@@ -5950,6 +6638,17 @@ export const exhaustiveCheck = (value: never): never => {
  * Re-exports all types for easy importing throughout the app
  */
 
+import { ViewProps } from 'react-native';
+
+export interface BaseComponentProps extends ViewProps {
+  testID?: string;
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: ViewProps['accessibilityRole'];
+}
+
+
 // Common types
 export * from './common';
 
@@ -5972,57 +6671,203 @@ export * from './utils/ordering';
 
 </file>
 <file path="src/utils/constants/index.ts">
+// App constants - placeholder
+// TODO: Define app-wide constants
+// Example: API endpoints, configuration values, etc.
 
+// export const API_BASE_URL = 'https://api.example.com';
+// export const DEFAULT_TIMEOUT = 5000;
+// export const APP_VERSION = '1.0.0';
 </file>
 <file path="src/utils/formatters/index.ts">
+// Formatting utilities - placeholder
+// TODO: Implement formatting functions for dates, numbers, etc.
+// Example: formatDate, formatDuration, formatWeight, etc.
 
+// export * from './dateFormatters';
+// export * from './numberFormatters';
+// export * from './workoutFormatters';
+</file>
+<file path="src/utils/helpers/componentSizing.ts">
+/**
+ * Component sizing utilities
+ * Centralizes common sizing logic to eliminate duplication
+ */
+
+import type { Theme } from '@/theme';
+
+// Common size type for components
+export type ComponentSize = 'sm' | 'md' | 'lg';
+
+/**
+ * Get padding horizontal value based on component size
+ * Used by ButtonBase, InputBase, and other components
+ */
+export const getPaddingHorizontal = (size: ComponentSize, theme: Theme): number => {
+  const spacingMap = {
+    sm: theme.spacing.sm,
+    md: theme.spacing.md,
+    lg: theme.spacing.lg,
+  };
+  
+  return spacingMap[size];
+};
+
+/**
+ * Get typography variant based on component size
+ * Standardizes typography selection across components
+ */
+export const getTypographyVariant = (size: ComponentSize) => {
+  const typographyMap = {
+    sm: 'body_small' as const,
+    md: 'body_medium' as const,
+    lg: 'body_large' as const,
+  };
+  
+  return typographyMap[size];
+};
+
+/**
+ * Get component height from theme based on component type and size
+ */
+export const getComponentHeight = (
+  type: 'button' | 'input',
+  size: ComponentSize,
+  theme: Theme
+): number => {
+  return type === 'button' 
+    ? theme.sizes.buttons[size]
+    : theme.sizes.inputs[size];
+};
+
+/**
+ * Combined sizing utility that returns all common sizing values
+ * Reduces repetitive code in components
+ */
+export const getComponentSizing = (
+  type: 'button' | 'input',
+  size: ComponentSize,
+  theme: Theme
+) => ({
+  height: getComponentHeight(type, size, theme),
+  paddingHorizontal: getPaddingHorizontal(size, theme),
+  typography: getTypographyVariant(size),
+});
 </file>
 <file path="src/utils/helpers/index.ts">
+// Component utilities
+export * from './componentSizing';
 
+// Theme utilities  
+export * from './themeHelpers';
+</file>
+<file path="src/utils/helpers/themeHelpers.ts">
+/**
+ * Theme helper utilities
+ * Centralizes common theme operations to eliminate duplication
+ */
+
+import type { Theme } from '@/theme';
+import type { TextColor, TypographyPreset } from '@/types';
+
+/**
+ * Get text color value from theme based on color name
+ * Centralizes the color mapping logic used across text components
+ */
+export const getTextColor = (color: TextColor, theme: Theme): string => {
+  const colorMap = {
+    primary: theme.colors.text_primary,
+    secondary: theme.colors.text_secondary,
+    tertiary: theme.colors.text_tertiary,
+    inverse: theme.colors.text_inverse,
+    error: theme.colors.error,
+    success: theme.colors.success,
+    warning: theme.colors.warning,
+    info: theme.colors.info,
+  };
+  
+  return colorMap[color];
+};
+
+/**
+ * Get typography configuration from theme
+ * Includes safety check and warning for undefined variants
+ */
+export const getTypographyConfig = (variant: TypographyPreset, theme: Theme) => {
+  const typography = theme.typography[variant];
+  
+  if (!typography) {
+    console.warn(`Typography variant "${variant}" not found in theme`);
+    return null;
+  }
+  
+  return typography;
+};
+
+/**
+ * Generate complete text style object from typography variant
+ * Combines font properties into ready-to-use style
+ */
+export const getTextStyle = (
+  variant: TypographyPreset,
+  color: TextColor,
+  align: 'left' | 'center' | 'right',
+  theme: Theme
+) => {
+  const typography = getTypographyConfig(variant, theme);
+  
+  if (!typography) {
+    return null;
+  }
+  
+  return {
+    fontSize: typography.font_size,
+    lineHeight: typography.font_size * typography.line_height,
+    fontWeight: typography.font_weight as any,
+    letterSpacing: typography.letter_spacing,
+    color: getTextColor(color, theme),
+    textAlign: align,
+  };
+};
+
+/**
+ * Helper to get semantic colors consistently
+ * Used for status indicators, buttons, etc.
+ */
+export const getSemanticColor = (
+  type: 'success' | 'error' | 'warning' | 'info',
+  variant: 'main' | 'light' | 'dark',
+  theme: Theme
+): string => {
+  const colorKey = `${type}_${variant}` as keyof typeof theme.colors;
+  return theme.colors[colorKey] || theme.colors[type];
+};
 </file>
 <file path="src/utils/validators/index.ts">
+// Validation utilities - placeholder
+// TODO: Implement validation functions for forms and data
+// Example: validateEmail, validatePassword, validateWorkout, etc.
 
+// export * from './formValidators';
+// export * from './dataValidators';
+// export * from './workoutValidators';
 </file>
 <file path="src/utils/index.ts">
+// Utility functions barrel export
 
+// Component helpers
+export * from './helpers';
+
+// Constants (when implemented)
+// export * from './constants';
+
+// Formatters (when implemented) 
+// export * from './formatters';
+
+// Validators (when implemented)
+// export * from './validators';
 </file>
 <file path="src/index.ts">
-
-</file>
-<file path=".eslintrc.js">
-module.exports = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  extends: [
-    '@react-native-community',
-    'plugin:@typescript-eslint/recommended',
-  ],
-  rules: {
-    '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-  },
-};
-
-</file>
-<file path=".prettierrc.js">
-module.exports = {
-  arrowParens: 'avoid',
-  singleQuote: true,
-  trailingComma: 'all',
-};
-
-</file>
-<file path=".watchmanconfig">
-{}
-
-</file>
-<file path="app.json">
-{
-  "name": "FitTrack",
-  "displayName": "FitTrack"
-}
 
 </file>
 <file path="App.tsx">
@@ -6034,6 +6879,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ApolloProvider } from '@/contexts/ApolloProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { GlassVariantProvider } from '@/contexts/GlassVariantContext';
 import { RootNavigator } from '@/navigation/RootNavigator';
 
 /**
@@ -6047,9 +6893,11 @@ const App: React.FC = () => {
         <AuthProvider>
           <ApolloProvider>
             <ThemeProvider>
-              <NavigationContainer>
-                <RootNavigator />
-              </NavigationContainer>
+              <GlassVariantProvider>
+                <NavigationContainer>
+                  <RootNavigator />
+                </NavigationContainer>
+              </GlassVariantProvider>
             </ThemeProvider>
           </ApolloProvider>
         </AuthProvider>
@@ -6106,34 +6954,6 @@ module.exports = {
 };
 
 </file>
-<file path="codegen.yml">
-overwrite: true
-schema: "${HASURA_ENDPOINT}"
-documents: "src/api/queries/**/*.graphql"
-generates:
-  src/api/generated/graphql.ts:
-    plugins:
-      - typescript
-      - typescript-operations
-    config:
-      skipTypename: true
-      enumsAsTypes: true
-      avoidOptionals: false
-      maybeValue: T | null
-
-</file>
-<file path="index.js">
-/**
- * @format
- */
-
-import { AppRegistry } from 'react-native';
-import App from './App';
-import { name as appName } from './app.json';
-
-AppRegistry.registerComponent(appName, () => App);
-
-</file>
 <file path="metro.config.js">
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
@@ -6151,76 +6971,6 @@ const config = {
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
-
-</file>
-<file path="package.json">
-{
-  "name": "FitTrack",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "type-check": "tsc --noEmit",
-    "codegen": "graphql-codegen --config codegen.yml",
-    "codegen:watch": "graphql-codegen --config codegen.yml --watch",
-    "pod-install": "cd ios && pod install",
-    "clean": "watchman watch-del-all && rm -rf node_modules && yarn install && yarn pod-install",
-    "validate": "yarn type-check && yarn lint",
-    "prepare": "husky install"
-  },
-  "dependencies": {
-    "@apollo/client": "^3.13.8",
-    "@expo/vector-icons": "^14.1.0",
-    "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-native-community/blur": "^4.4.1",
-    "@react-native/new-app-screen": "0.80.0",
-    "@react-navigation/bottom-tabs": "^7.4.2",
-    "@react-navigation/native": "^7.1.14",
-    "@react-navigation/native-stack": "^7.3.21",
-    "@react-navigation/stack": "^7.4.2",
-    "@shopify/react-native-skia": "^2.0.7",
-    "@tanstack/react-query": "^5.81.5",
-    "babel-plugin-module-resolver": "^5.0.2",
-    "react": "19.1.0",
-    "react-native": "0.80.0",
-    "react-native-async-storage": "^0.0.1",
-    "react-native-gesture-handler": "^2.26.0",
-    "react-native-linear-gradient": "^2.8.3",
-    "react-native-reanimated": "^3.18.0",
-    "react-native-safe-area-context": "^5.5.0",
-    "react-native-screens": "^4.11.1",
-    "react-native-vector-icons": "^10.2.0",
-    "zustand": "^5.0.6"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.3",
-    "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "19.0.0",
-    "@react-native-community/cli-platform-android": "19.0.0",
-    "@react-native-community/cli-platform-ios": "19.0.0",
-    "@react-native/babel-preset": "0.80.0",
-    "@react-native/eslint-config": "0.80.0",
-    "@react-native/metro-config": "0.80.0",
-    "@react-native/typescript-config": "0.80.0",
-    "@types/jest": "^29.5.13",
-    "@types/react": "^19.1.0",
-    "@types/react-test-renderer": "^19.1.0",
-    "eslint": "^8.19.0",
-    "jest": "^29.6.3",
-    "prettier": "2.8.8",
-    "react-native-dotenv": "^3.4.11",
-    "react-test-renderer": "19.1.0",
-    "typescript": "5.0.4"
-  },
-  "engines": {
-    "node": ">=18"
-  }
-}
 
 </file>
 <file path="tsconfig.json">
