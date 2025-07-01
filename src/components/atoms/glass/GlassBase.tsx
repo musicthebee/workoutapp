@@ -85,13 +85,13 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
     return {
       backgroundColor: isDark ? solidBackgrounds[variant].dark : solidBackgrounds[variant].light,
       elevation: elevationLevels[variant],
-      borderWidth: 1,
+      borderWidth: theme.borders.widths.thin,
       borderColor: isDark ? borderColors.dark : borderColors.light,
-      borderRadius: 12,
+      borderRadius: theme.borders.radii.md,
       overflow: 'hidden' as const,
-      shadowColor: '#000',
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: elevationLevels[variant] / 2 },
-      shadowOpacity: 0.15,
+      shadowOpacity: theme.shadows.glass[variant].shadowOpacity,
       shadowRadius: elevationLevels[variant],
     };
   };
@@ -178,8 +178,8 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            borderRadius: 12,
-            borderWidth: 1,
+            borderRadius: theme.borders.radii.md,
+            borderWidth: theme.borders.widths.thin,
             borderColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)',
           }}
           pointerEvents="none" 
