@@ -299,9 +299,9 @@ export const AtomsShowcaseScreen: React.FC = () => {
           <TextBase variant="body_medium">Flex Layout (Row)</TextBase>
           <Spacer size="sm" />
           <Flex direction="row" justify="between" align="center" gap="md">
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.primary }} />
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.secondary }} />
-            <View style={{ width: 60, height: 60, backgroundColor: theme.colors.success }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.primary }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.secondary }} />
+            <View style={{ width: theme.sizes.touchTargets.large, height: theme.sizes.touchTargets.large, backgroundColor: theme.colors.success }} />
           </Flex>
           
           <Spacer size="lg" />
@@ -309,16 +309,16 @@ export const AtomsShowcaseScreen: React.FC = () => {
           <TextBase variant="body_medium">Grid Layout (2 columns)</TextBase>
           <Spacer size="sm" />
           <Grid columns={2} gap="md">
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 1</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 2</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 3</TextBase>
             </GlassBase>
-            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: 80 }}>
+            <GlassBase variant="medium" style={{ padding: theme.spacing.md, height: theme.sizes.touchTargets.huge }}>
               <TextBase variant="caption">Grid Item 4</TextBase>
             </GlassBase>
           </Grid>

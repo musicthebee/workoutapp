@@ -1,6 +1,6 @@
 // src/theme/utils/glassMorphism.ts
 import { ViewStyle, Platform } from 'react-native';
-import { glassEffects, glassPresets as glassPresetTokens, gradients } from '../tokens/effects';
+import { glassEffects, glassPresets as glassPresetTokens, gradients, borderWidths, shadows } from '../tokens/effects';
 
 export interface GlassMorphismOptions {
   variant?: 'light' | 'medium' | 'heavy';
@@ -41,16 +41,13 @@ export const glassMorphism = ({
     backgroundColor: tintColor,
     // @ts-ignore - custom property for blur configuration
     blurAmount: blur,
-    borderWidth: 1,
+    borderWidth: borderWidths.thin,
     borderColor,
     shadowColor: isDark ? '#000' : '#000',
-    shadowOffset: {
-      width: 0,
-      height: variant === 'heavy' ? 8 : variant === 'medium' ? 4 : 2,
-    },
+    shadowOffset: shadows.glass[variant].shadowOffset,
     shadowOpacity: shadow,
-    shadowRadius: variant === 'heavy' ? 16 : variant === 'medium' ? 8 : 4,
-    elevation: variant === 'heavy' ? 12 : variant === 'medium' ? 6 : 3,
+    shadowRadius: shadows.glass[variant].shadowRadius,
+    elevation: shadows.glass[variant].elevation,
     overflow: 'visible' as const,
   };
 };

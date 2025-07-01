@@ -77,7 +77,7 @@ export const WorkoutExampleScreen: React.FC = () => {
                 <TextBase variant="body_large">10 × 135 lbs</TextBase>
               </Flex>
               
-              <View style={{ width: 1, backgroundColor: theme.colors.divider }} />
+              <View style={{ width: theme.borders.widths.thin, backgroundColor: theme.colors.divider }} />
               
               <Flex align="center">
                 <TextBase variant="caption" color="tertiary">TARGET</TextBase>

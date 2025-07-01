@@ -14,10 +14,11 @@ import Animated from 'react-native-reanimated';
 import { useTheme } from '@/theme/hooks/useTheme';
 import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
 import { useGlassEffects } from '@/hooks/ui/glassAnimations';
+import { useGlassVariant } from '@/contexts/GlassVariantContext';
 import type { BaseComponentProps } from '@/types';
 
 export interface GlassBaseProps extends BaseComponentProps {
-  variant: 'light' | 'medium' | 'heavy';
+  variant?: 'light' | 'medium' | 'heavy'; // Now optional - uses global variant if not specified
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   shimmer?: boolean;
@@ -31,7 +32,7 @@ export interface GlassBaseProps extends BaseComponentProps {
  * Handles platform differences cleanly without code duplication
  */
 export const GlassBase: React.FC<GlassBaseProps> = ({
-  variant,
+  variant: propVariant,
   children,
   style,
   testID,
@@ -43,6 +44,10 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
 }) => {
   const theme = useTheme();
   const isDark = theme.isDark;
+  const { selectedVariant } = useGlassVariant();
+  
+  // Use prop variant if provided, otherwise use global selected variant
+  const variant = propVariant || selectedVariant;
   
   // Use the glass animation hooks that were previously unused
   const glassEffects = useGlassEffects({

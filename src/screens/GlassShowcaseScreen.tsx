@@ -36,14 +36,102 @@ import {
 } from '@/components/atoms';
 import { GradientBackground, GradientOrb } from '@/components/atoms/glass/GradientOrb';
 import { useTheme, useThemeControls } from '@/hooks';
+import { useGlassVariant } from '@/contexts/GlassVariantContext';
 import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
+// Factory function to create styles with theme tokens
+const createStyles = (theme: any) => StyleSheet.create({
+  themeToggle: {
+    padding: theme.spacing.sm,
+    borderRadius: theme.borders.radii.md,
+  },
+  heroCard: {
+    padding: theme.spacing.xxl,
+    borderRadius: theme.borders.radii.xl,
+  },
+  actionButton: {
+    borderRadius: theme.borders.radii.md,
+    overflow: 'hidden',
+  },
+  secondaryButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+  },
+  gradientButton: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+  },
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.md,
+  },
+  gridCard: {
+    width: (screenWidth - theme.spacing.md * 4) / 2.5,
+    aspectRatio: 1,
+    padding: theme.spacing.lg,
+    borderRadius: theme.borders.radii.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedCard: {
+    borderWidth: theme.borders.widths.medium,
+    borderColor: 'rgba(99, 102, 241, 0.5)',
+  },
+  interactiveCard: {
+    padding: theme.spacing.lg,
+    borderRadius: theme.borders.radii.lg,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    gap: theme.spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+  },
+  inputPlaceholder: {
+    flex: 1,
+  },
+  toggle: {
+    width: theme.sizes.touchTargets.small,
+    height: theme.spacing.xl,
+    padding: theme.spacing.xxxs,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: theme.borders.widths.thin,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  toggleThumb: {
+    width: theme.spacing.xl - theme.spacing.xxs,
+    height: theme.spacing.xl - theme.spacing.xxs,
+    borderRadius: (theme.spacing.xl - theme.spacing.xxs) / 2,
+    marginLeft: theme.spacing.md + theme.spacing.xxs,
+  },
+  performanceGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
+  },
+  performanceCard: {
+    width: (screenWidth - theme.spacing.lg * 4) / 4,
+    aspectRatio: 1,
+    borderRadius: theme.borders.radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
 export const GlassShowcaseScreen: React.FC = () => {
   const theme = useTheme();
   const { isDark, toggleTheme } = useThemeControls();
-  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const { selectedVariant, setSelectedVariant } = useGlassVariant();
+  const styles = createStyles(theme);
   
   // Animation values
   const formOpacity = useSharedValue(0);
@@ -63,7 +151,9 @@ export const GlassShowcaseScreen: React.FC = () => {
   
   
   const handleCardPress = (index: number) => {
-    setSelectedCard(index);
+    const variants = ['light', 'medium', 'heavy'] as const;
+    const newVariant = variants[index];
+    setSelectedVariant(newVariant);
     cardScale.value = withSequence(
       withTiming(0.95, { duration: 100 }),
       withSpring(1, theme.animation.springs.bouncy)
@@ -129,7 +219,6 @@ export const GlassShowcaseScreen: React.FC = () => {
           {/* Hero Card */}
           <Animated.View style={formAnimatedStyle}>
             <GlassBase
-              variant="medium"
               style={styles.heroCard}
               glow={true}
               shimmer={true}
@@ -170,35 +259,42 @@ export const GlassShowcaseScreen: React.FC = () => {
           
           {/* Glass Cards Grid */}
           <Animated.View entering={FadeInUp.delay(600).duration(800).springify()}>
-            <TextBase variant="heading_4">Glass Variants</TextBase>
+            <Flex direction="row" justify="between" align="center">
+              <TextBase variant="heading_4">Glass Variants</TextBase>
+              <TextBase variant="caption" color="secondary">
+                Active: {selectedVariant.charAt(0).toUpperCase() + selectedVariant.slice(1)}
+              </TextBase>
+            </Flex>
             <Spacer size="md" />
             
             <View style={styles.cardsGrid}>
-              {['light', 'medium', 'heavy'].map((variant, index) => (
-                <Animated.View
-                  key={variant}
-                  entering={FadeInUp.delay(800 + index * 100).springify()}
-                  layout={Layout.springify()}
-                >
-                  <TouchableOpacity
-                    onPress={() => handleCardPress(index)}
-                    activeOpacity={0.8}
+              {['light', 'medium', 'heavy'].map((variant, index) => {
+                const isSelected = selectedVariant === variant;
+                return (
+                  <Animated.View
+                    key={variant}
+                    entering={FadeInUp.delay(800 + index * 100).springify()}
+                    layout={Layout.springify()}
                   >
-                    <GlassBase
-                      variant={variant as 'light' | 'medium' | 'heavy'}
-                      style={[
-                        styles.gridCard,
-                        selectedCard === index && styles.selectedCard,
-                      ]}
-                      glow={selectedCard === index}
+                    <TouchableOpacity
+                      onPress={() => handleCardPress(index)}
+                      activeOpacity={0.8}
                     >
+                      <GlassBase
+                        variant={variant as 'light' | 'medium' | 'heavy'}
+                        style={[
+                          styles.gridCard,
+                          isSelected && styles.selectedCard,
+                        ]}
+                        glow={isSelected}
+                      >
                       <Icon 
                         name={index === 0 ? 'sun' : index === 1 ? 'cloud' : 'moon'}
-                        size={32} 
+                        size={theme.sizes.icons.lg} 
                         color={theme.colors.primary} 
                       />
                       <Spacer size="sm" />
-                      <TextBase variant="heading_4" align="center">
+                      <TextBase variant="body_medium" align="center">
                         {variant.charAt(0).toUpperCase() + variant.slice(1)}
                       </TextBase>
                       <TextBase variant="caption" color="secondary" align="center">
@@ -207,7 +303,8 @@ export const GlassShowcaseScreen: React.FC = () => {
                     </GlassBase>
                   </TouchableOpacity>
                 </Animated.View>
-              ))}
+                );
+              })}
             </View>
           </Animated.View>
           
@@ -218,7 +315,7 @@ export const GlassShowcaseScreen: React.FC = () => {
             <TextBase variant="heading_4">Interactive Elements</TextBase>
             <Spacer size="md" />
             
-            <GlassBase variant="light" style={styles.interactiveCard}>
+            <GlassBase style={styles.interactiveCard}>
               {/* Input fields - using simple styling to avoid double glass stacking */}
               <View style={[styles.inputContainer, { borderRadius: theme.borders.radii.md }]}>
                 <Icon name="user" size={20} color={theme.colors.muted} />
@@ -280,90 +377,3 @@ export const GlassShowcaseScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  themeToggle: {
-    padding: 12,
-    borderRadius: 12,
-  },
-  heroCard: {
-    padding: 32,
-    borderRadius: 24,
-  },
-  actionButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  secondaryButton: {
-    // Simple styling for secondary button to avoid glass stacking
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-  },
-  gradientButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-  },
-  cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-  },
-  gridCard: {
-    width: (screenWidth - 64) / 3,
-    aspectRatio: 1,
-    padding: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selectedCard: {
-    borderWidth: 2,
-    borderColor: 'rgba(99, 102, 241, 0.5)',
-  },
-  interactiveCard: {
-    padding: 24,
-    borderRadius: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 12,
-    // Simple solid background to avoid glass stacking artifacts
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
-  },
-  inputPlaceholder: {
-    flex: 1,
-  },
-  toggle: {
-    width: 50,
-    height: 30,
-    padding: 2,
-    // Simple background to avoid glass stacking
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  toggleThumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    marginLeft: 20,
-  },
-  performanceGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  performanceCard: {
-    width: (screenWidth - 64) / 4,
-    aspectRatio: 1,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

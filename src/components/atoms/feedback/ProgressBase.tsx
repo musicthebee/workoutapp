@@ -33,11 +33,11 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
 }) => {
   const theme = useTheme();
   
-  // Size mapping
+  // Size mapping using theme tokens
   const sizeMap = {
-    sm: { height: 4, width: 100 },
-    md: { height: 8, width: 200 },
-    lg: { height: 12, width: 300 },
+    sm: { height: theme.spacing.xxs, width: theme.spacing.xxxxxl + theme.spacing.xxs },
+    md: { height: theme.spacing.xs, width: theme.spacing.xxxxxl * 2 + theme.spacing.lg },
+    lg: { height: theme.spacing.sm, width: theme.spacing.xxxxxl * 3 + theme.spacing.xl },
   };
   
   const dimensions = sizeMap[size];

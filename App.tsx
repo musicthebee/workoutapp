@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ApolloProvider } from '@/contexts/ApolloProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { GlassVariantProvider } from '@/contexts/GlassVariantContext';
 import { RootNavigator } from '@/navigation/RootNavigator';
 
 /**
@@ -19,9 +20,11 @@ const App: React.FC = () => {
         <AuthProvider>
           <ApolloProvider>
             <ThemeProvider>
-              <NavigationContainer>
-                <RootNavigator />
-              </NavigationContainer>
+              <GlassVariantProvider>
+                <NavigationContainer>
+                  <RootNavigator />
+                </NavigationContainer>
+              </GlassVariantProvider>
             </ThemeProvider>
           </ApolloProvider>
         </AuthProvider>
