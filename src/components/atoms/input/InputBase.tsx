@@ -9,6 +9,7 @@ import {
 
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getComponentSizing } from '@/utils/helpers';
 import type { BaseComponentProps, InputSize, InputVariant } from '@/types';
 
 /**
@@ -40,12 +41,9 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
 }, ref) => {
   const theme = useTheme();
   
-  // Get size from theme
-  const height = theme.sizes.inputs[size];
-  const paddingHorizontal = theme.spacing[size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'];
-  
-  // Typography based on size
-  const typography = theme.typography[size === 'sm' ? 'body_small' : size === 'md' ? 'body_medium' : 'body_large'];
+  // Get sizing using centralized utility (eliminates duplication)
+  const { height, paddingHorizontal, typography } = getComponentSizing('input', size, theme);
+  const typographyConfig = theme.typography[typography];
   
   // Keyboard type based on variant
   const keyboardType = variant === 'numeric' ? 'numeric' : 'default';
@@ -72,7 +70,7 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
         style={[
           {
             flex: 1,
-            fontSize: typography.font_size,
+            fontSize: typographyConfig.font_size,
             color: theme.colors.text_primary,
             padding: 0, // Remove default padding
           },

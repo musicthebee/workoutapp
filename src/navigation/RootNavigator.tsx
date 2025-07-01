@@ -11,7 +11,7 @@ import type { RootStackParamList, TabParamList } from '@/types';
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, DiagnosticScreen } from '@/screens';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {

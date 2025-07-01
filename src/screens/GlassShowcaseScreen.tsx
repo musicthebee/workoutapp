@@ -29,8 +29,6 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import {
   GlassBase,
-  GlassBaseAndroid,
-  GlassBaseAndroidRich,
   ButtonBase,
   TextBase,
   Spacer,
@@ -148,12 +146,7 @@ export const GlassShowcaseScreen: React.FC = () => {
               
               {/* Action buttons */}
               <Flex direction="row" gap="md" justify="center">
-                <TouchableOpacity
-                  style={[
-                    styles.actionButton,
-                    glassMorphism({ variant: 'heavy', isDark }),
-                  ]}
-                >
+                <TouchableOpacity style={styles.actionButton}>
                   <LinearGradient
                     colors={[...theme.gradients.primary]}
                     start={{ x: 0, y: 0 }}
@@ -166,12 +159,7 @@ export const GlassShowcaseScreen: React.FC = () => {
                   </LinearGradient>
                 </TouchableOpacity>
                 
-                <TouchableOpacity
-                  style={[
-                    styles.actionButton,
-                    glassMorphism({ variant: 'light', isDark }),
-                  ]}
-                >
+                <TouchableOpacity style={[styles.actionButton, styles.secondaryButton]}>
                   <TextBase variant="button_small">Learn More</TextBase>
                 </TouchableOpacity>
               </Flex>
@@ -230,9 +218,9 @@ export const GlassShowcaseScreen: React.FC = () => {
             <TextBase variant="heading_4">Interactive Elements</TextBase>
             <Spacer size="md" />
             
-            <GlassBaseAndroidRich variant="light" style={styles.interactiveCard}>
-              {/* Input fields */}
-              <View style={[styles.inputContainer, glassMorphism({ variant: 'light', isDark })]}>
+            <GlassBase variant="light" style={styles.interactiveCard}>
+              {/* Input fields - using simple styling to avoid double glass stacking */}
+              <View style={[styles.inputContainer, { borderRadius: theme.borders.radii.md }]}>
                 <Icon name="user" size={20} color={theme.colors.muted} />
                 <TextBase variant="body_medium" style={styles.inputPlaceholder}>
                   Username
@@ -241,7 +229,7 @@ export const GlassShowcaseScreen: React.FC = () => {
               
               <Spacer size="md" />
               
-              <View style={[styles.inputContainer, glassMorphism({ variant: 'light', isDark })]}>
+              <View style={[styles.inputContainer, { borderRadius: theme.borders.radii.md }]}>
                 <Icon name="lock" size={20} color={theme.colors.muted} />
                 <TextBase variant="body_medium" style={styles.inputPlaceholder}>
                   Password
@@ -253,11 +241,11 @@ export const GlassShowcaseScreen: React.FC = () => {
               {/* Toggle switches */}
               <Flex direction="row" justify="between" align="center">
                 <TextBase variant="body_medium">Enable Notifications</TextBase>
-                <View style={[styles.toggle, glassMorphism({ variant: 'medium', isDark })]}>
+                <View style={[styles.toggle, { borderRadius: theme.borders.radii.full }]}>
                   <View style={[styles.toggleThumb, { backgroundColor: theme.colors.primary }]} />
                 </View>
               </Flex>
-            </GlassBaseAndroidRich>
+            </GlassBase>
           </Animated.View>
           
           <Spacer size="xl" />
@@ -305,6 +293,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
   },
+  secondaryButton: {
+    // Simple styling for secondary button to avoid glass stacking
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
   gradientButton: {
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -334,8 +330,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
     gap: 12,
+    // Simple solid background to avoid glass stacking artifacts
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
   },
   inputPlaceholder: {
     flex: 1,
@@ -343,8 +342,11 @@ const styles = StyleSheet.create({
   toggle: {
     width: 50,
     height: 30,
-    borderRadius: 15,
     padding: 2,
+    // Simple background to avoid glass stacking
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   toggleThumb: {
     width: 26,

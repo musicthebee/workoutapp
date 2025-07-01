@@ -84,17 +84,61 @@ export const animationConfig = {
   },
 } as const;
 
-// Gradient definitions
+// Glass component presets (moved from glassMorphism.ts for centralization)
+export const glassPresets = {
+  card: { variant: 'light' as const, borderOpacity: 0.15 },
+  modal: { variant: 'medium' as const, shadowOpacity: 0.3 },
+  button: { variant: 'light' as const, tintOpacity: 0.3, borderOpacity: 0.2 },
+  navigation: { variant: 'heavy' as const, tintOpacity: 0.7 },
+  input: { variant: 'light' as const, tintOpacity: 0.2, borderOpacity: 0.25 },
+} as const;
+
+// Gradient definitions (consolidated from glassMorphism.ts)
 export const gradients = {
-  // Glass gradients
+  // Glass gradients with LinearGradient configurations
   glass: {
-    light: ['rgba(255,255,255,0.5)', 'rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)'],
-    medium: ['rgba(255,255,255,0.6)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)'],
-    heavy: ['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.2)'],
-    dark: {
-      light: ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.02)', 'rgba(0,0,0,0.1)'],
-      medium: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(0,0,0,0.15)'],
-      heavy: ['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)', 'rgba(0,0,0,0.2)'],
+    light: {
+      colors: {
+        light: ['rgba(255,255,255,0.2)', 'transparent'],
+        dark: ['rgba(255,255,255,0.05)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 1, y: 1 },
+    },
+    medium: {
+      colors: {
+        light: ['rgba(255,255,255,0.15)', 'transparent'],
+        dark: ['rgba(255,255,255,0.08)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 0.5, y: 1 },
+    },
+    heavy: {
+      colors: {
+        light: ['rgba(255,255,255,0.1)', 'transparent'],
+        dark: ['rgba(255,255,255,0.1)', 'transparent'],
+      },
+      start: { x: 0, y: 0 },
+      end: { x: 0.3, y: 1 },
+    },
+  },
+  
+  // Orb gradients
+  orb: {
+    primary: {
+      colors: ['rgba(99, 102, 241, 0.3)', 'rgba(99, 102, 241, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
+    },
+    secondary: {
+      colors: ['rgba(249, 115, 22, 0.3)', 'rgba(249, 115, 22, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
+    },
+    accent: {
+      colors: ['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0.1)', 'transparent'],
+      start: { x: 0.5, y: 0.5 },
+      end: { x: 1, y: 1 },
     },
   },
   
@@ -204,26 +248,21 @@ export const zIndices = {
   notification: 1600,
 } as const;
 
-// Missing exports for theme/index.ts
+// Skia blur effects for compatibility
 export const skiaBlurEffects = {
   light: 10,
   medium: 20,
   heavy: 30,
 } as const;
 
-export const animationDurations = {
-  fast: 150,
-  normal: 300,
-  slow: 500,
-  crawl: 1000,
-  ambient: 3000,
-} as const;
-
+// Simplified exports using centralized animationConfig (removes duplication)
+export const animationDurations = animationConfig.easing.timing;
 export const animationSprings = animationConfig.easing.spring;
 export const animationEasings = animationConfig.easing;
 
 // Type exports
 export type GlassEffect = keyof typeof glassEffects;
+export type GlassPreset = keyof typeof glassPresets;
 export type AnimationConfig = typeof animationConfig;
 export type Gradient = keyof typeof gradients;
 export type BorderRadius = keyof typeof borderRadii;

@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, TextProps, StyleProp, TextStyle } from 'react-native';
 
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getTextStyle } from '@/utils/helpers';
 import type { BaseComponentProps, TextVariant, TextColor } from '@/types';
 
 /**
@@ -31,39 +32,17 @@ export const TextBase: React.FC<TextBaseProps> = ({
   ...restProps
 }) => {
   const theme = useTheme();
-  const typography = theme.typography[variant];
   
-  // Safety check for undefined typography variant
-  if (!typography) {
-    console.warn(`TextBase: Unknown typography variant "${variant}"`);
+  // Use centralized theme helper (eliminates duplication)
+  const textStyle = getTextStyle(variant, color, align, theme);
+  
+  if (!textStyle) {
     return null;
   }
   
-  // Map color to theme color
-  const textColor = {
-    primary: theme.colors.text_primary,
-    secondary: theme.colors.text_secondary,
-    tertiary: theme.colors.text_tertiary,
-    inverse: theme.colors.text_inverse,
-    error: theme.colors.error,
-    success: theme.colors.success,
-    warning: theme.colors.warning,
-    info: theme.colors.info,
-  }[color];
-  
   return (
     <Text
-      style={[
-        {
-          fontSize: typography.font_size,
-          lineHeight: typography.font_size * typography.line_height,
-          fontWeight: typography.font_weight as TextStyle['fontWeight'],
-          letterSpacing: typography.letter_spacing,
-          color: textColor,
-          textAlign: align,
-        },
-        style,
-      ]}
+      style={[textStyle, style]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}

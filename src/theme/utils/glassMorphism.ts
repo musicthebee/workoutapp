@@ -1,6 +1,6 @@
 // src/theme/utils/glassMorphism.ts
 import { ViewStyle, Platform } from 'react-native';
-import { glassEffects } from '../tokens/effects';
+import { glassEffects, glassPresets as glassPresetTokens, gradients } from '../tokens/effects';
 
 export interface GlassMorphismOptions {
   variant?: 'light' | 'medium' | 'heavy';
@@ -27,32 +27,6 @@ export const glassMorphism = ({
   const tint = tintOpacity ?? glass.tint_opacity;
   const border = borderOpacity ?? glass.border_opacity;
   const shadow = shadowOpacity ?? glass.shadow_opacity;
-  
-  // Platform-specific implementations
-  if (Platform.OS === 'android') {
-    // Android: Enhanced glass effect without borders/elevation
-    const androidTints = {
-      light: {
-        dark: `rgba(255, 255, 255, ${0.08})`,
-        light: `rgba(255, 255, 255, ${0.85})`,
-      },
-      medium: {
-        dark: `rgba(255, 255, 255, ${0.12})`,
-        light: `rgba(255, 255, 255, ${0.75})`,
-      },
-      heavy: {
-        dark: `rgba(255, 255, 255, ${0.18})`,
-        light: `rgba(255, 255, 255, ${0.65})`,
-      },
-    };
-    
-    return {
-      backgroundColor: customTint || (isDark ? androidTints[variant].dark : androidTints[variant].light),
-      borderRadius: 12,
-      overflow: 'hidden' as const,
-      // No borders, elevation, or shadows to prevent artifacts
-    };
-  }
   
   // iOS: Full glass effect with borders and shadows
   const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
@@ -81,82 +55,29 @@ export const glassMorphism = ({
   };
 };
 
-// Glass variants preset
-export const glassPresets = {
-  card: (isDark: boolean): ViewStyle => glassMorphism({ 
-    variant: 'light', 
+// Helper functions that use centralized tokens from effects.ts
+
+// Glass preset utility functions (using centralized tokens)
+export const getGlassPreset = (preset: keyof typeof glassPresetTokens, isDark: boolean): ViewStyle => {
+  const presetConfig = glassPresetTokens[preset];
+  return glassMorphism({ 
+    ...presetConfig,
     isDark,
-    borderOpacity: 0.15,
-  }),
-  
-  modal: (isDark: boolean): ViewStyle => glassMorphism({ 
-    variant: 'medium', 
-    isDark,
-    shadowOpacity: 0.3,
-  }),
-  
-  button: (isDark: boolean): ViewStyle => glassMorphism({ 
-    variant: 'light', 
-    isDark,
-    tintOpacity: 0.3,
-    borderOpacity: 0.2,
-  }),
-  
-  navigation: (isDark: boolean): ViewStyle => glassMorphism({ 
-    variant: 'heavy', 
-    isDark,
-    tintOpacity: 0.7,
-  }),
-  
-  input: (isDark: boolean): ViewStyle => glassMorphism({ 
-    variant: 'light', 
-    isDark,
-    tintOpacity: 0.2,
-    borderOpacity: 0.25,
-  }),
+  });
 };
 
-// Gradient utility for LinearGradient component
+// Simplified gradient utility using centralized tokens
 export const gradient = {
-  glass: (isDark: boolean) => ({
-    light: {
-      colors: isDark
-        ? ['rgba(255,255,255,0.05)', 'transparent']
-        : ['rgba(255,255,255,0.2)', 'transparent'],
-      start: { x: 0, y: 0 },
-      end: { x: 1, y: 1 },
-    },
-    medium: {
-      colors: isDark
-        ? ['rgba(255,255,255,0.08)', 'transparent']
-        : ['rgba(255,255,255,0.15)', 'transparent'],
-      start: { x: 0, y: 0 },
-      end: { x: 0.5, y: 1 },
-    },
-    heavy: {
-      colors: isDark
-        ? ['rgba(255,255,255,0.1)', 'transparent']
-        : ['rgba(255,255,255,0.1)', 'transparent'],
-      start: { x: 0, y: 0 },
-      end: { x: 0.3, y: 1 },
-    },
-  }),
-  
-  orb: {
-    primary: {
-      colors: ['rgba(99, 102, 241, 0.3)', 'rgba(99, 102, 241, 0.1)', 'transparent'],
-      start: { x: 0.5, y: 0.5 },
-      end: { x: 1, y: 1 },
-    },
-    secondary: {
-      colors: ['rgba(249, 115, 22, 0.3)', 'rgba(249, 115, 22, 0.1)', 'transparent'],
-      start: { x: 0.5, y: 0.5 },
-      end: { x: 1, y: 1 },
-    },
-    accent: {
-      colors: ['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0.1)', 'transparent'],
-      start: { x: 0.5, y: 0.5 },
-      end: { x: 1, y: 1 },
-    },
+  glass: (isDark: boolean) => {
+    return Object.fromEntries(
+      Object.entries(gradients.glass).map(([variant, config]) => [
+        variant,
+        {
+          ...config,
+          colors: config.colors[isDark ? 'dark' : 'light'],
+        },
+      ])
+    );
   },
+  orb: gradients.orb,
 };

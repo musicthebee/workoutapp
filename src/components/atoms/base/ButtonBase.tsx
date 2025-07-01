@@ -10,6 +10,7 @@ import Animated from 'react-native-reanimated';
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { usePressAnimation } from '@/hooks/ui/usePressAnimation';
 import { useTheme } from '@/theme/hooks/useTheme';
+import { getComponentSizing } from '@/utils/helpers';
 import type { BaseComponentProps, ButtonSize, ButtonVariant } from '@/types';
 
 /**
@@ -50,9 +51,8 @@ export const ButtonBase: React.FC<ButtonBaseProps> = ({
   // Map button variant to glass variant
   const glassVariant = variant === 'ghost' ? 'light' : 'medium';
   
-  // Get size from theme
-  const height = theme.sizes.buttons[size];
-  const paddingHorizontal = theme.spacing[size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'];
+  // Get sizing using centralized utility (eliminates duplication)
+  const { height, paddingHorizontal } = getComponentSizing('button', size, theme);
   
   // Determine if button is interactive
   const isDisabled = disabled || loading;
