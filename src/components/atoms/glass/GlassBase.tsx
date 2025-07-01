@@ -141,14 +141,14 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
       accessibilityLabel={accessibilityLabel}
     >
       {/* Blur layer */}
-      {/* <BlurView
+      <BlurView
         style={StyleSheet.absoluteFillObject}
         blurType={isDark ? 'dark' : 'light'}
         blurAmount={blurAmount}
         reducedTransparencyFallbackColor={
           isDark ? 'rgba(10, 10, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)'
         }
-      /> */}
+      />
       
       {/* Gradient overlay */}
       <LinearGradient
