@@ -11,7 +11,7 @@ import type { RootStackParamList, TabParamList } from '@/types';
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen } from '@/screens';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, ComponentShowcaseScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
@@ -51,7 +51,7 @@ const TabNavigator: React.FC = () => {
               iconName = focused ? 'diamond' : 'diamond-outline';
               break;
             case 'HistoryTab':
-              iconName = focused ? 'time' : 'time-outline';
+              iconName = focused ? 'layers' : 'layers-outline';
               break;
             case 'ProfileTab':
               iconName = focused ? 'person' : 'person-outline';
@@ -87,8 +87,8 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="HistoryTab" 
-        component={() => <PlaceholderScreen title="History" />}
-        options={{ title: 'History' }}
+        component={ComponentShowcaseScreen}
+        options={{ title: 'Components V2' }}
       />
       <Tab.Screen 
         name="ProfileTab" 

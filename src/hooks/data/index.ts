@@ -1,7 +1,4 @@
-// Data hooks - placeholder
-// TODO: Implement data fetching and state management hooks
-// Example: useApi, useQuery, useWorkouts, etc.
-
-// export * from './useApi';
-// export * from './useWorkouts';
-// export * from './useExercises';
+// Data hooks
+export { useActiveWorkout } from './useActiveWorkout';
+export { useExercises } from './useExercises';
+export { useWorkouts } from './useWorkouts';
