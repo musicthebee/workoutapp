@@ -160,8 +160,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
         >
           <Animated.View style={decreaseAnimation.animatedStyle}>
             <GlassBase
-              variant="light"
-              style={[
+                            style={[
                 styles.button,
                 !can_decrease && styles.buttonDisabled,
               ]}
@@ -199,8 +198,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
         >
           <Animated.View style={increaseAnimation.animatedStyle}>
             <GlassBase
-              variant="light"
-              style={[
+                            style={[
                 styles.button,
                 !can_increase && styles.buttonDisabled,
               ]}
@@ -303,7 +301,7 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
           return (
             <AnimatedView key={value} style={getItemStyle(index)}>
               <PressableGlass
-                variant={is_selected ? 'medium' : 'light'}
+                variant={is_selected ? undefined : 'light'}
                 onPress={() => on_select(value)}
                 press_scale={0.95}
                 glass_style={[

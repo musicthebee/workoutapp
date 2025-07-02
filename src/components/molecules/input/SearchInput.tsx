@@ -287,7 +287,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           accessibilityLabel={`Filter${filter_count > 0 ? `, ${filter_count} active` : ''}`}
           accessibilityRole="button"
         >
-          <GlassBase variant="light" style={styles.filterButton}>
+          <GlassBase  style={styles.filterButton}>
             <Ionicons 
               name="filter" 
               size={theme.sizes.icons.md} 

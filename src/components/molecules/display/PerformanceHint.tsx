@@ -204,7 +204,6 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
   if (variant === 'card') {
     return (
       <GlassBase
-        variant="light"
         style={[styles.cardContainer, style]}
         testID={testID}
         accessible={accessible}

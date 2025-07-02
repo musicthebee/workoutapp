@@ -4,6 +4,7 @@ import { View, StyleSheet, Pressable, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
+import { useEntranceAnimation, usePressAnimation } from '@/hooks/ui/animations';
 import { TextBase } from '@/components/atoms';
 import type { BaseComponentProps } from '@/types';
 
@@ -37,6 +38,12 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
+  const entranceAnimation = useEntranceAnimation({ 
+    type: 'slideIn', 
+    duration: theme.animation.durations.normal 
+  });
+  const backPressAnimation = usePressAnimation();
+  const actionPressAnimation = usePressAnimation();
   
   const styles = StyleSheet.create({
     container: {
@@ -85,8 +92,9 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
   const title_variant = variant === 'prominent' ? 'heading_3' : 'heading_4';
 
   return (
-    <View 
+    <entranceAnimation.AnimatedView 
       style={[
+        entranceAnimation.animatedStyle,
         styles.container,
         variant === 'prominent' && styles.prominentContainer,
         style,
@@ -156,7 +164,7 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
       ) : (
         <View style={styles.button} />
       )}
-    </View>
+    </entranceAnimation.AnimatedView>
   );
 };
 

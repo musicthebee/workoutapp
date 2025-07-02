@@ -151,7 +151,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
   if (on_press || on_remove) {
     return (
       <PressableGlass
-        variant={is_selected ? 'medium' : 'light'}
+        variant={is_selected ? undefined : 'light'}
         onPress={handle_press}
         glass_style={[
           styles.container,
@@ -171,7 +171,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
 
   return (
     <GlassBase
-      variant={is_selected ? 'medium' : 'light'}
+      variant={is_selected ? undefined : 'light'}
       style={[
         styles.container,
         is_selected && styles.selected,

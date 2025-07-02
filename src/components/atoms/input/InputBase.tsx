@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import {
   TextInput,
   TextInputProps,
@@ -9,6 +9,7 @@ import {
 
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { useTheme } from '@/theme/hooks/useTheme';
+import { useTransitionAnimation } from '@/hooks/ui/animations';
 import { getComponentSizing } from '@/utils/helpers';
 import type { BaseComponentProps, InputSize, InputVariant } from '@/types';
 
@@ -37,9 +38,12 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
   accessible = true,
   accessibilityLabel,
   placeholderTextColor,
+  onFocus,
+  onBlur,
   ...textInputProps
 }, ref) => {
   const theme = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
   
   // Get sizing using centralized utility (eliminates duplication)
   const { height, paddingHorizontal, typography } = getComponentSizing('input', size, theme);
@@ -48,44 +52,84 @@ export const InputBase = forwardRef<TextInput, InputBaseProps>(({
   // Keyboard type based on variant
   const keyboardType = variant === 'numeric' ? 'numeric' : 'default';
   
+  // Focus transition animation
+  const focusAnimation = useTransitionAnimation({
+    type: 'timing',
+    duration: theme.animation.durations.fast,
+  });
+  
+  // Update animation based on focus state
+  React.useEffect(() => {
+    if (focusAnimation.animatedValue) {
+      focusAnimation.animatedValue.setValue(isFocused ? 1 : 0);
+    }
+  }, [isFocused, focusAnimation.animatedValue]);
+  
+  const handleFocus = (e: any) => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+  
+  const handleBlur = (e: any) => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
+  
   return (
-    <GlassBase
-      variant="light"
+    <focusAnimation.AnimatedView
       style={[
-        {
-          height,
-          paddingHorizontal,
-          borderWidth: theme.borders.widths.thin,
-          borderColor: hasError 
-            ? theme.colors.error 
-            : theme.colors.glass_border,
-          borderRadius: theme.borders.radii.md,
+        focusAnimation.animatedStyle,
+        focusAnimation.animatedValue && {
+          transform: [{
+            scale: focusAnimation.animatedValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 1.02],
+            }),
+          }],
         },
-        containerStyle,
       ]}
-      testID={`${testID}-container`}
     >
-      <TextInput
-        ref={ref}
+      <GlassBase
         style={[
           {
-            flex: 1,
-            fontSize: typographyConfig.font_size,
-            color: theme.colors.text_primary,
-            padding: 0, // Remove default padding
+            height,
+            paddingHorizontal,
+            borderWidth: theme.borders.widths.thin,
+            borderColor: hasError 
+              ? theme.colors.error 
+              : isFocused
+              ? theme.colors.primary
+              : theme.colors.glass_border,
+            borderRadius: theme.borders.radii.md,
           },
-          inputStyle,
+          containerStyle,
         ]}
-        placeholderTextColor={
-          placeholderTextColor || theme.colors.text_tertiary
-        }
-        keyboardType={keyboardType}
-        testID={testID}
-        accessible={accessible}
-        accessibilityLabel={accessibilityLabel}
-        {...textInputProps}
-      />
-    </GlassBase>
+        testID={`${testID}-container`}
+      >
+        <TextInput
+          ref={ref}
+          style={[
+            {
+              flex: 1,
+              fontSize: typographyConfig.font_size,
+              color: theme.colors.text_primary,
+              padding: 0, // Remove default padding
+            },
+            inputStyle,
+          ]}
+          placeholderTextColor={
+            placeholderTextColor || theme.colors.text_tertiary
+          }
+          keyboardType={keyboardType}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          testID={testID}
+          accessible={accessible}
+          accessibilityLabel={accessibilityLabel}
+          {...textInputProps}
+        />
+      </GlassBase>
+    </focusAnimation.AnimatedView>
   );
 });
 

@@ -161,7 +161,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             </TextBase>
           </View>
           
-          <GlassBase variant="light" style={styles.demoBox}>
+          <GlassBase  style={styles.demoBox}>
             <TextBase variant="body_small" color="secondary">Active Hooks:</TextBase>
             <Spacer size="sm" />
             <TextBase variant="body_medium">• useExercises: {demo_exercises.length} exercises loaded</TextBase>
@@ -397,7 +397,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             Empty States
           </TextBase>
           
-          <GlassBase variant="light" style={{ height: 200 }}>
+          <GlassBase  style={{ height: 200 }}>
             <ListEmptyState
               title="No Exercises Found"
               item_type="exercises"
@@ -407,7 +407,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           </GlassBase>
           <Spacer size="md" />
           
-          <GlassBase variant="light" style={{ height: 200 }}>
+          <GlassBase  style={{ height: 200 }}>
             <SearchEmptyState
               title="No Results Found"
               search_query={search_query || "bench press"}
@@ -416,7 +416,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           </GlassBase>
           <Spacer size="md" />
           
-          <GlassBase variant="light" style={{ height: 200 }}>
+          <GlassBase  style={{ height: 200 }}>
             <ErrorEmptyState
               title="Connection Error"
               error_message="Network connection failed"
@@ -431,7 +431,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             Timer Integration
           </TextBase>
           
-          <GlassBase variant="medium" style={styles.demoBox}>
+          <GlassBase  style={styles.demoBox}>
             <TextBase variant="heading_1" style={{ textAlign: 'center' }}>
               {timer.display}
             </TextBase>

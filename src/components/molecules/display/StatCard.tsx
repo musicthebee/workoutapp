@@ -207,7 +207,6 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <entranceAnimation.AnimatedView style={entranceAnimation.animatedStyle}>
       <PressableGlass
-        variant="light"
         onPress={on_press}
         glass_style={[styles.container, style]}
         testID={testID}
@@ -320,6 +319,10 @@ export const MiniStat: React.FC<MiniStatProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
+  const entranceAnimation = useEntranceAnimation({ 
+    type: 'fade', 
+    duration: theme.animation.durations.normal 
+  });
   
   const styles = StyleSheet.create({
     container: {
@@ -347,8 +350,12 @@ export const MiniStat: React.FC<MiniStatProps> = ({
   });
 
   return (
-    <View 
-      style={[styles.container, style]}
+    <entranceAnimation.AnimatedView 
+      style={[
+        entranceAnimation.animatedStyle,
+        styles.container, 
+        style
+      ]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel || `${label}: ${value}`}
@@ -371,7 +378,7 @@ export const MiniStat: React.FC<MiniStatProps> = ({
           {value}
         </TextBase>
       </View>
-    </View>
+    </entranceAnimation.AnimatedView>
   );
 };
 

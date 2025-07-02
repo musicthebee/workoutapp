@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/hooks';
+import { useEntranceAnimation } from '@/hooks/ui/animations';
 import { GlassBase } from '@/components/atoms';
 import type { BaseComponentProps } from '@/types';
 
@@ -44,6 +45,10 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
+  const entranceAnimation = useEntranceAnimation({ 
+    type: 'slideUp', 
+    duration: theme.animation.durations.normal 
+  });
   
   const styles = StyleSheet.create({
     container: {
@@ -133,7 +138,9 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
-      {wrapped_content}
+      <entranceAnimation.AnimatedView style={[entranceAnimation.animatedStyle, { flex: 1 }]}>
+        {wrapped_content}
+      </entranceAnimation.AnimatedView>
     </SafeAreaView>
   );
 };
