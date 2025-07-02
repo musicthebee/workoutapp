@@ -112,8 +112,13 @@ export const StatCard: React.FC<StatCardProps> = ({
     },
     valueContainer: {
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'center',
       gap: theme.spacing.xs,
+    },
+    bottomRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     value: {
       fontSize: config.value_size,
@@ -153,6 +158,27 @@ export const StatCard: React.FC<StatCardProps> = ({
             {label}
           </TextBase>
         </View>
+      </View>
+      
+      <View style={styles.bottomRow}>
+        <View style={styles.valueContainer}>
+          {animated && typeof value === 'number' ? (
+            <AnimatedValue 
+              value={value}
+              style={styles.value}
+              duration={theme.animation.durations.slow}
+            />
+          ) : (
+            <TextBase variant="heading_2" style={styles.value}>
+              {value}
+            </TextBase>
+          )}
+          {unit && (
+            <TextBase variant="caption" style={styles.unit}>
+              {unit}
+            </TextBase>
+          )}
+        </View>
         
         {trend && (
           <View style={styles.trendContainer}>
@@ -173,26 +199,6 @@ export const StatCard: React.FC<StatCardProps> = ({
               </TextBase>
             )}
           </View>
-        )}
-      </View>
-      
-      <View style={styles.valueContainer}>
-        {animated && typeof value === 'number' ? (
-          <AnimatedValue 
-            value={value}
-            style={styles.value}
-            duration={theme.animation.durations.slow}
-          />
-        ) : (
-          <TextBase variant="heading_2" style={styles.value}>
-            {value}
-          </TextBase>
-        )}
-        
-        {unit && (
-          <TextBase variant="caption" style={styles.unit}>
-            {unit}
-          </TextBase>
         )}
       </View>
     </View>
@@ -259,9 +265,9 @@ export const StatCardGrid: React.FC<StatCardGridProps> = ({
       gap: theme.spacing.md,
     },
     card: {
-      width: columns === 2 
-        ? `${(100 - theme.spacing.md) / 2}%` 
-        : `${(100 - theme.spacing.md * 2) / 3}%`,
+      flex: 1,
+      minWidth: columns === 2 ? '45%' : '30%',
+      maxWidth: columns === 2 ? '48%' : '32%',
     },
   });
 
@@ -319,18 +325,18 @@ export const MiniStat: React.FC<MiniStatProps> = ({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: theme.spacing.sm,
+      gap: theme.spacing.xs,
     },
     iconContainer: {
-      width: theme.sizes.touchTargets.small,
-      height: theme.sizes.touchTargets.small,
+      width: theme.sizes.touchTargets.small * 0.8,
+      height: theme.sizes.touchTargets.small * 0.8,
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: theme.borders.radii.md,
+      borderRadius: theme.borders.radii.sm,
       backgroundColor: theme.colors.surface,
     },
     textContainer: {
-      gap: theme.spacing.xxs,
+      gap: theme.spacing.xxxs,
     },
     label: {
       color: theme.colors.text_secondary,
@@ -358,10 +364,10 @@ export const MiniStat: React.FC<MiniStatProps> = ({
       )}
       
       <View style={styles.textContainer}>
-        <TextBase variant="caption" style={styles.label}>
+        <TextBase variant="overline" style={styles.label}>
           {label}
         </TextBase>
-        <TextBase variant="body_medium" style={styles.value}>
+        <TextBase variant="body_small" style={styles.value}>
           {value}
         </TextBase>
       </View>

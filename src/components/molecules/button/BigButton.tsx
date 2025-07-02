@@ -75,7 +75,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
         {loading && (
           <ActivityIndicator 
             size="small" 
-            color={variant === 'ghost' ? theme.colors.primary : theme.colors.text_inverse}
+            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
           />
         )}
         
@@ -84,17 +84,20 @@ export const BigButton: React.FC<BigButtonProps> = ({
           <Ionicons 
             name={icon} 
             size={theme.sizes.icons.md} 
-            color={styles.text.color}
+            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
             style={styles.icon}
           />
         )}
         
         {/* Button text */}
         <TextBase 
-          variant="button_large" 
-          style={styles.text}
+          variant="button_large"
+          style={[
+            styles.text,
+            { color: variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary }
+          ]}
         >
-          {loading ? loading_text : label}
+          {loading ? loading_text : (children || label)}
         </TextBase>
         
         {/* Right icon */}
@@ -102,7 +105,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
           <Ionicons 
             name={icon} 
             size={theme.sizes.icons.md} 
-            color={styles.text.color}
+            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
             style={styles.icon}
           />
         )}

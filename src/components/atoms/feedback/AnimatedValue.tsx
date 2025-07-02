@@ -39,8 +39,10 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
   const animatedValue = useSharedValue(0);
   
   useEffect(() => {
+    // Ensure value is a valid number
+    const numericValue = typeof value === 'number' && !isNaN(value) ? value : 0;
     animatedValue.value = withTiming(
-      value,
+      numericValue,
       { duration: duration || theme.animation.durations.normal }
     );
   }, [value, duration, animatedValue, theme]);
@@ -48,8 +50,9 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
   // Create a worklet-compatible format function
   const animatedProps = useAnimatedProps(() => {
     'worklet';
-    // For now, just use basic string conversion in the worklet
-    const roundedValue = Math.round(animatedValue.value);
+    // Ensure animated value is valid before rounding
+    const currentValue = isNaN(animatedValue.value) ? 0 : animatedValue.value;
+    const roundedValue = Math.round(currentValue);
     return {
       text: roundedValue.toString(),
       defaultValue: roundedValue.toString(),

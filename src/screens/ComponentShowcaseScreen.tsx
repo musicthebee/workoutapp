@@ -1,6 +1,6 @@
 // src/screens/ComponentShowcaseV2Screen.tsx
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { useTheme } from '@/hooks';
 import { 
@@ -50,8 +50,19 @@ export const ComponentShowcaseScreen: React.FC = () => {
   // Demo state using our hooks - ALL FIXED!
   const { exercises, filters, handle_filter_change, toggle_favorites_filter } = useExercises(); // ✅ FIXED
   const { workouts, counts: workout_counts } = useWorkouts(); // ✅ FIXED
-  const { is_active, start_empty_workout, end_workout } = useActiveWorkout(); // TESTING NOW
+  const { is_active, start_empty_workout, end_workout } = useActiveWorkout(); // ✅ FIXED
   const timer = useTimer({ mode: 'countdown', initial_seconds: 90 });
+  
+  // Mock data for better showcase since filtering is disabled
+  const demo_exercises = Array.from({ length: 12 }, (_, i) => ({ 
+    id: `ex-${i}`, 
+    name: `Exercise ${i + 1}` 
+  }));
+  const demo_workouts = Array.from({ length: 8 }, (_, i) => ({ 
+    id: `wo-${i}`, 
+    name: `Workout ${i + 1}` 
+  }));
+  const demo_workout_counts = { total: 25, library: 15, mine: 10 };
   
   // Local demo state
   const [search_query, setSearchQuery] = useState('');
@@ -71,10 +82,10 @@ export const ComponentShowcaseScreen: React.FC = () => {
   ];
   
   const demo_stats = [
-    { id: '1', label: 'Workouts', value: workout_counts.total, icon: 'fitness' as const, trend: 'up' as const, trend_value: '+12%' },
-    { id: '2', label: 'Exercises', value: exercises.length, icon: 'barbell' as const, trend: 'up' as const, trend_value: '+5' },
-    { id: '3', label: 'This Week', value: 4, unit: 'sessions', icon: 'calendar' as const },
-    { id: '4', label: 'Streak', value: 7, unit: 'days', icon: 'flame' as const, trend: 'up' as const },
+    { id: '1', label: 'Total', value: demo_workout_counts.total, icon: 'fitness' as const, trend: 'up' as const, trend_value: '+12%' },
+    { id: '2', label: 'Library', value: demo_exercises.length, icon: 'barbell' as const, trend: 'up' as const, trend_value: '+5' },
+    { id: '3', label: 'Week', value: 4, icon: 'calendar' as const },
+    { id: '4', label: 'Streak', value: 7, icon: 'flame' as const, trend: 'up' as const, trend_value: '+2' },
   ];
   
   const demo_performance = {
@@ -116,7 +127,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
     row: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
     demoBox: {
       padding: theme.spacing.lg,
@@ -153,10 +164,11 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <GlassBase variant="light" style={styles.demoBox}>
             <TextBase variant="body_small" color="secondary">Active Hooks:</TextBase>
             <Spacer size="sm" />
-            <TextBase variant="body_medium">• useExercises: {exercises.length} exercises loaded</TextBase>
-            <TextBase variant="body_medium">• useWorkouts: {workout_counts.total} workouts</TextBase>
+            <TextBase variant="body_medium">• useExercises: {demo_exercises.length} exercises loaded</TextBase>
+            <TextBase variant="body_medium">• useWorkouts: {demo_workouts.length} workouts, {demo_workout_counts.total} total</TextBase>
             <TextBase variant="body_medium">• useActiveWorkout: {is_active ? 'Active' : 'Inactive'}</TextBase>
             <TextBase variant="body_medium">• useTimer: {timer.display}</TextBase>
+            <TextBase variant="body_medium">• Filters active: {Object.keys(filters).length}</TextBase>
             <Spacer size="md" />
             <View style={styles.row}>
               <BigButton
@@ -164,6 +176,15 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 onPress={is_active ? end_workout : start_empty_workout}
                 variant={is_active ? "secondary" : "primary"}
                 icon={is_active ? "stop-circle" : "play-circle"}
+              />
+            </View>
+            <Spacer size="sm" />
+            <View style={styles.row}>
+              <BigButton
+                label="Toggle Favorites"
+                onPress={toggle_favorites_filter}
+                variant="secondary"
+                icon="heart"
               />
             </View>
           </GlassBase>
@@ -228,6 +249,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 label="Complete Set"
                 icon="checkmark-circle"
                 onPress={() => {}}
+                variant="primary"
               />
             </View>
             <View style={styles.gridItem}>
@@ -273,8 +295,31 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <Spacer size="sm" />
           <FilterChipGroup
             chips={demo_chips}
-            on_chip_press={(id: string) => console.log('Chip pressed:', id)}
+            on_chip_press={(id: string) => {
+              console.log('Chip pressed:', id);
+              handle_filter_change('muscle_groups', [id]);
+            }}
           />
+          <Spacer size="md" />
+          
+          <TextBase variant="heading_4">Individual Filter Chip</TextBase>
+          <Spacer size="sm" />
+          <View style={styles.row}>
+            <FilterChip
+              id="demo"
+              label="Chest"
+              count={15}
+              is_selected={true}
+              on_press={() => console.log('Single chip pressed')}
+            />
+            <FilterChip
+              id="demo2"
+              label="Back"
+              count={12}
+              is_selected={false}
+              on_press={() => console.log('Single chip pressed')}
+            />
+          </View>
           <Spacer size="lg" />
           
           <TextBase variant="heading_4">Active Filters</TextBase>
@@ -293,9 +338,23 @@ export const ComponentShowcaseScreen: React.FC = () => {
           </TextBase>
           
           {/* Stat Cards */}
-          <TextBase variant="heading_4">Stat Cards</TextBase>
+          <TextBase variant="heading_4">Stat Card Grid</TextBase>
           <Spacer size="sm" />
           <StatCardGrid stats={demo_stats} columns={2} animated />
+          <Spacer size="md" />
+          
+          <TextBase variant="heading_4">Individual Stat Card</TextBase>
+          <Spacer size="sm" />
+          <StatCard
+            id="demo-card"
+            label="Total Workouts"
+            value={42}
+            unit="sessions"
+            icon="fitness"
+            trend="up"
+            trend_value="+5 this week"
+            animated={true}
+          />
           <Spacer size="lg" />
           
           {/* Mini Stats */}
@@ -340,6 +399,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           
           <GlassBase variant="light" style={{ height: 200 }}>
             <ListEmptyState
+              title="No Exercises Found"
               item_type="exercises"
               action_label="Add Exercise"
               on_action={() => {}}
@@ -349,6 +409,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           
           <GlassBase variant="light" style={{ height: 200 }}>
             <SearchEmptyState
+              title="No Results Found"
               search_query={search_query || "bench press"}
               on_clear_search={() => setSearchQuery('')}
             />
@@ -357,6 +418,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           
           <GlassBase variant="light" style={{ height: 200 }}>
             <ErrorEmptyState
+              title="Connection Error"
               error_message="Network connection failed"
               on_retry={() => {}}
             />
@@ -380,13 +442,17 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 icon={timer.is_running ? "pause" : "play"}
                 onPress={timer.toggle}
                 variant="primary"
-              />
+              >
+                {timer.is_running ? "Pause" : "Start"}
+              </BigButton>
               <BigButton
                 label="Reset"
                 icon="refresh"
                 onPress={timer.reset}
                 variant="ghost"
-              />
+              >
+                Reset
+              </BigButton>
             </View>
             <Spacer size="sm" />
             <View style={styles.row}>
@@ -394,12 +460,16 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 label="-30s"
                 onPress={timer.subtract_30_seconds}
                 variant="secondary"
-              />
+              >
+                -30s
+              </BigButton>
               <BigButton
                 label="+30s"
                 onPress={timer.add_30_seconds}
                 variant="secondary"
-              />
+              >
+                +30s
+              </BigButton>
             </View>
           </GlassBase>
         </View>
