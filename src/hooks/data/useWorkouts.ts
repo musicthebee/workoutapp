@@ -1,6 +1,5 @@
 // src/hooks/data/useWorkouts.ts
 import { useEffect, useCallback, useMemo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
 import {
   useWorkoutStore,
@@ -42,34 +41,15 @@ export const useWorkouts = () => {
     reset_filters,
     set_search,
     clear_error,
-  } = useWorkoutStore(
-    useShallow((state) => ({
-      is_loading: state.is_loading,
-      is_creating: state.is_creating,
-      is_updating: state.is_updating,
-      error: state.error,
-      filters: state.filters,
-      search_query: state.search_query,
-      fetch_workouts: state.fetch_workouts,
-      create_workout: state.create_workout,
-      update_workout: state.update_workout,
-      copy_from_library: state.copy_from_library,
-      toggle_favorite: state.toggle_favorite,
-      archive_workout: state.archive_workout,
-      set_filter: state.set_filter,
-      reset_filters: state.reset_filters,
-      set_search: state.set_search,
-      clear_error: state.clear_error,
-    }))
-  );
+  } = useWorkoutStore();
 
   // Get filtered workouts
   const workouts = useFilteredWorkouts();
 
-  // Fetch workouts on mount
+  // Fetch workouts on mount only
   useEffect(() => {
     fetch_workouts();
-  }, [fetch_workouts]);
+  }, []); // Empty dependency array to avoid infinite loop
 
   // Memoized counts
   const counts = useMemo(() => ({
@@ -238,17 +218,7 @@ export const useWorkout = (workout_id: UUID | null | undefined) => {
     update_workout_exercise,
     remove_exercise_from_workout,
     reorder_exercises,
-  } = useWorkoutStore(
-    useShallow((state) => ({
-      update_workout: state.update_workout,
-      toggle_favorite: state.toggle_favorite,
-      archive_workout: state.archive_workout,
-      add_exercise_to_workout: state.add_exercise_to_workout,
-      update_workout_exercise: state.update_workout_exercise,
-      remove_exercise_from_workout: state.remove_exercise_from_workout,
-      reorder_exercises: state.reorder_exercises,
-    }))
-  );
+  } = useWorkoutStore();
   
   // Denormalize exercises for easy use
   const exercises_with_details = useMemo(() => {
@@ -344,14 +314,7 @@ export const useWorkout = (workout_id: UUID | null | undefined) => {
  * Handles both manual and AI-assisted creation
  */
 export const useWorkoutCreation = () => {
-  const { create_workout, is_creating, error, clear_error } = useWorkoutStore(
-    useShallow((state) => ({
-      create_workout: state.create_workout,
-      is_creating: state.is_creating,
-      error: state.error,
-      clear_error: state.clear_error,
-    }))
-  );
+  const { create_workout, is_creating, error, clear_error } = useWorkoutStore();
   
   const [creation_mode, set_creation_mode] = React.useState<'manual' | 'ai'>('manual');
   const [ai_prompt, set_ai_prompt] = React.useState('');

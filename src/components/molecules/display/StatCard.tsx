@@ -184,13 +184,13 @@ export const StatCard: React.FC<StatCardProps> = ({
             duration={theme.animation.durations.slow}
           />
         ) : (
-          <TextBase style={styles.value}>
+          <TextBase variant="heading_2" style={styles.value}>
             {value}
           </TextBase>
         )}
         
         {unit && (
-          <TextBase style={styles.unit}>
+          <TextBase variant="caption" style={styles.unit}>
             {unit}
           </TextBase>
         )}
@@ -271,7 +271,7 @@ export const StatCardGrid: React.FC<StatCardGridProps> = ({
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
-      accessibilityRole="group"
+      accessibilityRole="text"
     >
       {stats.map((stat, index) => (
         <AnimatedView key={stat.id} style={[styles.card, getItemStyle(index)]}>

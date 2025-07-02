@@ -193,7 +193,7 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
               size={theme.sizes.icons.xxs} 
               color={theme.colors.background}
             />
-            <TextBase style={styles.prText}>PR</TextBase>
+            <TextBase variant="caption" style={styles.prText}>PR</TextBase>
           </View>
         )}
       </View>
@@ -221,17 +221,17 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
                 size={theme.sizes.icons.xs} 
                 color={theme.colors.background}
               />
-              <TextBase style={styles.prText}>PR</TextBase>
+              <TextBase variant="caption" style={styles.prText}>PR</TextBase>
             </View>
           )}
         </View>
         
-        <TextBase style={styles.cardValue}>
+        <TextBase variant="heading_3" style={styles.cardValue}>
           {performance_text}
         </TextBase>
         
         {show_date && performance.date && (
-          <TextBase style={styles.dateText}>
+          <TextBase variant="caption" style={styles.dateText}>
             {format_date(performance.date)}
           </TextBase>
         )}
@@ -248,10 +248,10 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
       accessibilityLabel={accessible_label}
     >
       <View style={styles.compactContent}>
-        <TextBase style={styles.compactLabel}>
+        <TextBase variant="caption" style={styles.compactLabel}>
           {label}
         </TextBase>
-        <TextBase style={styles.compactValue}>
+        <TextBase variant="body_medium" style={styles.compactValue}>
           {performance_text}
         </TextBase>
       </View>
@@ -312,7 +312,7 @@ export const PerformanceComparison: React.FC<PerformanceComparisonProps> = ({
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
-      accessibilityRole="group"
+      accessibilityRole="text"
     >
       <View style={styles.section}>
         <PerformanceHint
@@ -429,7 +429,7 @@ export const Badge: React.FC<BadgeProps> = ({
             color={config.text_color}
           />
         )}
-        <TextBase style={styles.text}>
+        <TextBase variant="caption" style={styles.text}>
           {label}
         </TextBase>
       </View>

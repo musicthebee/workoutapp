@@ -1,6 +1,5 @@
 // src/hooks/data/useActiveWorkout.ts
 import { useCallback, useMemo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
 import {
   useActiveWorkoutStore,
@@ -47,40 +46,17 @@ export const useActiveWorkout = () => {
     skip_rest_timer,
     add_rest_time,
     clear_error,
-  } = useActiveWorkoutStore(
-    useShallow((state) => ({
-      session: state.session,
-      performance_id: state.performance_id,
-      is_loading: state.is_loading,
-      is_saving: state.is_saving,
-      error: state.error,
-      rest_timer_seconds: state.rest_timer_seconds,
-      is_timer_running: state.is_timer_running,
-      start_workout: state.start_workout,
-      start_empty_workout: state.start_empty_workout,
-      pause_workout: state.pause_workout,
-      resume_workout: state.resume_workout,
-      end_workout: state.end_workout,
-      complete_workout: state.complete_workout,
-      add_exercise_during_workout: state.add_exercise_during_workout,
-      skip_exercise: state.skip_exercise,
-      log_set: state.log_set,
-      complete_current_set: state.complete_current_set,
-      go_to_next_exercise: state.go_to_next_exercise,
-      go_to_previous_exercise: state.go_to_previous_exercise,
-      start_rest_timer: state.start_rest_timer,
-      pause_rest_timer: state.pause_rest_timer,
-      resume_rest_timer: state.resume_rest_timer,
-      skip_rest_timer: state.skip_rest_timer,
-      add_rest_time: state.add_rest_time,
-      clear_error: state.clear_error,
-    }))
-  );
+  } = useActiveWorkoutStore();
 
-  // Use selector hooks
-  const current_exercise = useCurrentExercise();
-  const is_active = useIsWorkoutActive();
-  const progress = useWorkoutProgress();
+  // Use selector hooks - TEMPORARILY DISABLED
+  // const current_exercise = useCurrentExercise();
+  // const is_active = useIsWorkoutActive();
+  // const progress = useWorkoutProgress();
+  
+  // Mock for now
+  const current_exercise = null;
+  const is_active = false;
+  const progress = { current: 0, total: 0, percentage: 0 };
 
   // Calculate session duration
   const session_duration = useMemo(() => {

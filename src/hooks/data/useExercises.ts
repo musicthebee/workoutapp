@@ -1,6 +1,5 @@
 // src/hooks/data/useExercises.ts
 import { useEffect, useCallback, useMemo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
 import {
   useExerciseStore,
@@ -39,34 +38,15 @@ export const useExercises = () => {
     reset_filters,
     set_search,
     clear_error,
-  } = useExerciseStore(
-    useShallow((state) => ({
-      is_loading: state.is_loading,
-      is_creating: state.is_creating,
-      is_updating: state.is_updating,
-      error: state.error,
-      filters: state.filters,
-      search_query: state.search_query,
-      fetch_exercises: state.fetch_exercises,
-      create_exercise: state.create_exercise,
-      update_exercise: state.update_exercise,
-      copy_from_library: state.copy_from_library,
-      toggle_favorite: state.toggle_favorite,
-      archive_exercise: state.archive_exercise,
-      set_filter: state.set_filter,
-      reset_filters: state.reset_filters,
-      set_search: state.set_search,
-      clear_error: state.clear_error,
-    }))
-  );
+  } = useExerciseStore();
 
   // Get filtered exercises using selector hook
   const exercises = useFilteredExercises();
 
-  // Fetch exercises on mount and when filters change
+  // Fetch exercises on mount only
   useEffect(() => {
     fetch_exercises();
-  }, [fetch_exercises]);
+  }, []); // Empty dependency array to avoid infinite loop
 
   // Memoized counts for UI
   const counts = useMemo(() => ({
@@ -239,12 +219,11 @@ export const useExercise = (exercise_id: UUID | null | undefined) => {
     toggle_favorite,
     archive_exercise,
   } = useExerciseStore(
-    useShallow((state) => ({
+    (state) => ({
       update_exercise: state.update_exercise,
       toggle_favorite: state.toggle_favorite,
       archive_exercise: state.archive_exercise,
-    }))
-  );
+    }));
   
   // Exercise-specific actions
   const update = useCallback(async (updates: UpdateExerciseInput) => {
@@ -280,14 +259,7 @@ export const useExercise = (exercise_id: UUID | null | undefined) => {
  * Handles both manual and AI-assisted creation
  */
 export const useExerciseCreation = () => {
-  const { create_exercise, is_creating, error, clear_error } = useExerciseStore(
-    useShallow((state) => ({
-      create_exercise: state.create_exercise,
-      is_creating: state.is_creating,
-      error: state.error,
-      clear_error: state.clear_error,
-    }))
-  );
+  const { create_exercise, is_creating, error, clear_error } = useExerciseStore();
   
   const [creation_mode, set_creation_mode] = React.useState<'manual' | 'ai'>('manual');
   const [ai_prompt, set_ai_prompt] = React.useState('');

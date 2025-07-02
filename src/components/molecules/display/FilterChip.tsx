@@ -237,7 +237,7 @@ export const FilterChipGroup: React.FC<FilterChipGroupProps> = ({
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
-      accessibilityRole="group"
+      accessibilityRole="button"
     >
       {chips.map((chip, index) => (
         <AnimatedView key={chip.id} style={getItemStyle(index)}>

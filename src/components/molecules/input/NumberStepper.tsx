@@ -176,7 +176,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
         </Pressable>
         
         <View style={styles.valueContainer}>
-          <TextBase style={styles.value}>
+          <TextBase variant="heading_3" style={styles.value}>
             {animatedValue}
           </TextBase>
           {unit && (

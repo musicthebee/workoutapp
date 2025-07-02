@@ -47,10 +47,10 @@ import {
 export const ComponentShowcaseScreen: React.FC = () => {
   const theme = useTheme();
   
-  // Demo state using our hooks
-  const { exercises, filters, handle_filter_change, toggle_favorites_filter } = useExercises();
-  const { workouts, counts: workout_counts } = useWorkouts();
-  const { is_active, start_empty_workout, end_workout } = useActiveWorkout();
+  // Demo state using our hooks - ALL FIXED!
+  const { exercises, filters, handle_filter_change, toggle_favorites_filter } = useExercises(); // ✅ FIXED
+  const { workouts, counts: workout_counts } = useWorkouts(); // ✅ FIXED
+  const { is_active, start_empty_workout, end_workout } = useActiveWorkout(); // TESTING NOW
   const timer = useTimer({ mode: 'countdown', initial_seconds: 90 });
   
   // Local demo state

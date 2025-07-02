@@ -193,7 +193,7 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
           />
           {badge !== undefined && badge !== 0 && (
             <View style={styles.badge}>
-              <TextBase style={styles.badgeText}>
+              <TextBase variant="caption" style={styles.badgeText}>
                 {typeof badge === 'number' && badge > 99 ? '99+' : badge}
               </TextBase>
             </View>
