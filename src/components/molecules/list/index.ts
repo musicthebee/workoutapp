@@ -1,1 +1,1 @@
-// List components will be implemented here
+export { SettingsRow } from './SettingsRow';

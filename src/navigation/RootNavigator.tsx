@@ -11,7 +11,7 @@ import type { RootStackParamList, TabParamList } from '@/types';
 import { View, Text } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, ComponentShowcaseScreen } from '@/screens';
+import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, ComponentShowcaseScreen, ProfileScreen } from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
@@ -92,7 +92,7 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen 
         name="ProfileTab" 
-        component={() => <PlaceholderScreen title="Profile" />}
+        component={ProfileScreen}
         options={{ title: 'Profile' }}
       />
     </Tab.Navigator>
@@ -104,19 +104,10 @@ const TabNavigator: React.FC = () => {
  */
 export const RootNavigator: React.FC = () => {
   const theme = useTheme();
-  const { user, loading, signInWithEmailAndPassword } = useAuth();
-  
-  // Auto-login for development
-  React.useEffect(() => {
-    if (!loading && !user) {
-      // Automatically sign in with test user for development
-      signInWithEmailAndPassword('test@example.com', 'password123')
-        .catch(err => console.error('Auto-login failed:', err));
-    }
-  }, [loading, user, signInWithEmailAndPassword]);
+  const { user, is_loading } = useAuth();
   
   // Show loading screen while checking auth
-  if (loading) {
+  if (is_loading) {
     return <PlaceholderScreen title="Loading..." />;
   }
   
