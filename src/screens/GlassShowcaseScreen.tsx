@@ -1,12 +1,11 @@
 // src/screens/GlassShowcaseScreen.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   ScrollView,
   View,
   TouchableOpacity,
   Dimensions,
   StyleSheet,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -16,10 +15,6 @@ import Animated, {
   withSpring,
   withSequence,
   withDelay,
-  withRepeat,
-  interpolate,
-  Extrapolate,
-  FadeIn,
   FadeInDown,
   FadeInUp,
   Layout,
@@ -29,15 +24,13 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import {
   GlassBase,
-  ButtonBase,
   TextBase,
   Spacer,
   Flex,
 } from '@/components/atoms';
-import { GradientBackground, GradientOrb } from '@/components/atoms/glass/GradientOrb';
+import { GradientBackground } from '@/components/atoms/glass/GradientOrb';
 import { useTheme, useThemeControls } from '@/hooks';
 import { useGlassVariant } from '@/contexts/GlassVariantContext';
-import { glassMorphism, gradient } from '@/theme/utils/glassMorphism';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

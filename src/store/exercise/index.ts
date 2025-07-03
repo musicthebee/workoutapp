@@ -1,17 +1,16 @@
 // src/store/exercise/index.ts
-import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import type { 
-  Exercise, 
   UUID, 
   ExerciseFilters,
   CreateExerciseInput,
   UpdateExerciseInput,
   ApiError,
 } from '@/types';
+import type { Exercise } from '@/types/database/models';
 import { mockApi } from '@/services/mockApi';
 import { createEmptyExerciseFilters } from '@/types/business/filters';
 
@@ -269,13 +268,13 @@ export const useExerciseStore = create<ExerciseStore>()(
       // Filter operations
       set_filter: (key, value) => {
         set(state => {
-          state.filters[key] = value;
+          (state.filters as any)[key] = value;
         });
       },
       
       reset_filters: () => {
         set(state => {
-          state.filters = createEmptyExerciseFilters();
+          state.filters = createEmptyExerciseFilters() as any;
           state.search_query = '';
         });
       },

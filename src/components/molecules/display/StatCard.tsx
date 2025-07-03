@@ -1,10 +1,10 @@
 // src/components/molecules/display/StatCard.tsx
 import React from 'react';
-import { View, StyleSheet, Pressable, ViewStyle, Animated } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { GlassBase, TextBase, AnimatedValue } from '@/components/atoms';
+import { TextBase, AnimatedValue } from '@/components/atoms';
 import { PressableGlass } from '@/components/atoms/glass/PressableGlass';
 import { useEntranceAnimation, useStaggerAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
@@ -13,7 +13,7 @@ interface StatCardProps extends BaseComponentProps {
   label: string;
   value: string | number;
   unit?: string;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   trend?: 'up' | 'down' | 'neutral';
   trend_value?: string;
   variant?: 'default' | 'compact' | 'prominent';
@@ -43,7 +43,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  const entranceAnimation = useEntranceAnimation({ type: 'scale', duration: theme.animation.durations.normal });
+  const entranceAnimation = useEntranceAnimation({ type: 'scale', duration: theme.animation.durations.normal.duration });
   
   // Trend configuration
   const trend_config = {
@@ -149,7 +149,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         <View style={styles.labelContainer}>
           {icon && (
             <Ionicons 
-              name={icon} 
+              name={icon as any} 
               size={config.icon_size} 
               color={theme.colors.text_secondary}
             />
@@ -166,7 +166,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             <AnimatedValue 
               value={value}
               style={styles.value}
-              duration={theme.animation.durations.slow}
+              duration={theme.animation.durations.slow.duration}
             />
           ) : (
             <TextBase variant="heading_2" style={styles.value}>
@@ -209,7 +209,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <PressableGlass
         variant="light"
         onPress={on_press}
-        glass_style={[styles.container, style]}
+        glass_style={[styles.container, style] as any}
         testID={testID}
         accessible={accessible}
         accessibilityLabel={accessibilityLabel || `${label}: ${value} ${unit || ''}`}

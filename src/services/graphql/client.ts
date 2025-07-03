@@ -40,7 +40,7 @@ const authLink = setContext(async (_, { headers }) => {
 /**
  * Error Link - Handles GraphQL and network errors
  */
-const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
       console.error(
@@ -70,7 +70,7 @@ const cache = new InMemoryCache({
     workout: {
       fields: {
         workout_exercises: {
-          merge(existing = [], incoming: unknown[]) {
+          merge(_existing = [], incoming: unknown[]) {
             return incoming;
           },
         },
@@ -88,13 +88,13 @@ const cache = new InMemoryCache({
         // Merge paginated lists properly
         exercises: {
           keyArgs: ['where', 'order_by'],
-          merge(existing = [], incoming: unknown[]) {
+          merge(_existing = [], incoming: unknown[]) {
             return incoming;
           },
         },
         workouts: {
           keyArgs: ['where', 'order_by'],
-          merge(existing = [], incoming: unknown[]) {
+          merge(_existing = [], incoming: unknown[]) {
             return incoming;
           },
         },

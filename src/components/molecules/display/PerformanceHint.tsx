@@ -4,7 +4,7 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { GlassBase, TextBase, Spacer } from '@/components/atoms';
+import { GlassBase, TextBase } from '@/components/atoms';
 import { useEntranceAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
 
@@ -190,7 +190,7 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
           <View style={styles.prBadge}>
             <Ionicons 
               name="trophy" 
-              size={theme.sizes.icons.xxs} 
+              size={theme.sizes.icons.xs} 
               color={theme.colors.background}
             />
             <TextBase variant="caption" style={styles.prText}>PR</TextBase>
@@ -345,7 +345,7 @@ interface BadgeProps extends BaseComponentProps {
   label: string;
   variant?: 'pr' | 'new' | 'improved' | 'custom';
   color?: string;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   size?: 'small' | 'medium';
   style?: ViewStyle;
 }
@@ -365,7 +365,7 @@ export const Badge: React.FC<BadgeProps> = ({
   const { animatedStyle, AnimatedView } = useEntranceAnimation({
     type: 'scale',
     from: { scale: 0, opacity: 0 },
-    duration: theme.animation.durations.normal,
+    duration: theme.animation.durations.normal.duration,
   });
   
   const variant_config = {
@@ -424,8 +424,8 @@ export const Badge: React.FC<BadgeProps> = ({
       >
         {display_icon && (
           <Ionicons 
-            name={display_icon} 
-            size={size === 'small' ? theme.sizes.icons.xxs : theme.sizes.icons.xs} 
+            name={display_icon as any} 
+            size={size === 'small' ? theme.sizes.icons.xs : theme.sizes.icons.xs} 
             color={config.text_color}
           />
         )}

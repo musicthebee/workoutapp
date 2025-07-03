@@ -13,8 +13,8 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { InputBase, GlassBase, TextBase } from '@/components/atoms';
-import { useTransitionAnimation, usePressAnimation } from '@/hooks/ui/animations';
+import { GlassBase, TextBase } from '@/components/atoms';
+import { usePressAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
 
 interface SearchInputProps extends BaseComponentProps {
@@ -54,9 +54,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 }) => {
   const theme = useTheme();
   const inputRef = useRef<TextInput>(null);
-  const [isFocused, setIsFocused] = useState(false);
+  const [, setIsFocused] = useState(false);
   const clearButtonAnimation = usePressAnimation({ scale: 0.8 });
-  const focusAnimation = useTransitionAnimation(isFocused, { type: 'fade', duration: theme.animation.durations.fast });
   
   const handle_clear = useCallback(() => {
     on_change_text('');

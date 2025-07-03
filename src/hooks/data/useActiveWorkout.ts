@@ -1,17 +1,13 @@
 // src/hooks/data/useActiveWorkout.ts
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import {
   useActiveWorkoutStore,
-  useCurrentExercise,
-  useIsWorkoutActive,
-  useWorkoutProgress,
 } from '@/store/activeWorkout';
 import type {
   UUID,
   SetPerformance,
   ActiveExercise,
-  WorkoutState,
 } from '@/types';
 
 /**
@@ -22,7 +18,6 @@ export const useActiveWorkout = () => {
   // Select state from store
   const {
     session,
-    performance_id,
     is_loading,
     is_saving,
     error,

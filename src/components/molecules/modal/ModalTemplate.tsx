@@ -38,7 +38,6 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
   keyboard_avoiding = true,
   content_style,
   footer_style,
-  glass_variant = 'light',
   testID,
   accessible = true,
   accessibilityLabel,

@@ -48,8 +48,8 @@ export const ComponentShowcaseScreen: React.FC = () => {
   const theme = useTheme();
   
   // Demo state using our hooks - ALL FIXED!
-  const { exercises, filters, handle_filter_change, toggle_favorites_filter } = useExercises(); // ✅ FIXED
-  const { workouts, counts: workout_counts } = useWorkouts(); // ✅ FIXED
+  const { filters, handle_filter_change, toggle_favorites_filter } = useExercises(); // ✅ FIXED
+  useWorkouts(); // ✅ FIXED
   const { is_active, start_empty_workout, end_workout } = useActiveWorkout(); // ✅ FIXED
   const timer = useTimer({ mode: 'countdown', initial_seconds: 90 });
   

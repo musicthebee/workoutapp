@@ -4,7 +4,8 @@
  */
 
 import type { Theme } from '@/theme';
-import type { TextColor, TypographyPreset } from '@/types';
+import type { TypographyPreset } from '@/theme/tokens/typography';
+import type { TextColor } from '@/types';
 
 /**
  * Get text color value from theme based on color name

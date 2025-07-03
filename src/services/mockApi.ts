@@ -14,8 +14,6 @@ import type {
   Workout,
   WorkoutExercise,
   WorkoutPerformance,
-  ExercisePerformance,
-  SetPerformance,
   User,
 } from '@/types/database/models';
 

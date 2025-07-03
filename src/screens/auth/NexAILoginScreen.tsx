@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions,
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
@@ -20,17 +19,13 @@ import Animated, {
   withSpring,
   withSequence,
   withDelay,
-  withRepeat,
   interpolate,
-  Extrapolate,
-  FadeIn,
   FadeInDown,
   FadeInUp,
   Layout,
   Easing,
   cancelAnimation,
 } from 'react-native-reanimated';
-import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import { NexAILogo } from '@/components/brand/NexAILogo';
@@ -38,7 +33,6 @@ import { useTheme } from '@/theme/hooks/useTheme';
 import { glassMorphism } from '@/theme/utils/glassMorphism';
 import { useLogin } from '@/hooks/useAuth';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface NexAILoginScreenProps {
   onForgotPassword?: () => void;
@@ -150,18 +144,10 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
     opacity: glassOpacity.value,
   }));
   
-  const emailContainerStyle = useAnimatedStyle(() => {
-    const borderColor = interpolate(
-      emailFocus.value,
-      [0, 1],
-      [0, 1],
-    );
-    
-    return {
-      borderColor: theme.colors.primary,
-      borderWidth: interpolate(emailFocus.value, [0, 1], [1, 2]),
-    };
-  });
+  const emailContainerStyle = useAnimatedStyle(() => ({
+    borderColor: theme.colors.primary,
+    borderWidth: interpolate(emailFocus.value, [0, 1], [1, 2]),
+  }));
   
   const passwordContainerStyle = useAnimatedStyle(() => ({
     borderColor: theme.colors.primary,

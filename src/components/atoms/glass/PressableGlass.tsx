@@ -99,7 +99,7 @@ export const PressableGlass: React.FC<PressableGlassProps> = ({
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole={accessibilityRole}
-      accessibilityState={{ ...accessibilityState, disabled }}
+      accessibilityState={{ ...accessibilityState, disabled: disabled || false }}
       style={style}
       {...pressableProps}
     >

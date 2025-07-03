@@ -8,11 +8,9 @@ import type {
   ActiveWorkout,
   ActiveExercise,
   SetPerformance,
-  WorkoutState,
-  WorkoutExercise,
-  Exercise,
   CompleteWorkoutInput,
 } from '@/types';
+import type { WorkoutExercise, Exercise } from '@/types/database/models';
 import { mockApi } from '@/services/mockApi';
 import { orderingHelpers } from '@/types/utils/ordering';
 import { useExerciseStore } from '../exercise';
@@ -163,7 +161,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
           };
           
           set(state => {
-            state.session = session;
+            state.session = session as any;
             state.performance_id = performance.id;
             state.is_loading = false;
           });
@@ -217,7 +215,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
           // Add to session
           set(state => {
             if (state.session) {
-              state.session.exercises.push(new_exercise);
+              (state.session.exercises as any).push(new_exercise);
               state.session.totalSets += new_exercise.sets;
               
               // If this is the first exercise, move to active state
@@ -462,7 +460,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
                 exercise_id: ex.exercise_id,
                 exercise_name: ex.exerciseName,
                 exercise_order: ex.exercise_order,
-                set_performances: ex.completedSets,
+                set_performances: ex.completedSets as any,
               })),
           };
           

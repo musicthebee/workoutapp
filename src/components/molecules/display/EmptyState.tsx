@@ -4,13 +4,13 @@ import { View, StyleSheet, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { TextBase, Spacer } from '@/components/atoms';
+import { TextBase } from '@/components/atoms';
 import { BigButton } from '@/components/molecules/button/BigButton';
 import { useEntranceAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
 
 interface EmptyStateProps extends BaseComponentProps {
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   title: string;
   message?: string;
   action_label?: string;
@@ -111,7 +111,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     >
       <AnimatedView style={[styles.content, animatedStyle]}>
         <Ionicons 
-          name={icon} 
+          name={icon as any} 
           size={config.icon_size} 
           color={theme.colors.text_tertiary}
           style={styles.icon}
@@ -142,7 +142,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
               variant="primary"
               testID={`${testID}-action`}
               full_width
-            />
+            >
+              {action_label}
+            </BigButton>
           </View>
         )}
       </AnimatedView>

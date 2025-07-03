@@ -23,7 +23,7 @@ export const usePressAnimation = (options: PressAnimationOptions = {}) => {
   const {
     scale = 0.96,
     opacity = 0.8,
-    duration = theme.animation.durations.fast,
+    duration = theme.animation.durations.fast.duration,
   } = options;
 
   const scaleValue = useRef(new Animated.Value(1)).current;
@@ -311,7 +311,7 @@ export const useTransitionAnimation = (
 ) => {
   const theme = useTheme();
   const {
-    duration = theme.animation.durations.normal,
+    duration = theme.animation.durations.normal.duration,
     type = 'fade',
   } = options;
 

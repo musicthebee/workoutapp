@@ -1,6 +1,6 @@
 // src/services/auth.service.ts
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification } from '@react-native-firebase/auth';
-import { getFirestore, collection, doc, setDoc, serverTimestamp } from '@react-native-firebase/firestore';
+import { getFirestore, doc, setDoc, serverTimestamp } from '@react-native-firebase/firestore';
 import type { 
   AuthUser, 
   AuthState, 
@@ -48,7 +48,7 @@ class AuthService {
     console.log('AuthService: Setting up auth state listener');
     try {
       this.unsubscribe_firebase = onAuthStateChanged(
-        this.auth,
+        this.auth!,
         this.handle_auth_state_change.bind(this)
       );
       console.log('AuthService: Auth listener set up successfully');
@@ -166,7 +166,7 @@ class AuthService {
       
       // Create user with email and password
       const credential = await createUserWithEmailAndPassword(
-        this.auth,
+        this.auth!,
         data.email,
         data.password
       );
@@ -180,7 +180,7 @@ class AuthService {
       }
 
       // Create user profile in Firestore
-      const userRef = doc(this.firestore, 'users', credential.user.uid);
+      const userRef = doc(this.firestore!, 'users', credential.user.uid);
       await setDoc(userRef, {
         email: data.email,
         first_name: data.first_name || '',
@@ -207,7 +207,7 @@ class AuthService {
     try {
       this.update_state({ is_loading: true });
       
-      await signInWithEmailAndPassword(this.auth, data.email, data.password);
+      await signInWithEmailAndPassword(this.auth!, data.email, data.password);
       
       // Auth state listener will handle the state update
     } catch (error: any) {
@@ -222,7 +222,7 @@ class AuthService {
   async sign_out(): Promise<void> {
     try {
       this.update_state({ is_loading: true });
-      await signOut(this.auth);
+      await signOut(this.auth!);
       // Auth state listener will handle the state update
     } catch (error: any) {
       this.update_state({ is_loading: false });
@@ -235,7 +235,7 @@ class AuthService {
    */
   async reset_password(email: string): Promise<void> {
     try {
-      await sendPasswordResetEmail(this.auth, email);
+      await sendPasswordResetEmail(this.auth!, email);
     } catch (error: any) {
       throw this.map_firebase_error(error);
     }
@@ -246,7 +246,7 @@ class AuthService {
    */
   async send_verification_email(): Promise<void> {
     try {
-      const current_user = this.auth.currentUser;
+      const current_user = this.auth!.currentUser;
       if (!current_user) {
         throw new AuthError('auth/user-not-found', 'No user signed in');
       }
@@ -262,7 +262,7 @@ class AuthService {
    */
   async get_id_token(force_refresh = false): Promise<string | null> {
     try {
-      const current_user = this.auth.currentUser;
+      const current_user = this.auth!.currentUser;
       if (!current_user) {
         return null;
       }
@@ -282,7 +282,7 @@ class AuthService {
     claims: Record<string, any>;
   } | null> {
     try {
-      const current_user = this.auth.currentUser;
+      const current_user = this.auth!.currentUser;
       if (!current_user) {
         return null;
       }

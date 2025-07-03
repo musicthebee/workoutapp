@@ -12,7 +12,6 @@ import Animated, {
   withRepeat,
   withSpring,
   interpolate,
-  Extrapolate,
   withSequence,
   withDelay,
   Easing,
@@ -27,17 +26,12 @@ import Svg, {
   G,
   Text as SvgText,
   Circle,
-  Path,
-  Mask,
-  Rect,
 } from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/theme/hooks/useTheme';
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
 const AnimatedG = Animated.createAnimatedComponent(G);
-const AnimatedSvgText = Animated.createAnimatedComponent(SvgText);
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface NexAILogoProps {
   size?: number;
@@ -340,7 +334,7 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
           <AnimatedPolygon
             points={hexagonPoints(0.95)}
             fill="url(#hexGradient3)"
-            opacity={face3Opacity}
+            opacity={face3Opacity.value}
             strokeWidth="2"
             stroke={theme.colors.glass_border}
           />
@@ -349,7 +343,7 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
           <AnimatedPolygon
             points={hexagonPoints(0.97)}
             fill="url(#hexGradient2)"
-            opacity={face2Opacity}
+            opacity={face2Opacity.value}
             strokeWidth="2"
             stroke={theme.colors.glass_border}
           />
@@ -358,14 +352,14 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
           <AnimatedPolygon
             points={hexagonPoints(1)}
             fill="url(#hexGradient1)"
-            opacity={face1Opacity}
+            opacity={face1Opacity.value}
             strokeWidth="3"
             stroke={theme.colors.primary}
           />
         </AnimatedG>
         
         {/* Text container - Always visible for static, hidden when back-facing for animated */}
-        <AnimatedG style={animated ? textContainerStyle : undefined} opacity={animated ? undefined : 1}>
+        <G style={animated ? textContainerStyle : undefined} opacity={animated ? undefined : 1}>
           {/* Large N */}
           <SvgText
             x={actualSize / 2}
@@ -392,7 +386,7 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
           >
             AI
           </SvgText>
-        </AnimatedG>
+        </G>
         
         {/* Orbital rings */}
         {animated && (

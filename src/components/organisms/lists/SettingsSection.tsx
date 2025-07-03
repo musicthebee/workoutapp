@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { TextBase, Spacer } from '@/components/atoms';
+import { TextBase } from '@/components/atoms';
 import { SettingsRow } from '@/components/molecules';
 import { useTheme } from '@/hooks';
 import type { SettingsSectionProps } from '@/types';

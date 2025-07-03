@@ -23,7 +23,7 @@ export const WorkoutExampleScreen: React.FC = () => {
   const theme = useTheme();
   
   // Mock data
-  const [currentSet, setCurrentSet] = useState(2);
+  const [currentSet] = useState(2);
   const [timeRemaining, setTimeRemaining] = useState(45);
   const [repsInput, setRepsInput] = useState('');
   const [weightInput, setWeightInput] = useState('135');
@@ -94,11 +94,13 @@ export const WorkoutExampleScreen: React.FC = () => {
           <Flex direction="row" justify="between" align="center">
             <Flex>
               <TextBase variant="caption" color="tertiary">REST TIME</TextBase>
-              <AnimatedValue 
-                value={timeRemaining}
-                format={(v) => `${Math.floor(v)}s`}
-                style={{ fontSize: theme.typography.heading_2.font_size }}
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                <AnimatedValue 
+                  value={timeRemaining}
+                  style={{ fontSize: theme.typography.heading_2.font_size }}
+                />
+                <TextBase variant="heading_2" style={{ fontSize: theme.typography.heading_2.font_size }}>s</TextBase>
+              </View>
             </Flex>
             
             <ButtonBase variant="ghost" size="sm" onPress={() => setTimeRemaining(0)}>

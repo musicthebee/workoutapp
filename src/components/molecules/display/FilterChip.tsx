@@ -1,12 +1,12 @@
 // src/components/molecules/display/FilterChip.tsx
 import React from 'react';
-import { StyleSheet, Pressable, View, ViewStyle, Animated } from 'react-native';
+import { StyleSheet, Pressable, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
 import { GlassBase, TextBase } from '@/components/atoms';
 import { PressableGlass } from '@/components/atoms/glass/PressableGlass';
-import { useEntranceAnimation, useStaggerAnimation } from '@/hooks/ui/animations';
+import { useStaggerAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
 
 interface FilterChipProps extends BaseComponentProps {
@@ -15,7 +15,7 @@ interface FilterChipProps extends BaseComponentProps {
   on_press?: () => void;
   on_remove?: () => void;
   variant?: 'default' | 'compact' | 'removable';
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   count?: number;
   style?: ViewStyle;
 }
@@ -50,7 +50,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
     compact: {
       height: 36,
       padding_horizontal: theme.spacing.sm,
-      icon_size: theme.sizes.icons.xxs,
+      icon_size: theme.sizes.icons.xs,
       font_variant: 'body_small' as const,
     },
     removable: {
@@ -106,7 +106,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
     <View style={styles.content}>
       {icon && (
         <Ionicons 
-          name={icon} 
+          name={icon as any} 
           size={config.icon_size} 
           color={is_selected ? theme.colors.text_inverse : theme.colors.text_secondary}
         />
@@ -155,9 +155,9 @@ export const FilterChip: React.FC<FilterChipProps> = ({
         onPress={handle_press}
         glass_style={[
           styles.container,
-          is_selected && styles.selected,
+          is_selected ? styles.selected : {},
           style,
-        ]}
+        ] as any}
         testID={testID}
         accessible={accessible}
         accessibilityLabel={accessibilityLabel || `${label} filter${is_selected ? ', selected' : ''}${count ? `, ${count} items` : ''}`}
@@ -195,7 +195,7 @@ interface FilterChipGroupProps extends BaseComponentProps {
     id: string;
     label: string;
     is_selected?: boolean;
-    icon?: keyof typeof Ionicons.glyphMap;
+    icon?: string;
     count?: number;
   }>;
   on_chip_press?: (id: string) => void;

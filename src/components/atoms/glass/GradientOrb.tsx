@@ -8,8 +8,6 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
-  interpolate,
-  Extrapolate,
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/theme/hooks/useTheme';

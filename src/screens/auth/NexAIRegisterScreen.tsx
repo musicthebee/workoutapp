@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions,
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
@@ -19,12 +18,10 @@ import Animated, {
   withTiming,
   withSpring,
   withSequence,
-  FadeIn,
   FadeInDown,
   FadeInUp,
   Easing,
 } from 'react-native-reanimated';
-import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import { NexAILogo } from '@/components/brand/NexAILogo';
 import { useTheme } from '@/theme/hooks/useTheme';
@@ -32,7 +29,6 @@ import { glassMorphism } from '@/theme/utils/glassMorphism';
 import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from '@/hooks/useAuth';
 
-const { width: screenWidth } = Dimensions.get('window');
 
 interface NexAIRegisterScreenProps {
   onLogin?: () => void;

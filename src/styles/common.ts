@@ -1,6 +1,6 @@
 // src/styles/common.ts
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { Theme } from '@/types/ui/theme';
+import { Theme } from '@/theme';
 
 /**
  * Common style patterns used across multiple components

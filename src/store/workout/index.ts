@@ -4,8 +4,6 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import type { 
-  Workout,
-  WorkoutExercise,
   UUID, 
   WorkoutFilters,
   CreateWorkoutInput,
@@ -13,6 +11,7 @@ import type {
   AddExerciseToWorkoutInput,
   ApiError,
 } from '@/types';
+import type { Workout, WorkoutExercise } from '@/types/database/models';
 import { mockApi } from '@/services/mockApi';
 import { createEmptyWorkoutFilters } from '@/types/business/filters';
 import { orderingHelpers } from '@/types/utils/ordering';
@@ -464,13 +463,13 @@ export const useWorkoutStore = create<WorkoutStore>()(
       // Filter operations
       set_filter: (key, value) => {
         set(state => {
-          state.filters[key] = value;
+          (state.filters as any)[key] = value;
         });
       },
       
       reset_filters: () => {
         set(state => {
-          state.filters = createEmptyWorkoutFilters();
+          state.filters = createEmptyWorkoutFilters() as any;
           state.search_query = '';
         });
       },

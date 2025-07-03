@@ -1,5 +1,5 @@
 // src/hooks/data/useWorkouts.ts
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 
 import {
   useWorkoutStore,
@@ -342,7 +342,7 @@ export const useWorkoutCreation = () => {
     });
   }, [create_workout, selected_exercises]);
   
-  const create_with_ai = useCallback(async (prompt: string, constraints?: any) => {
+  const create_with_ai = useCallback(async (prompt: string) => {
     // TODO: Call AI service to generate workout
     const user_id = 'user_123';
     const generated: CreateWorkoutInput = {

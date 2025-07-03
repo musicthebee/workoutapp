@@ -142,7 +142,6 @@ export const useParallaxAnimation = (scrollOffset: any, factor = 0.5) => {
  * Color shift animation for dynamic glass tints
  */
 export const useColorShiftAnimation = (enabled = true) => {
-  const theme = useTheme();
   const hue = useSharedValue(0);
   
   useEffect(() => {

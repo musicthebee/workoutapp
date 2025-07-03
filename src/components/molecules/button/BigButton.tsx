@@ -8,7 +8,7 @@ import { useTheme } from '@/hooks';
 
 interface BigButtonProps extends Omit<ButtonBaseProps, 'size'> {
   label: string;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   icon_position?: 'left' | 'right';
   loading_text?: string;
   full_width?: boolean;
@@ -58,8 +58,6 @@ export const BigButton: React.FC<BigButtonProps> = ({
     },
   });
 
-  // Determine text color based on variant
-  const text_color = variant === 'ghost' || variant === 'secondary' ? 'primary' : 'inverse';
   
   return (
     <ButtonBase
@@ -82,7 +80,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
         {/* Left icon */}
         {!loading && icon && icon_position === 'left' && (
           <Ionicons 
-            name={icon} 
+            name={icon as any} 
             size={theme.sizes.icons.md} 
             color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
             style={styles.icon}
@@ -103,7 +101,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
         {/* Right icon */}
         {!loading && icon && icon_position === 'right' && (
           <Ionicons 
-            name={icon} 
+            name={icon as any} 
             size={theme.sizes.icons.md} 
             color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
             style={styles.icon}
@@ -119,13 +117,16 @@ export const BigButton: React.FC<BigButtonProps> = ({
  * Variant for home screen quick actions
  * Icon on top, label below
  */
-interface QuickActionButtonProps extends BaseComponentProps {
+interface QuickActionButtonProps {
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: string;
   on_press: () => void;
   variant?: 'primary' | 'secondary';
   badge?: string | number;
   style?: ViewStyle;
+  testID?: string;
+  accessible?: boolean;
+  accessibilityLabel?: string;
 }
 
 export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
@@ -192,7 +193,7 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
       <View style={styles.content}>
         <View style={styles.iconContainer}>
           <Ionicons 
-            name={icon} 
+            name={icon as any} 
             size={theme.sizes.icons.xl} 
             color={variant === 'primary' ? theme.colors.text_inverse : theme.colors.primary}
           />
@@ -216,15 +217,18 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
  * Floating Action Button
  * For adding exercises during workout
  */
-interface FloatingActionButtonProps extends BaseComponentProps {
-  icon?: keyof typeof Ionicons.glyphMap;
+interface FloatingActionButtonProps {
+  icon?: string;
   on_press: () => void;
   visible?: boolean;
   style?: ViewStyle;
+  testID?: string;
+  accessible?: boolean;
+  accessibilityLabel?: string;
 }
 
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  icon = 'add',
+  icon = 'add' as any,
   on_press,
   visible = true,
   style,

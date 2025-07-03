@@ -5,7 +5,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
-import { useThemeControls } from '@/hooks';
 import type { RootStackParamList, TabParamList } from '@/types';
 
 import { View, Text } from 'react-native';
@@ -32,7 +31,6 @@ const Tab = createBottomTabNavigator<TabParamList>();
  */
 const TabNavigator: React.FC = () => {
   const theme = useTheme();
-  const { isDark, toggleTheme } = useThemeControls();
   
   return (
     <Tab.Navigator

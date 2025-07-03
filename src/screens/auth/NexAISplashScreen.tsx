@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
-  Text,
-  Dimensions,
   StyleSheet,
   StatusBar,
 } from 'react-native';
@@ -26,7 +24,6 @@ import { NexAILogo } from '@/components/brand/NexAILogo';
 import { useTheme } from '@/theme/hooks/useTheme';
 import { TextBase } from '@/components/atoms';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface NexAISplashScreenProps {
   onAnimationComplete?: () => void;
@@ -292,7 +289,7 @@ export const NexAISplashScreen: React.FC<NexAISplashScreenProps> = ({ onAnimatio
       }, (finished) => {
         if (finished) {
           runOnJS(setShowContent)(false);
-          runOnJS(onAnimationComplete)?.();
+          if (onAnimationComplete) runOnJS(onAnimationComplete)();
         }
       });
     }, 5000);
@@ -396,9 +393,6 @@ export const NexAISplashScreen: React.FC<NexAISplashScreenProps> = ({ onAnimatio
     opacity: exitOpacity.value,
   }));
   
-  const particleStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: particleScale.value }],
-  }));
   
   if (!showContent) return null;
   

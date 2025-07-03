@@ -1,11 +1,11 @@
 // src/components/molecules/list/SettingsRow.tsx
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Switch, ViewStyle } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { TextBase } from '@/components/atoms';
 import { useTheme } from '@/hooks';
-import type { SettingsRowProps, SettingsItem } from '@/types';
+import type { SettingsRowProps } from '@/types';
 
 /**
  * Settings Row Component

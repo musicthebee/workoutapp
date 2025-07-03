@@ -18,12 +18,10 @@ import Animated, {
   withTiming,
   withSpring,
   withRepeat,
-  FadeIn,
   FadeInDown,
   FadeInUp,
   Easing,
 } from 'react-native-reanimated';
-import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/theme/hooks/useTheme';
 import { glassMorphism } from '@/theme/utils/glassMorphism';

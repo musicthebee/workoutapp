@@ -1,7 +1,7 @@
 // src/hooks/useAuth.ts
 import { useState, useEffect, useCallback } from 'react';
 import { authService } from '@/services/auth.service';
-import type { AuthState, AuthUser, SignInData, SignUpData, AuthError } from '@/types/auth';
+import type { AuthState, SignInData, SignUpData, AuthError } from '@/types/auth';
 
 /**
  * Primary auth hook for the application

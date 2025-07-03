@@ -1,5 +1,5 @@
 // src/hooks/data/useExercises.ts
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 
 import {
   useExerciseStore,

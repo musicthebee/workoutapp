@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { TextBase, Spacer } from '@/components/atoms';
+import { TextBase } from '@/components/atoms';
 import { EmptyState } from '@/components/molecules';
 import { SettingsSection } from '@/components/organisms';
 import { useTheme } from '@/hooks';

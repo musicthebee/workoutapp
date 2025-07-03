@@ -4,7 +4,6 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
@@ -17,18 +16,16 @@ const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
  */
 export interface AnimatedValueProps extends BaseComponentProps {
   value: number;
-  format?: (value: number) => string;
   duration?: number;
   style?: StyleProp<TextStyle>;
 }
 
 /**
  * Animated Value Component
- * Pure animated number display
+ * Pure animated number display with automatic rounding
  */
 export const AnimatedValue: React.FC<AnimatedValueProps> = ({
   value,
-  format = (v) => Math.round(v).toString(),
   duration,
   style,
   testID,
@@ -43,19 +40,20 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
     const numericValue = typeof value === 'number' && !isNaN(value) ? value : 0;
     animatedValue.value = withTiming(
       numericValue,
-      { duration: duration || theme.animation.durations.normal }
+      { duration: duration || theme.animation.durations.normal.duration }
     );
   }, [value, duration, animatedValue, theme]);
   
   // Create a worklet-compatible format function
   const animatedProps = useAnimatedProps(() => {
     'worklet';
-    // Ensure animated value is valid before rounding
+    // Ensure animated value is valid before formatting
     const currentValue = isNaN(animatedValue.value) ? 0 : animatedValue.value;
-    const roundedValue = Math.round(currentValue);
+    // Use simple inline formatting that works in worklet context
+    const formattedValue = Math.round(currentValue).toString();
     return {
-      text: roundedValue.toString(),
-      defaultValue: roundedValue.toString(),
+      text: formattedValue,
+      defaultValue: formattedValue,
     };
   });
   

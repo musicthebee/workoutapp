@@ -278,10 +278,12 @@ export const AtomsShowcaseScreen: React.FC = () => {
             
             <Flex gap="sm" align="center">
               <TextBase variant="body_small" color="tertiary">Animated Value</TextBase>
-              <AnimatedValue 
-                value={animatedNumber}
-                format={(v) => `${Math.round(v)} reps`}
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+                <AnimatedValue 
+                  value={animatedNumber}
+                />
+                <TextBase variant="body_medium">reps</TextBase>
+              </View>
               <ButtonBase variant="ghost" size="sm" onPress={updateNumber}>
                 <TextBase variant="button_small">Animate Number</TextBase>
               </ButtonBase>

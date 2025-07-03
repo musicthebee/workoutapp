@@ -1,5 +1,5 @@
 // src/theme/utils/glassMorphism.ts
-import { ViewStyle, Platform } from 'react-native';
+import { ViewStyle } from 'react-native';
 import { glassEffects, glassPresets as glassPresetTokens, gradients, borderWidths, shadows } from '../tokens/effects';
 
 export interface GlassMorphismOptions {

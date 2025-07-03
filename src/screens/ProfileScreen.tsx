@@ -5,8 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks/useAuth';
-import { TextBase, GlassBase, Spacer } from '@/components/atoms';
-import { StatCard, BigButton } from '@/components/molecules';
+import { TextBase, GlassBase } from '@/components/atoms';
 import { SettingsListTemplate } from '@/components/templates';
 import type { SettingsSection } from '@/types';
 
@@ -195,7 +194,6 @@ export const ProfileScreen: React.FC = () => {
     </View>
   );
 
-  const QuickActions = () => null; // Remove duplicate edit profile button
 
   return (
     <SettingsListTemplate

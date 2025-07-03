@@ -162,7 +162,7 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
             }
           />
           <LinearGradient
-            colors={gradientConfig.colors}
+            colors={[...gradientConfig.colors]}
             start={gradientConfig.start}
             end={gradientConfig.end}
             style={StyleSheet.absoluteFillObject}
