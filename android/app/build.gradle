@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 
@@ -79,12 +80,12 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.fittrack"
+    namespace "com.mkonyala.fitnesstracker"
     defaultConfig {
-        applicationId "com.fittrack"
+        applicationId "com.mkonyala.fitnesstracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 3
         versionName "1.0"
     }
     packagingOptions {

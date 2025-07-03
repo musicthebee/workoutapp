@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/theme/hooks/useTheme';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useThemeControls } from '@/hooks';
 import type { RootStackParamList, TabParamList } from '@/types';
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "632360564741",
+    "project_id": "fittrack-ae6a8",
+    "storage_bucket": "fittrack-ae6a8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632360564741:android:08805c738b68e7af27446c",
+        "android_client_info": {
+          "package_name": "com.mkonyala.fitnesstracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnKvVE1C1rnwNRxHTlkJ3SdHqQA-xTB58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

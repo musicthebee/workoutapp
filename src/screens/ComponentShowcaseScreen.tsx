@@ -122,7 +122,18 @@ export const ComponentShowcaseScreen: React.FC = () => {
     },
     gridItem: {
       flex: 1,
-      minWidth: 150,
+      minWidth: 160,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+    },
+    quickButtonRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      flexWrap: 'wrap',
+      paddingTop: theme.spacing.xl,
+      paddingBottom: theme.spacing.sm,
     },
     row: {
       flexDirection: 'row',
@@ -150,6 +161,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
       }
       scrollable
     >
+        <View style={{ marginTop: theme.spacing.xl }}>
         {/* Phase 5: Hooks Demo */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -238,37 +250,31 @@ export const ComponentShowcaseScreen: React.FC = () => {
         </View>
 
         {/* Button Components */}
-        <View style={styles.section}>
+        <View style={[styles.section, { paddingTop: theme.spacing.lg }]}>
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Button Components
           </TextBase>
           
-          <View style={styles.grid}>
-            <View style={styles.gridItem}>
-              <BigButton
-                label="Complete Set"
-                icon="checkmark-circle"
-                onPress={() => {}}
-                variant="primary"
-              />
-            </View>
-            <View style={styles.gridItem}>
-              <BigButton
-                label="Rest Timer"
-                icon="timer"
-                variant="secondary"
-                onPress={() => timer.toggle()}
-              />
-            </View>
+          <View style={styles.buttonRow}>
+            <BigButton
+              label="Complete Set"
+              icon="checkmark-circle"
+              onPress={() => {}}
+              variant="primary"
+            />
+          </View>
+          <Spacer size="sm" />
+          <View style={styles.buttonRow}>
+            <BigButton
+              label="Rest Timer"
+              icon="timer"
+              variant="secondary"
+              onPress={() => timer.toggle()}
+            />
           </View>
           <Spacer size="md" />
           
-          <View style={styles.row}>
-            <QuickActionButton
-              label="Quick Start"
-              icon="flash"
-              on_press={() => {}}
-            />
+          <View style={styles.quickButtonRow}>
             <QuickActionButton
               label="History"
               icon="time"
@@ -438,43 +444,38 @@ export const ComponentShowcaseScreen: React.FC = () => {
             <Spacer size="md" />
             <View style={styles.row}>
               <BigButton
-                label={timer.is_running ? "Pause" : "Start"}
                 icon={timer.is_running ? "pause" : "play"}
                 onPress={timer.toggle}
                 variant="primary"
-              >
-                {timer.is_running ? "Pause" : "Start"}
-              </BigButton>
+              />
               <BigButton
-                label="Reset"
                 icon="refresh"
                 onPress={timer.reset}
                 variant="ghost"
-              >
-                Reset
-              </BigButton>
+              />
             </View>
             <Spacer size="sm" />
-            <View style={styles.row}>
+            <View style={[styles.row, { justifyContent: 'center' }]}>
               <BigButton
                 label="-30s"
                 onPress={timer.subtract_30_seconds}
                 variant="secondary"
-              >
-                -30s
-              </BigButton>
+                full_width={false}
+                style={{ minWidth: 80 }}
+              />
               <BigButton
                 label="+30s"
                 onPress={timer.add_30_seconds}
                 variant="secondary"
-              >
-                +30s
-              </BigButton>
+                full_width={false}
+                style={{ minWidth: 80 }}
+              />
             </View>
           </GlassBase>
         </View>
 
         <Spacer size="xxxl" />
+        </View>
 
       {/* Floating Action Button */}
       <FloatingActionButton

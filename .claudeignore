@@ -1,0 +1,23 @@
+# Common ignore patterns
+*.log
+.*
+.env
+node_modules/
+__pycache__/
+.git/
+.idea/
+venv/
+android/
+codegen.yml
+Gemfile
+ios/
+metro.config.js
+package.json
+run.sh
+tsconfig.json
+app.json
+babel.config.js
+docs/
+index.js
+jest.config.js
+package-lock.json

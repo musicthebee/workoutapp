@@ -1,4 +1,4 @@
-package com.fittrack
+package com.mkonyala.fitnesstracker
 
 import android.app.Application
 import com.facebook.react.PackageList

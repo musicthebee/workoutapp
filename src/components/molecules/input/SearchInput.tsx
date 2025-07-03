@@ -113,6 +113,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       fontSize: config.font_size,
       color: theme.colors.text_primary,
       padding: 0,
+      textAlignVertical: 'center',
+      includeFontPadding: false,
+      lineHeight: config.font_size * 1.2,
       ...Platform.select({
         ios: {
           paddingVertical: theme.spacing.xs,

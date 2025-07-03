@@ -1,4 +1,4 @@
-package com.fittrack
+package com.mkonyala.fitnesstracker
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

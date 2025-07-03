@@ -143,8 +143,10 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
   
   const styles = StyleSheet.create({
     container: {
-      width: theme.sizes.touchTargets.huge,
+      minWidth: theme.sizes.touchTargets.large,
       height: theme.sizes.touchTargets.huge,
+      paddingHorizontal: theme.spacing.sm,
+      overflow: 'visible',
     },
     content: {
       flex: 1,
@@ -157,7 +159,7 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
     },
     badge: {
       position: 'absolute',
-      top: -theme.spacing.xs,
+      top: -theme.spacing.sm,
       right: -theme.spacing.xs,
       minWidth: theme.spacing.lg,
       height: theme.spacing.lg,
