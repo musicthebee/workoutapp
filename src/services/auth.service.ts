@@ -5,9 +5,9 @@ import type {
   AuthUser, 
   AuthState, 
   SignUpData, 
-  SignInData, 
-  AuthError 
+  SignInData
 } from '@/types/auth';
+import { AuthError } from '@/types/auth';
 
 type AuthStateListener = (state: AuthState) => void;
 

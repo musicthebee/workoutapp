@@ -17,7 +17,7 @@ run.sh
 tsconfig.json
 app.json
 babel.config.js
-docs/
+# docs/
 index.js
 jest.config.js
 package-lock.json

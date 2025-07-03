@@ -25,14 +25,14 @@ type AuthState = 'splash' | 'login' | 'register' | 'forgot-password' | 'authenti
  * Manages the authentication flow and screen transitions
  */
 const AuthFlow: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, is_loading } = useAuth();
   const [authState, setAuthState] = useState<AuthState>('splash');
   const [showSplash, setShowSplash] = useState(true);
   
   
   // Update auth state when authentication changes
   useEffect(() => {
-    if (!loading && !showSplash) {
+    if (!is_loading && !showSplash) {
       if (user) {
         setAuthState('authenticated');
       } else if (authState === 'authenticated') {
@@ -40,7 +40,7 @@ const AuthFlow: React.FC = () => {
         setAuthState('login');
       }
     }
-  }, [user, loading, showSplash, authState]);
+  }, [user, is_loading, showSplash, authState]);
   
   // Handle splash screen completion
   const handleSplashComplete = (): void => {
