@@ -29,8 +29,8 @@ query GetWorkouts($user_id: uuid!) {
       exercise_order
       sets
       reps
-      duration_seconds
-      rest_seconds
+      duration
+      rest
       exercise {
         id
         name
@@ -64,8 +64,8 @@ query GetWorkoutById($id: uuid!) {
       exercise_order
       sets
       reps
-      duration_seconds
-      rest_seconds
+      duration
+      rest
       exercise {
         id
         name
@@ -119,8 +119,8 @@ mutation AddExerciseToWorkout(
   $exercise_order: numeric!
   $sets: Int!
   $reps: Int
-  $duration_seconds: Int
-  $rest_seconds: Int!
+  $duration: Int
+  $rest: Int!
 ) {
   insert_workout_exercise_one(
     object: {
@@ -129,8 +129,8 @@ mutation AddExerciseToWorkout(
       exercise_order: $exercise_order
       sets: $sets
       reps: $reps
-      duration_seconds: $duration_seconds
-      rest_seconds: $rest_seconds
+      duration: $duration
+      rest: $rest
     }
   ) {
     workout_id
@@ -138,8 +138,8 @@ mutation AddExerciseToWorkout(
     exercise_order
     sets
     reps
-    duration_seconds
-    rest_seconds
+    duration
+    rest
   }
 }
 
@@ -158,8 +158,8 @@ mutation UpdateWorkoutExercise(
     exercise_order
     sets
     reps
-    duration_seconds
-    rest_seconds
+    duration
+    rest
   }
 }
 

@@ -1,5 +1,5 @@
 import type { UUID } from '../common';
-import type { MeasurementType } from '../database/models';
+import type { MeasurementType } from '../database/enums';
 
 /**
  * Types for managing active workout sessions

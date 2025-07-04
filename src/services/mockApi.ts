@@ -10,16 +10,19 @@ import type {
 } from '@/types';
 
 import type {
-  Difficulty,
-  Equipment,
   Exercise,
-  ExerciseCategory,
-  MuscleGroup,
   Workout,
-  WorkoutCategory,
   WorkoutExercise,
   WorkoutPerformance,
 } from '@/types/database/models';
+import {
+  Difficulty,
+  Equipment,
+  ExerciseCategory,
+  MeasurementType,
+  MuscleGroup,
+  WorkoutCategory,
+} from '@/types/database/enums';
 
 import { authService } from '@/services/auth.service';
 
@@ -59,11 +62,11 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Barbell Bench Press',
-      muscle_groups: ['chest', 'triceps', 'shoulders'],
-      category: 'strength',
-      equipment: 'barbell',
+      muscle_groups: [MuscleGroup.CHEST, MuscleGroup.TRICEPS, MuscleGroup.SHOULDERS],
+      category: ExerciseCategory.STRENGTH,
+      equipment: Equipment.BARBELL,
       instructions: 'Lie on bench, lower bar to chest with control, press up powerfully.',
-      measurement_type: 'reps',
+      measurement_type: MeasurementType.REPS,
       default_sets: 3,
       default_reps: 10,
       default_duration: null,
@@ -84,11 +87,11 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Pull-ups',
-      muscle_groups: ['back', 'biceps'],
-      category: 'strength',
-      equipment: 'bodyweight',
+      muscle_groups: [MuscleGroup.BACK, MuscleGroup.BICEPS],
+      category: ExerciseCategory.STRENGTH,
+      equipment: Equipment.BODYWEIGHT,
       instructions: 'Hang from bar, pull up until chin over bar.',
-      measurement_type: 'reps',
+      measurement_type: MeasurementType.REPS,
       default_sets: 3,
       default_reps: 8,
       default_duration: null,
@@ -109,11 +112,11 @@ const mockDatabase: MockDatabase = {
       user_id: null,
       source_id: null,
       name: 'Plank',
-      muscle_groups: ['core', 'abs'],
-      category: 'strength',
-      equipment: 'bodyweight',
+      muscle_groups: [MuscleGroup.CORE, MuscleGroup.ABS],
+      category: ExerciseCategory.STRENGTH,
+      equipment: Equipment.BODYWEIGHT,
       instructions: 'Hold plank position with straight body line.',
-      measurement_type: 'duration',
+      measurement_type: MeasurementType.DURATION,
       default_sets: 3,
       default_reps: null,
       default_duration: 60,
@@ -138,8 +141,8 @@ const mockDatabase: MockDatabase = {
       source_id: null,
       name: 'Push Day - Beginner',
       description: 'Chest, shoulders, and triceps workout',
-      category: 'strength',
-      difficulty: 'beginner',
+      category: WorkoutCategory.STRENGTH,
+      difficulty: Difficulty.BEGINNER,
       estimated_duration_minutes: 45,
       is_favorite: false,
       is_archived: false,
@@ -607,21 +610,21 @@ export const mockApi = {
     await delay(1000); // Simulate AI processing
 
     // Simulate AI response based on request
-    const muscleGroups = request.constraints?.muscle_groups || ['chest'];
-    const equipment = request.constraints?.equipment?.[0] || 'barbell';
-    const difficulty = request.constraints?.difficulty || 'intermediate';
+    const muscleGroups = request.constraints?.muscle_groups || [MuscleGroup.CHEST];
+    const equipment = request.constraints?.equipment?.[0] || Equipment.BARBELL;
+    const difficulty = request.constraints?.difficulty || Difficulty.INTERMEDIATE;
 
     return {
       user_id: request.user_id,
       source_id: null,
       name: `AI Generated: ${request.prompt?.slice(0, 30) || 'Custom Exercise'}`,
       muscle_groups: [...muscleGroups],
-      category: 'strength',
+      category: ExerciseCategory.STRENGTH,
       equipment,
       instructions: `AI Generated Instructions: ${
         request.prompt || 'Perform exercise with proper form'
       }`,
-      measurement_type: 'reps',
+      measurement_type: MeasurementType.REPS,
       default_sets: 3,
       default_reps: 10,
       default_duration: null,
@@ -632,7 +635,7 @@ export const mockApi = {
       ai_prompt: request.prompt || null,
       notes: null,
       embedding: null,
-      difficulty_score: difficulty === 'beginner' ? 3 : difficulty === 'advanced' ? 8 : 5,
+      difficulty_score: difficulty === Difficulty.BEGINNER ? 3 : difficulty === Difficulty.ADVANCED ? 8 : 5,
       popularity_score: 0,
     };
   },
@@ -643,14 +646,14 @@ export const mockApi = {
     await delay(1500); // Simulate AI processing
 
     const duration = request.constraints?.duration || 45;
-    const difficulty = request.constraints?.difficulty || 'intermediate';
+    const difficulty = request.constraints?.difficulty || Difficulty.INTERMEDIATE;
 
     return {
       user_id: request.user_id,
       source_id: null,
       name: `AI Workout: ${request.prompt?.slice(0, 30) || 'Custom Workout'}`,
       description: `AI generated workout based on: ${request.prompt}`,
-      category: 'strength',
+      category: WorkoutCategory.STRENGTH,
       difficulty,
       estimated_duration_minutes: duration,
       is_favorite: false,
@@ -668,17 +671,17 @@ export const mockApi = {
   // Utility methods
   seedDatabase: (count: number = 20): void => {
     const muscleGroups: MuscleGroup[] = [
-      'chest',
-      'back',
-      'shoulders',
-      'biceps',
-      'triceps',
-      'quads',
-      'hamstrings',
-      'abs',
+      MuscleGroup.CHEST,
+      MuscleGroup.BACK,
+      MuscleGroup.SHOULDERS,
+      MuscleGroup.BICEPS,
+      MuscleGroup.TRICEPS,
+      MuscleGroup.QUADS,
+      MuscleGroup.HAMSTRINGS,
+      MuscleGroup.ABS,
     ];
-    const categories: ExerciseCategory[] = ['strength', 'cardio', 'mobility', 'plyometric'];
-    const equipment: Equipment[] = ['barbell', 'dumbbell', 'bodyweight', 'cable', 'machine'];
+    const categories: ExerciseCategory[] = [ExerciseCategory.STRENGTH, ExerciseCategory.CARDIO, ExerciseCategory.MOBILITY, ExerciseCategory.PLYOMETRIC];
+    const equipment: Equipment[] = [Equipment.BARBELL, Equipment.DUMBBELL, Equipment.BODYWEIGHT, Equipment.CABLE, Equipment.MACHINE];
 
     // Generate exercises
     for (let i = 0; i < count; i++) {
@@ -694,7 +697,7 @@ export const mockApi = {
         category: categories[Math.floor(Math.random() * categories.length)]!,
         equipment: equipment[Math.floor(Math.random() * equipment.length)]!,
         instructions: `Instructions for exercise ${i + 1}`,
-        measurement_type: Math.random() > 0.3 ? 'reps' : 'duration',
+        measurement_type: Math.random() > 0.3 ? MeasurementType.REPS : MeasurementType.DURATION,
         default_sets: 3,
         default_reps: Math.random() > 0.3 ? 10 : null,
         default_duration: Math.random() > 0.7 ? 60 : null,
@@ -714,8 +717,8 @@ export const mockApi = {
     }
 
     // Generate workouts
-    const workoutCategories: WorkoutCategory[] = ['strength', 'cardio', 'hiit', 'circuit'];
-    const difficulties: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
+    const workoutCategories: WorkoutCategory[] = [WorkoutCategory.STRENGTH, WorkoutCategory.CARDIO, WorkoutCategory.HIIT, WorkoutCategory.CIRCUIT];
+    const difficulties: Difficulty[] = [Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.ADVANCED];
 
     for (let i = 0; i < Math.floor(count / 2); i++) {
       const workoutId = generateId('w');
@@ -730,8 +733,8 @@ export const mockApi = {
           exercise_id: randomExercise.id,
           exercise_order: j + 1,
           sets: 3,
-          reps: randomExercise.measurement_type === 'reps' ? 10 : null,
-          duration: randomExercise.measurement_type === 'duration' ? 60 : null,
+          reps: randomExercise.measurement_type === MeasurementType.REPS ? 10 : null,
+          duration: randomExercise.measurement_type === MeasurementType.DURATION ? 60 : null,
           rest: 60,
           notes: null,
           created_at: new Date().toISOString(),

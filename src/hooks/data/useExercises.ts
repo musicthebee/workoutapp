@@ -15,6 +15,12 @@ import type {
   UpdateExerciseInput,
   UUID,
 } from '@/types';
+import {
+  MuscleGroup,
+  ExerciseCategory,
+  Equipment,
+  MeasurementType,
+} from '@/types';
 
 /**
  * Main hook for exercise data management
@@ -309,11 +315,11 @@ export const useExerciseCreation = () => {
       const generated: CreateExerciseInput = {
         user_id,
         name: `AI Exercise: ${prompt.slice(0, 30)}`,
-        muscle_groups: ['core'],
-        category: 'strength',
-        equipment: 'bodyweight',
+        muscle_groups: [MuscleGroup.CORE],
+        category: ExerciseCategory.STRENGTH,
+        equipment: Equipment.BODYWEIGHT,
         instructions: `AI Generated based on: ${prompt}`,
-        measurement_type: 'reps',
+        measurement_type: MeasurementType.REPS,
         default_sets: 3,
         default_reps: 10,
         default_rest: 60,

@@ -21,8 +21,8 @@ query GetExercises($user_id: uuid!) {
     measurement_type
     default_sets
     default_reps
-    default_duration_seconds
-    default_rest_seconds
+    default_duration
+    default_rest
     is_favorite
     is_archived
     is_ai_generated
@@ -47,8 +47,8 @@ query GetExerciseById($id: uuid!) {
     measurement_type
     default_sets
     default_reps
-    default_duration_seconds
-    default_rest_seconds
+    default_duration
+    default_rest
     is_favorite
     is_archived
     is_ai_generated
@@ -73,8 +73,8 @@ mutation CreateExercise($object: exercise_insert_input!) {
     measurement_type
     default_sets
     default_reps
-    default_duration_seconds
-    default_rest_seconds
+    default_duration
+    default_rest
     is_favorite
     is_archived
     is_ai_generated
@@ -99,8 +99,8 @@ mutation UpdateExercise($id: uuid!, $set: exercise_set_input!) {
     measurement_type
     default_sets
     default_reps
-    default_duration_seconds
-    default_rest_seconds
+    default_duration
+    default_rest
     is_favorite
     is_archived
     notes
@@ -128,8 +128,8 @@ mutation CopyExerciseFromLibrary($user_id: uuid!, $source_id: uuid!) {
     measurement_type
     default_sets
     default_reps
-    default_duration_seconds
-    default_rest_seconds
+    default_duration
+    default_rest
     created_at
     updated_at
   }

@@ -5,7 +5,7 @@ import type {
   ExerciseCategory,
   MuscleGroup,
   WorkoutCategory,
-} from '../database/models';
+} from '../database/enums';
 
 /**
  * Types for filtering and searching data

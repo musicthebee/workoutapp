@@ -18,6 +18,7 @@ export * from './common';
 
 // Database types
 export * from './database/models';
+export * from './database/enums';
 
 // Business logic types
 export * from './business/activeWorkout';

@@ -10,6 +10,14 @@ import type {
   Workout_Exercise as GQLWorkoutExercise,
   Workout_Performance as GQLWorkoutPerformance,
 } from '@/api/generated/graphql';
+import type {
+  MuscleGroup,
+  ExerciseCategory,
+  WorkoutCategory,
+  Equipment,
+  MeasurementType,
+  Difficulty,
+} from './enums';
 
 // Clean core types - remove GraphQL metadata and unwrap scalars
 export type Exercise = Omit<
@@ -26,7 +34,10 @@ export type Exercise = Omit<
   source_id: string | null;
   created_at: string | null;
   updated_at: string | null;
-  muscle_groups: string[];
+  muscle_groups: MuscleGroup[];
+  category: ExerciseCategory;
+  equipment: Equipment;
+  measurement_type: MeasurementType;
   embedding: number[] | null;
   difficulty_score: number | null;
   popularity_score: number | null;
@@ -72,6 +83,8 @@ export type Workout = Omit<
   is_favorite: boolean | null;
   is_archived: boolean | null;
   is_ai_generated: boolean | null;
+  category: WorkoutCategory;
+  difficulty: Difficulty;
   workout_exercises: WorkoutExercise[];
 };
 
@@ -103,13 +116,15 @@ export type User = Omit<
   is_active: boolean | null;
 };
 
-// Extract enum values from GraphQL scalars
-export type MuscleGroup = string; // Will be constrained by GraphQL schema
-export type ExerciseCategory = string;
-export type WorkoutCategory = string;
-export type Equipment = string;
-export type MeasurementType = string;
-export type Difficulty = string;
+// Re-export enums for convenience (both as values and types)
+export {
+  MuscleGroup,
+  ExerciseCategory,
+  WorkoutCategory,
+  Equipment,
+  MeasurementType,
+  Difficulty,
+} from './enums';
 
 // Application-specific types (not database tables)
 // These represent JSON structures stored in the database

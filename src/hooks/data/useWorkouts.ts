@@ -18,6 +18,10 @@ import type {
   WorkoutExercise,
   WorkoutFilters,
 } from '@/types';
+import {
+  WorkoutCategory,
+  Difficulty,
+} from '@/types';
 
 /**
  * Main hook for workout data management
@@ -394,8 +398,8 @@ export const useWorkoutCreation = () => {
         user_id,
         name: `AI Workout: ${prompt.slice(0, 30)}`,
         description: `Generated based on: ${prompt}`,
-        category: 'hybrid',
-        difficulty: 'intermediate',
+        category: WorkoutCategory.HYBRID,
+        difficulty: Difficulty.INTERMEDIATE,
         estimated_duration_minutes: 45,
         exercises: [], // AI would provide these
         is_ai_generated: true,

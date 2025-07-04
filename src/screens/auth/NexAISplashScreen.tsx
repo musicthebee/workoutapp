@@ -505,7 +505,6 @@ export const NexAISplashScreen: React.FC<NexAISplashScreenProps> = ({ onAnimatio
         {/* Tagline */}
         <Animated.View style={[styles.taglineContainer, taglineStyle]}>
           <TextBase variant="body_large" color="secondary" style={styles.tagline}>
-            AI-Powered
           </TextBase>
           <LinearGradient
             colors={['#2196F3', '#9C27B0']}
@@ -513,8 +512,11 @@ export const NexAISplashScreen: React.FC<NexAISplashScreenProps> = ({ onAnimatio
             end={{ x: 1, y: 0 }}
             style={styles.taglineGradient}
           >
-            <TextBase variant="heading_2" style={styles.taglineMain}>
-              FITNESS EVOLUTION
+            <TextBase variant="heading_4" style={styles.taglineMain}>
+              AI FITNESS
+            </TextBase>
+            <TextBase variant="body_large" style={styles.taglineSecondary}>
+              evolution
             </TextBase>
           </LinearGradient>
         </Animated.View>
@@ -639,6 +641,12 @@ const styles = StyleSheet.create({
   taglineMain: {
     color: '#FFFFFF',
     fontWeight: '900',
+    letterSpacing: 2,
+  },
+  taglineSecondary: {
+    color: '#FFFFFF',
+    fontWeight: '500',
+    textAlign: 'center',
     letterSpacing: 2,
   },
   wave: {
