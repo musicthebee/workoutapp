@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { useTheme } from '@/hooks';
+import type { MuscleGroup } from '@/types';
 import { 
   Spacer, 
   TextBase,
@@ -77,7 +78,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
   const demo_chips = [
     { id: 'chest', label: 'Chest', count: 15, is_selected: true },
     { id: 'back', label: 'Back', count: 12, is_selected: false },
-    { id: 'legs', label: 'Legs', count: 18, is_selected: false },
+    { id: 'quads', label: 'Quads', count: 18, is_selected: false },
     { id: 'shoulders', label: 'Shoulders', count: 10, is_selected: false },
   ];
   
@@ -187,8 +188,9 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 label={is_active ? "End Workout" : "Start Workout"}
                 onPress={is_active ? end_workout : start_empty_workout}
                 variant={is_active ? "secondary" : "primary"}
-                icon={is_active ? "stop-circle" : "play-circle"}
-              />
+                icon={is_active ? "stop-circle" : "play-circle"}>
+                {is_active ? "End Workout" : "Start Workout"}
+              </BigButton>
             </View>
             <Spacer size="sm" />
             <View style={styles.row}>
@@ -197,7 +199,8 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 onPress={toggle_favorites_filter}
                 variant="secondary"
                 icon="heart"
-              />
+              >
+              </BigButton>
             </View>
           </GlassBase>
         </View>
@@ -261,7 +264,8 @@ export const ComponentShowcaseScreen: React.FC = () => {
               icon="checkmark-circle"
               onPress={() => {}}
               variant="primary"
-            />
+            >
+            </BigButton>
           </View>
           <Spacer size="sm" />
           <View style={styles.buttonRow}>
@@ -270,7 +274,8 @@ export const ComponentShowcaseScreen: React.FC = () => {
               icon="timer"
               variant="secondary"
               onPress={() => timer.toggle()}
-            />
+            >
+            </BigButton>
           </View>
           <Spacer size="md" />
           
@@ -303,7 +308,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             chips={demo_chips}
             on_chip_press={(id: string) => {
               console.log('Chip pressed:', id);
-              handle_filter_change('muscle_groups', [id]);
+              handle_filter_change('muscle_groups', [id as MuscleGroup]);
             }}
           />
           <Spacer size="md" />
@@ -444,15 +449,19 @@ export const ComponentShowcaseScreen: React.FC = () => {
             <Spacer size="md" />
             <View style={styles.row}>
               <BigButton
+                label={timer.is_running ? "Pause" : "Play"}
                 icon={timer.is_running ? "pause" : "play"}
                 onPress={timer.toggle}
-                variant="primary"
-              />
+                variant="primary">
+                {timer.is_running ? "Pause" : "Play"}
+              </BigButton>
               <BigButton
+                label="Reset"
                 icon="refresh"
                 onPress={timer.reset}
-                variant="ghost"
-              />
+                variant="ghost">
+                Reset
+              </BigButton>
             </View>
             <Spacer size="sm" />
             <View style={[styles.row, { justifyContent: 'center' }]}>
@@ -461,15 +470,17 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 onPress={timer.subtract_30_seconds}
                 variant="secondary"
                 full_width={false}
-                style={{ minWidth: 80 }}
-              />
+                style={{ minWidth: 80 }}>
+                -30s
+              </BigButton>
               <BigButton
                 label="+30s"
                 onPress={timer.add_30_seconds}
                 variant="secondary"
                 full_width={false}
                 style={{ minWidth: 80 }}
-              />
+              >
+              </BigButton>
             </View>
           </GlassBase>
         </View>

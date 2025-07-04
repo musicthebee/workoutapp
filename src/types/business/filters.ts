@@ -1,4 +1,5 @@
 import type { UUID } from '../common';
+import type { MuscleGroup, ExerciseCategory, WorkoutCategory, Equipment, Difficulty } from '../database/models';
 
 /**
  * Types for filtering and searching data
@@ -8,9 +9,9 @@ import type { UUID } from '../common';
 // Exercise filtering options
 export interface ExerciseFilters {
   readonly search?: string;
-  readonly muscle_groups?: ReadonlyArray<string>;
-  readonly categories?: ReadonlyArray<string>;
-  readonly equipment?: ReadonlyArray<string>;
+  readonly muscle_groups?: ReadonlyArray<MuscleGroup>;
+  readonly categories?: ReadonlyArray<ExerciseCategory>;
+  readonly equipment?: ReadonlyArray<Equipment>;
   readonly favoritesOnly?: boolean;
   readonly customOnly?: boolean;
   readonly source?: 'library' | 'mine' | 'all';
@@ -19,8 +20,8 @@ export interface ExerciseFilters {
 // Workout filtering options
 export interface WorkoutFilters {
   readonly search?: string;
-  readonly categories?: ReadonlyArray<string>;
-  readonly difficulty?: ReadonlyArray<string>;
+  readonly categories?: ReadonlyArray<WorkoutCategory>;
+  readonly difficulty?: ReadonlyArray<Difficulty>;
   readonly durationRange?: {
     readonly min?: number;
     readonly max?: number;

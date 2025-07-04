@@ -6,26 +6,70 @@ import type { UUID } from '../common';
  * For now, they prevent duplication between mockApi and other services
  */
 
+// Database enum types matching schema
+export type MuscleGroup = 
+  | 'chest' | 'back' | 'shoulders' 
+  | 'biceps' | 'triceps' | 'forearms'
+  | 'abs' | 'obliques' | 'core'
+  | 'quads' | 'hamstrings' | 'glutes' | 'calves'
+  | 'cardio';
+
+export type ExerciseCategory = 
+  | 'strength'      // traditional resistance training
+  | 'cardio'        // endurance/aerobic
+  | 'plyometric'    // explosive movements
+  | 'mobility'      // stretching/flexibility
+  | 'balance'       // stability work
+  | 'power';        // olympic lifts, explosive strength
+
+export type WorkoutCategory = 
+  | 'strength'      // traditional lifting session
+  | 'cardio'        // endurance focused session
+  | 'hiit'          // high intensity intervals
+  | 'circuit'       // rotating exercises, minimal rest
+  | 'mobility'      // yoga/stretching session
+  | 'hybrid';       // mixed goals
+
+export type Equipment = 
+  | 'barbell' | 'dumbbell' | 'kettlebell'
+  | 'cable' | 'machine' | 'bodyweight'
+  | 'bands' | 'medicine_ball' | 'trx'
+  | 'cardio_machine' | 'none';
+
+export type MeasurementType = 
+  | 'reps'          // count based
+  | 'duration'      // duration based (seconds)
+  | 'distance';     // distance based (meters)
+
+export type Difficulty = 
+  | 'beginner'
+  | 'intermediate'
+  | 'advanced';
+
 // Exercise model matching database schema
 export interface Exercise {
   id: UUID;
   user_id: UUID | null;
   source_id: UUID | null;
   name: string;
-  muscle_groups: string[];
-  category: string;
-  equipment: string;
+  muscle_groups: MuscleGroup[];
+  category: ExerciseCategory;
+  equipment: Equipment;
   instructions: string;
-  measurement_type: 'reps' | 'duration' | 'distance';
+  measurement_type: MeasurementType;
   default_sets: number;
   default_reps: number | null;
-  default_duration_seconds: number | null;
-  default_rest_seconds: number;
+  default_duration: number | null;  // Duration in seconds
+  default_rest: number;  // Rest time in seconds
   is_favorite: boolean;
   is_archived: boolean;
   is_ai_generated: boolean;
   ai_prompt: string | null;
   notes: string | null;
+  // AI/ML fields
+  embedding: number[] | null;  // Vector embeddings for semantic search
+  difficulty_score: number | null;  // 1-10 scale
+  popularity_score: number;
   created_at: string;
   updated_at: string;
 }
@@ -37,8 +81,10 @@ export interface WorkoutExercise {
   exercise_order: number;
   sets: number;
   reps: number | null;
-  duration_seconds: number | null;
-  rest_seconds: number;
+  duration: number | null;  // Duration in seconds
+  rest: number;  // Rest time in seconds
+  notes: string | null;  // Missing field from schema
+  created_at: string;
   exercise?: Exercise; // Populated on fetch
 }
 
@@ -49,13 +95,18 @@ export interface Workout {
   source_id: UUID | null;
   name: string;
   description: string | null;
-  category: string;
-  difficulty: string;
-  estimated_duration_minutes: number | null;
+  category: WorkoutCategory;
+  difficulty: Difficulty;
+  estimated_duration_minutes: number;  // NOT NULL in schema
   is_favorite: boolean;
   is_archived: boolean;
   is_ai_generated: boolean;
   ai_prompt: string | null;
+  notes: string | null;  // Missing field from schema
+  // AI/ML fields
+  embedding: number[] | null;  // Vector embeddings for semantic search
+  total_volume_estimate: number | null;  // Estimated total volume for tracking
+  popularity_score: number;
   created_at: string;
   updated_at: string;
   workout_exercises: WorkoutExercise[];
@@ -89,12 +140,29 @@ export interface WorkoutPerformance {
   exercise_performances: ExercisePerformance[];
 }
 
-// User model
+// User model matching database schema
 export interface User {
   id: UUID;
-  email: string;
   firebase_uid: string;
+  email: string;
   name: string | null;
+  date_of_birth: string | null;  // DATE type
+  // Physical attributes for tracking
+  height_cm: number | null;
+  weight_kg: number | null;
+  // Preferences
+  preferred_units: 'metric' | 'imperial';
+  rest_timer_enabled: boolean;
+  rest_timer_auto_start: boolean;
+  // Notification preferences
+  workout_reminders: boolean;
+  achievement_notifications: boolean;
+  // Training preferences
+  training_experience: Difficulty;
+  primary_goal: string | null;  // 'strength', 'muscle', 'endurance', 'weight_loss', 'general_fitness'
+  // Account status
+  is_active: boolean;
+  last_login: string | null;
   created_at: string;
   updated_at: string;
 }

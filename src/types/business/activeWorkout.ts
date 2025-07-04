@@ -1,4 +1,5 @@
 import type { UUID } from '../common';
+import type { MeasurementType } from '../database/models';
 
 /**
  * Types for managing active workout sessions
@@ -23,8 +24,8 @@ export interface ActiveSet {
   readonly restDuration: number;
 }
 
-// Performance data for a completed set
-export interface SetPerformance {
+// Performance data for a completed set (during active workout)
+export interface ActiveSetPerformance {
   readonly reps?: number;
   readonly weight?: number;
   readonly duration?: number;
@@ -39,9 +40,9 @@ export interface ActiveExercise {
   readonly exerciseName: string;
   readonly exercise_order: number;
   readonly instructions: string;
-  readonly measurement_type: string;
+  readonly measurement_type: MeasurementType;
   readonly sets: number;
-  readonly completedSets: ReadonlyArray<SetPerformance>;
+  readonly completedSets: ReadonlyArray<ActiveSetPerformance>;
   readonly currentSet: ActiveSet | null;
 }
 
@@ -66,7 +67,7 @@ export const isWorkoutActive = (state: WorkoutState): boolean =>
 export const canAddExercise = (state: WorkoutState): boolean =>
   state === 'preparing' || state === 'active' || state === 'rest';
 
-export const isSetComplete = (performance: SetPerformance): boolean =>
+export const isSetComplete = (performance: ActiveSetPerformance): boolean =>
   performance.completed && 
   (performance.reps !== undefined || 
    performance.duration !== undefined || 

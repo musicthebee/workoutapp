@@ -17,6 +17,9 @@ export interface BaseComponentProps extends ViewProps {
 // Common types
 export * from './common';
 
+// Database types
+export * from './database/models';
+
 // Business logic types
 export * from './business/activeWorkout';
 export * from './business/filters';

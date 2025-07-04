@@ -1,12 +1,13 @@
 // src/hooks/data/useActiveWorkout.ts
 import React, { useCallback, useMemo } from 'react';
+import { Alert } from 'react-native';
 
 import {
   useActiveWorkoutStore,
 } from '@/store/activeWorkout';
 import type {
   UUID,
-  SetPerformance,
+  ActiveSetPerformance,
   ActiveExercise,
 } from '@/types';
 
@@ -48,9 +49,9 @@ export const useActiveWorkout = () => {
   // const is_active = useIsWorkoutActive();
   // const progress = useWorkoutProgress();
   
-  // Mock for now
-  const current_exercise = null;
-  const is_active = false;
+  // Get current exercise from session
+  const current_exercise = session ? session.exercises[session.currentExerciseIndex] : null;
+  const is_active = session ? ['active', 'rest'].includes(session.state) : false;
   const progress = { current: 0, total: 0, percentage: 0 };
 
   // Calculate session duration
@@ -82,7 +83,7 @@ export const useActiveWorkout = () => {
   const can_add_exercise = session ? ['preparing', 'active', 'rest'].includes(session.state) : false;
 
   // Enhanced log set with validation
-  const log_set_performance = useCallback((performance: SetPerformance) => {
+  const log_set_performance = useCallback((performance: ActiveSetPerformance) => {
     if (!current_exercise) {
       console.error('No current exercise to log set for');
       return;
@@ -105,7 +106,7 @@ export const useActiveWorkout = () => {
   ) => {
     if (!current_exercise) return;
     
-    const performance: SetPerformance = {
+    const performance: ActiveSetPerformance = {
       reps: reps || current_exercise.currentSet?.targetReps,
       weight: weight || previous_set?.weight,
       completed: true,
@@ -127,10 +128,19 @@ export const useActiveWorkout = () => {
   // Complete workout with validation
   const finish_workout = useCallback(async (notes?: string) => {
     if (!session || session.completedSets === 0) {
-      const confirm = window.confirm(
-        'No sets completed. Are you sure you want to end this workout?'
-      );
-      if (!confirm) return;
+      return new Promise<void>((resolve) => {
+        Alert.alert(
+          'End Workout',
+          'No sets completed. Are you sure you want to end this workout?',
+          [
+            { text: 'Cancel', style: 'cancel', onPress: () => resolve() },
+            { text: 'End Workout', style: 'destructive', onPress: () => {
+              complete_workout(notes);
+              resolve();
+            }}
+          ]
+        );
+      });
     }
     
     await complete_workout(notes);
@@ -252,10 +262,10 @@ export const useSetLogger = (exercise: ActiveExercise | null) => {
   const handle_complete = useCallback(() => {
     if (!exercise) return;
     
-    const performance: SetPerformance = {
-      reps: exercise.measurement_type === 'reps' ? reps : undefined,
-      weight: weight || undefined,
-      duration: exercise.measurement_type === 'duration' ? duration : undefined,
+    const performance: ActiveSetPerformance = {
+      reps: exercise.measurement_type === 'reps' ? (reps ?? undefined) : undefined,
+      weight: weight ?? undefined,
+      duration: exercise.measurement_type === 'duration' ? (duration ?? undefined) : undefined,
       completed: true,
       notes: notes || undefined,
     };
@@ -266,9 +276,9 @@ export const useSetLogger = (exercise: ActiveExercise | null) => {
   const handle_failed = useCallback(() => {
     if (!exercise) return;
     
-    const performance: SetPerformance = {
-      reps: reps || 0,
-      weight: weight || undefined,
+    const performance: ActiveSetPerformance = {
+      reps: reps ?? 0,
+      weight: weight ?? undefined,
       completed: false,
       notes: notes || 'Failed set',
     };

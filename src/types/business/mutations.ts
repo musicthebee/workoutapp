@@ -1,4 +1,5 @@
 import type { UUID } from '../common';
+import type { MuscleGroup, ExerciseCategory, WorkoutCategory, Equipment, MeasurementType, Difficulty } from '../database/models';
 
 /**
  * Input types for GraphQL mutations
@@ -12,8 +13,8 @@ export interface AddExerciseToWorkoutInput {
   readonly exercise_order: number; // Use fractional ordering
   readonly sets: number;
   readonly reps?: number | null;
-  readonly duration_seconds?: number | null;
-  readonly rest_seconds: number;
+  readonly duration?: number | null;
+  readonly rest: number;
 }
 
 // For creating new exercise (manual or AI-assisted)
@@ -21,15 +22,15 @@ export interface CreateExerciseInput {
   readonly user_id: UUID; // Makes it owned by user
   readonly source_id?: UUID | null; // If copied from library
   readonly name: string;
-  readonly muscle_groups: ReadonlyArray<string>;
-  readonly category: string;
-  readonly equipment: string;
+  readonly muscle_groups: MuscleGroup[];
+  readonly category: ExerciseCategory;
+  readonly equipment: Equipment;
   readonly instructions: string;
-  readonly measurement_type: string;
+  readonly measurement_type: MeasurementType;
   readonly default_sets: number;
   readonly default_reps?: number | null;
-  readonly default_duration_seconds?: number | null;
-  readonly default_rest_seconds: number;
+  readonly default_duration?: number | null;
+  readonly default_rest: number;
   readonly is_ai_generated?: boolean; // Just a flag!
   readonly ai_prompt?: string | null; // Store the prompt if AI
 }
@@ -37,15 +38,15 @@ export interface CreateExerciseInput {
 // For updating existing exercise
 export interface UpdateExerciseInput {
   readonly name?: string;
-  readonly muscle_groups?: ReadonlyArray<string>;
-  readonly category?: string;
-  readonly equipment?: string;
+  readonly muscle_groups?: MuscleGroup[];
+  readonly category?: ExerciseCategory;
+  readonly equipment?: Equipment;
   readonly instructions?: string;
-  readonly measurement_type?: string;
+  readonly measurement_type?: MeasurementType;
   readonly default_sets?: number;
   readonly default_reps?: number | null;
-  readonly default_duration_seconds?: number | null;
-  readonly default_rest_seconds?: number;
+  readonly default_duration?: number | null;
+  readonly default_rest?: number;
   readonly is_favorite?: boolean;
   readonly is_archived?: boolean;
   readonly notes?: string | null;
@@ -57,9 +58,9 @@ export interface CreateWorkoutInput {
   readonly source_id?: UUID | null;
   readonly name: string;
   readonly description?: string | null;
-  readonly category: string;
-  readonly difficulty: string;
-  readonly estimated_duration_minutes?: number | null;
+  readonly category: WorkoutCategory;
+  readonly difficulty: Difficulty;
+  readonly estimated_duration_minutes: number;
   readonly is_ai_generated?: boolean; // Just a flag!
   readonly ai_prompt?: string | null;
   readonly exercises?: ReadonlyArray<{
@@ -67,8 +68,8 @@ export interface CreateWorkoutInput {
     readonly exercise_order: number;
     readonly sets: number;
     readonly reps?: number | null;
-    readonly duration_seconds?: number | null;
-    readonly rest_seconds: number;
+    readonly duration?: number | null;
+    readonly rest: number;
   }>;
 }
 
@@ -76,9 +77,9 @@ export interface CreateWorkoutInput {
 export interface UpdateWorkoutInput {
   readonly name?: string;
   readonly description?: string | null;
-  readonly category?: string;
-  readonly difficulty?: string;
-  readonly estimated_duration_minutes?: number | null;
+  readonly category?: WorkoutCategory;
+  readonly difficulty?: Difficulty;
+  readonly estimated_duration_minutes?: number;
   readonly is_favorite?: boolean;
   readonly is_archived?: boolean;
 }
@@ -90,8 +91,8 @@ export interface AIGenerationRequest {
   readonly prompt?: string;
   readonly constraints?: {
     // For exercises
-    readonly muscle_groups?: ReadonlyArray<string>;
-    readonly equipment?: ReadonlyArray<string>;
+    readonly muscle_groups?: MuscleGroup[];
+    readonly equipment?: Equipment[];
     readonly exercise_type?: string;
     
     // For workouts  

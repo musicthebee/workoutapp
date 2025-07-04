@@ -280,14 +280,14 @@ export const useWorkoutStore = create<WorkoutStore>()(
             description: library_workout.description,
             category: library_workout.category,
             difficulty: library_workout.difficulty,
-            estimated_duration_minutes: library_workout.estimated_duration_minutes,
+            estimated_duration_minutes: library_workout.estimated_duration_minutes || 30,
             exercises: get().workout_exercises.get(library_workout_id)?.map(we => ({
               exercise_id: we.exercise_id,
               exercise_order: we.exercise_order,
               sets: we.sets,
               reps: we.reps,
-              duration_seconds: we.duration_seconds,
-              rest_seconds: we.rest_seconds,
+              duration: we.duration,
+              rest: we.rest,
             })),
           };
           
@@ -326,8 +326,10 @@ export const useWorkoutStore = create<WorkoutStore>()(
           exercise_order,
           sets: config?.sets || 3,
           reps: config?.reps || null,
-          duration_seconds: config?.duration_seconds || null,
-          rest_seconds: config?.rest_seconds || 90,
+          duration: config?.duration || null,
+          rest: config?.rest || 90,
+          notes: null,
+          created_at: new Date().toISOString(),
         };
         
         // Optimistic update
@@ -344,8 +346,8 @@ export const useWorkoutStore = create<WorkoutStore>()(
             {
               sets: new_exercise.sets,
               reps: new_exercise.reps,
-              duration_seconds: new_exercise.duration_seconds,
-              rest_seconds: new_exercise.rest_seconds,
+              duration: new_exercise.duration,
+              rest: new_exercise.rest,
             }
           );
         } catch (error) {

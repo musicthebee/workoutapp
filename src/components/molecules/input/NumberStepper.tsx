@@ -45,7 +45,7 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
   const theme = useTheme();
   const decreaseAnimation = usePressAnimation({ scale: 0.9 });
   const increaseAnimation = usePressAnimation({ scale: 0.9 });
-  const animatedValue = useValueChangeAnimation(value, theme.animation.durations.fast);
+  const animatedValue = useValueChangeAnimation(value, 150);
   
   // Handle decrease
   const decrease = useCallback((): void => {
@@ -248,7 +248,7 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
     itemCount: values.length,
     staggerDelay: 30,
     type: 'scale',
-    duration: theme.animation.durations.fast,
+    duration: 150,
   });
   
   const styles = StyleSheet.create({
@@ -274,7 +274,7 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
       borderRadius: variant === 'pills' ? theme.borders.radii.full : theme.borders.radii.md,
     },
     buttonSelected: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary as string,
     },
     text: {
       color: theme.colors.text_primary,
@@ -308,7 +308,7 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
                 press_scale={0.95}
                 glass_style={[
                   styles.button,
-                  is_selected && styles.buttonSelected,
+                  is_selected ? styles.buttonSelected : undefined,
                 ]}
                 testID={`${testID}-value-${value}`}
                 accessible={true}

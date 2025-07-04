@@ -7,7 +7,7 @@ import type {
   UUID,
   ActiveWorkout,
   ActiveExercise,
-  SetPerformance,
+  ActiveSetPerformance,
   CompleteWorkoutInput,
 } from '@/types';
 import type { WorkoutExercise, Exercise } from '@/types/database/models';
@@ -49,8 +49,8 @@ interface ActiveWorkoutActions {
   skip_exercise: () => void;
   
   // Set management
-  log_set: (performance: SetPerformance) => void;
-  update_set: (set_index: number, performance: SetPerformance) => void;
+  log_set: (performance: ActiveSetPerformance) => void;
+  update_set: (set_index: number, performance: ActiveSetPerformance) => void;
   complete_current_set: () => void;
   
   // Navigation
@@ -98,8 +98,8 @@ const createActiveExercise = (
   currentSet: {
     setNumber: 1,
     targetReps: workout_exercise.reps || undefined,
-    targetDuration: workout_exercise.duration_seconds || undefined,
-    restDuration: workout_exercise.rest_seconds,
+    targetDuration: workout_exercise.duration || undefined,
+    restDuration: workout_exercise.rest,
   },
 });
 
@@ -211,8 +211,10 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
               exercise_order: new_order,
               sets: exercise_data.default_sets,
               reps: exercise_data.default_reps,
-              duration_seconds: exercise_data.default_duration_seconds,
-              rest_seconds: exercise_data.default_rest_seconds,
+              duration: exercise_data.default_duration,
+              rest: exercise_data.default_rest,
+              notes: null,
+              created_at: new Date().toISOString(),
             },
             exercise_data
           );
@@ -239,8 +241,8 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
               {
                 sets: exercise_data.default_sets,
                 reps: exercise_data.default_reps,
-                duration_seconds: exercise_data.default_duration_seconds,
-                rest_seconds: exercise_data.default_rest_seconds,
+                duration: exercise_data.default_duration,
+                rest: exercise_data.default_rest,
               }
             );
           }
@@ -253,7 +255,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
       },
       
       // Log set performance
-      log_set: (performance: SetPerformance) => {
+      log_set: (performance: ActiveSetPerformance) => {
         set(state => {
           if (!state.session || state.session.state !== 'active') return;
           
@@ -295,7 +297,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
         if (!current_exercise || !current_exercise.currentSet) return;
         
         // Create default performance (user didn't log specific values)
-        const performance: SetPerformance = {
+        const performance: ActiveSetPerformance = {
           reps: current_exercise.currentSet.targetReps,
           completed: true,
         };
@@ -486,7 +488,7 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
       },
       
       // Update set (for editing)
-      update_set: (set_index: number, performance: SetPerformance) => {
+      update_set: (set_index: number, performance: ActiveSetPerformance) => {
         set(state => {
           if (!state.session) return;
           

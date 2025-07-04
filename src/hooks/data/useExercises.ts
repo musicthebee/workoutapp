@@ -289,14 +289,14 @@ export const useExerciseCreation = () => {
     const generated: CreateExerciseInput = {
       user_id,
       name: `AI Exercise: ${prompt.slice(0, 30)}`,
-      muscle_groups: ['full_body'],
+      muscle_groups: ['core'],
       category: 'strength',
       equipment: 'bodyweight',
       instructions: `AI Generated based on: ${prompt}`,
       measurement_type: 'reps',
       default_sets: 3,
       default_reps: 10,
-      default_rest_seconds: 60,
+      default_rest: 60,
       is_ai_generated: true,
       ai_prompt: prompt,
     };

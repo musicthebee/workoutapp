@@ -95,7 +95,7 @@ export const SettingsListTemplate: React.FC<SettingsListTemplateProps> = ({
             <EmptyState
               icon="settings-outline"
               title="No Settings Available"
-              subtitle="Settings will appear here when available"
+              message="Settings will appear here when available"
               testID={`${testID}-empty`}
             />
           )}

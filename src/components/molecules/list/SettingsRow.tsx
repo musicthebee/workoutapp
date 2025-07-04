@@ -107,7 +107,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
             onValueChange={item.on_toggle}
             disabled={item.disabled}
             trackColor={{
-              false: theme.colors.surface_variant,
+              false: theme.colors.surface,
               true: theme.colors.primary,
             }}
             thumbColor={theme.colors.text_inverse}

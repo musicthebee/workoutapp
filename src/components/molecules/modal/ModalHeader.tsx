@@ -12,7 +12,7 @@ interface ModalHeaderProps extends BaseComponentProps {
   on_back?: () => void;
   on_action?: () => void;
   action_label?: string;
-  back_icon?: keyof typeof Ionicons.glyphMap;
+  back_icon?: string;
   action_disabled?: boolean;
   variant?: 'default' | 'minimal' | 'prominent';
   style?: ViewStyle;

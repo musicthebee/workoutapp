@@ -242,8 +242,8 @@ export const useWorkout = (workout_id: UUID | null | undefined) => {
     let total_seconds = 0;
     exercises_with_details.forEach(we => {
       const sets = we.sets;
-      const rest = we.rest_seconds;
-      const exercise_time = we.duration_seconds || 30; // Assume 30s per set if reps
+      const rest = we.rest;
+      const exercise_time = we.duration || 30; // Assume 30s per set if reps
       
       total_seconds += (sets * exercise_time) + ((sets - 1) * rest);
     });
@@ -336,7 +336,7 @@ export const useWorkoutCreation = () => {
       exercise_order: (index + 1) * 1.0,
       sets: 3,
       reps: 10,
-      rest_seconds: 90,
+      rest: 90,
     }));
     
     return create_workout({
@@ -358,7 +358,7 @@ export const useWorkoutCreation = () => {
       user_id,
       name: `AI Workout: ${prompt.slice(0, 30)}`,
       description: `Generated based on: ${prompt}`,
-      category: 'general',
+      category: 'hybrid',
       difficulty: 'intermediate',
       estimated_duration_minutes: 45,
       exercises: [], // AI would provide these

@@ -230,7 +230,7 @@ interface StatCardGridProps extends BaseComponentProps {
     label: string;
     value: string | number;
     unit?: string;
-    icon?: keyof typeof Ionicons.glyphMap;
+    icon?: string;
     trend?: 'up' | 'down' | 'neutral';
     trend_value?: string;
     on_press?: () => void;
@@ -306,7 +306,7 @@ export const StatCardGrid: React.FC<StatCardGridProps> = ({
 interface MiniStatProps extends BaseComponentProps {
   label: string;
   value: string | number;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   style?: ViewStyle;
 }
 
@@ -364,7 +364,7 @@ export const MiniStat: React.FC<MiniStatProps> = ({
       )}
       
       <View style={styles.textContainer}>
-        <TextBase variant="overline" style={styles.label}>
+        <TextBase variant="body_small" style={styles.label}>
           {label}
         </TextBase>
         <TextBase variant="body_small" style={styles.value}>

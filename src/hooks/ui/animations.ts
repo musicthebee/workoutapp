@@ -34,7 +34,7 @@ export const usePressAnimation = (options: PressAnimationOptions = {}) => {
       Animated.spring(scaleValue, {
         toValue: scale,
         useNativeDriver: true,
-        ...theme.animation.springs.stiff,
+        ...theme.animation.springs.responsive,
       }),
       Animated.timing(opacityValue, {
         toValue: opacity,
@@ -49,7 +49,7 @@ export const usePressAnimation = (options: PressAnimationOptions = {}) => {
       Animated.spring(scaleValue, {
         toValue: 1,
         useNativeDriver: true,
-        ...theme.animation.springs.stiff,
+        ...theme.animation.springs.responsive,
       }),
       Animated.timing(opacityValue, {
         toValue: 1,
@@ -109,7 +109,7 @@ export const useEntranceAnimation = (options: EntranceAnimationOptions = {}) => 
     // Start animation
     Animated.timing(animatedValue, {
       toValue: 1,
-      duration: isReducedMotion.current ? 0 : duration,
+      duration: isReducedMotion.current ? 0 : (typeof duration === 'number' ? duration : 300),
       delay: isReducedMotion.current ? 0 : delay,
       useNativeDriver: true,
     }).start();
@@ -239,7 +239,7 @@ export const useStaggerAnimation = (options: StaggerAnimationOptions) => {
       
       return Animated.timing(value, {
         toValue: 1,
-        duration,
+        duration: typeof duration === 'number' ? duration : 300,
         delay,
         useNativeDriver: true,
       });
