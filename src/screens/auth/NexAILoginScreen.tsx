@@ -217,7 +217,7 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
                   entering={FadeInUp.delay(500).springify()}
                   style={styles.forgotContainer}
                 >
-                  <AuthLink onPress={onForgotPassword!} color="primary">
+                  <AuthLink onPress={onForgotPassword!}>
                     Forgot password?
                   </AuthLink>
                 </Animated.View>
@@ -255,7 +255,7 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
               <TextBase variant="body_medium" color="secondary">
                 Don't have an account?{' '}
               </TextBase>
-              <AuthLink onPress={onRegister!} color="primary">
+              <AuthLink onPress={onRegister!}>
                 Sign Up
               </AuthLink>
             </Animated.View>

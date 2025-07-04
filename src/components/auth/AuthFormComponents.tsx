@@ -264,12 +264,43 @@ export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps>
 };
 
 // Auth Link Component
-export const AuthLink: React.FC<AuthLinkProps> = ({ children, onPress, color = 'primary' }) => {
+export const AuthLink: React.FC<AuthLinkProps> = ({ children, onPress, color = 'info' }) => {
+  const theme = useTheme();
+  const [isPressed, setIsPressed] = React.useState(false);
+  
+  const linkStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(isPressed ? 0.98 : 1),
+        },
+      ],
+      opacity: withSpring(isPressed ? 0.7 : 1),
+    };
+  });
+  
   return (
-    <Pressable onPress={onPress} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-      <TextBase variant="body_medium" color={color} style={styles.link}>
-        {children}
-      </TextBase>
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+    >
+      <Animated.View style={linkStyle}>
+        <TextBase 
+          variant="body_medium" 
+          color={color} 
+          style={[
+            styles.link,
+            {
+              // Modern mobile design - blue color is sufficient link indicator
+              // textDecorationLine: 'underline', // Commented out for cleaner look
+            }
+          ]}
+        >
+          {children}
+        </TextBase>
+      </Animated.View>
     </Pressable>
   );
 };
@@ -365,6 +396,7 @@ const styles = StyleSheet.create({
   },
   link: {
     fontWeight: '600',
+    letterSpacing: 0.1,
   },
   dividerContainer: {
     flexDirection: 'row',
