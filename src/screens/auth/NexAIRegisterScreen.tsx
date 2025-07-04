@@ -107,8 +107,8 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
     
     if (!password) {
       errors.password = 'Password is required';
-    } else if (password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
     }
     
     if (!confirmPassword) {
@@ -187,6 +187,9 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
               <TextBase variant="heading_4" align="center">
                 Create Account
               </TextBase>
+              <TextBase variant="body_small" color="secondary" align="center">
+                Start your fitness evolution
+              </TextBase>
             </Animated.View>
             
             {/* Registration form */}
@@ -234,7 +237,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                   label="Password"
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   icon="lock"
                   type="password"
                   showPasswordToggle
@@ -279,39 +282,20 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                     full_width
                   />
                 </Animated.View>
-                
-                {/* Terms text
-                <Animated.View 
-                  entering={FadeInDown.delay(700).springify()}
-                  style={styles.termsContainer}
-                >
-                  <TextBase variant="caption" color="tertiary" align="center">
-                    By creating an account, you agree to our{' '}
-                    <TextBase variant="caption" color="primary">
-                      Terms of Service
-                    </TextBase>
-                    {' '}and{' '}
-                    <TextBase variant="caption" color="primary">
-                      Privacy Policy
-                    </TextBase>
-                  </TextBase>
-                </Animated.View>
-                */}
-              
-              {/* Sign in link */}
-              <Animated.View
-                entering={FadeInDown.delay(800).springify()}
-                style={styles.signinContainer}
-              >
-                <TextBase variant="body_medium" color="secondary">
-                  Already have an account?{' '}
-                </TextBase>
-                <AuthLink onPress={onLogin!} color="primary">
-                  Sign In
-                </AuthLink>
-              </Animated.View>
-
               </AuthFormCard>
+            </Animated.View>
+            
+            {/* Sign in link */}
+            <Animated.View
+              entering={FadeInDown.delay(800).springify()}
+              style={styles.signinContainer}
+            >
+              <TextBase variant="body_medium" color="secondary">
+                Already have an account?{' '}
+              </TextBase>
+              <AuthLink onPress={onLogin!}>
+                Sign In
+              </AuthLink>
             </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -354,6 +338,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 24,
   },
 });

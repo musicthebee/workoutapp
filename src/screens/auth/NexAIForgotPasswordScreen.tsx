@@ -216,7 +216,7 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     <TextBase variant="body_medium" color="secondary">
                       Remember your password?{' '}
                     </TextBase>
-                    <AuthLink onPress={onBackToLogin!} color="primary">
+                    <AuthLink onPress={onBackToLogin!}>
                       Sign In
                     </AuthLink>
                   </Animated.View>
@@ -269,7 +269,6 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                         setEmail('');
                         successScale.value = 0;
                       }}
-                      color="primary"
                     >
                       Try again
                     </AuthLink>
