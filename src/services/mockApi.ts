@@ -14,8 +14,9 @@ import type {
   Workout,
   WorkoutExercise,
   WorkoutPerformance,
-  User,
 } from '@/types/database/models';
+
+import { authService } from '@/services/auth.service';
 
 /**
  * Mock API Service
@@ -25,7 +26,6 @@ import type {
 
 // Mock database
 interface MockDatabase {
-  currentUser: Pick<User, 'id' | 'name' | 'email'>;
   exercises: Exercise[];
   workouts: Workout[];
   performances: WorkoutPerformance[];
@@ -49,12 +49,6 @@ const delay = (ms: number = 300): Promise<void> =>
 
 // Mock database instance
 const mockDatabase: MockDatabase = {
-  currentUser: {
-    id: 'user_123',
-    name: 'Test User',
-    email: 'test@example.com',
-  },
-  
   exercises: [
     // Library exercises (user_id = null)
     {
@@ -141,10 +135,14 @@ export const mockApi = {
   // Auth
   async getCurrentUser(): Promise<{ id: UUID; name: string; email: string }> {
     await delay();
+    const current_user = authService.get_current_user();
+    if (!current_user) {
+      throw new Error('User not authenticated');
+    }
     return {
-      id: mockDatabase.currentUser.id,
-      name: mockDatabase.currentUser.name || 'Unknown User',
-      email: mockDatabase.currentUser.email,
+      id: current_user.id,
+      name: current_user.display_name || 'Unknown User',
+      email: current_user.email || '',
     };
   },
 

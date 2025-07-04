@@ -7,6 +7,7 @@ import {
   useExerciseById,
   useIsExerciseOwned,
 } from '@/store/exercise';
+import { authService } from '@/services/auth.service';
 import type {
   Exercise,
   UUID,
@@ -265,7 +266,11 @@ export const useExerciseCreation = () => {
   const [ai_prompt, set_ai_prompt] = React.useState('');
   
   const create_manual = useCallback(async (input: Omit<CreateExerciseInput, 'user_id'>) => {
-    const user_id = 'user_123'; // TODO: Get from auth
+    const current_user = authService.get_current_user();
+    if (!current_user) {
+      throw new Error('User not authenticated');
+    }
+    const user_id = current_user.id;
     return create_exercise({
       ...input,
       user_id,
@@ -276,7 +281,11 @@ export const useExerciseCreation = () => {
   const create_with_ai = useCallback(async (prompt: string) => {
     // TODO: Call AI service to generate exercise
     // For now, just mock
-    const user_id = 'user_123';
+    const current_user = authService.get_current_user();
+    if (!current_user) {
+      throw new Error('User not authenticated');
+    }
+    const user_id = current_user.id;
     const generated: CreateExerciseInput = {
       user_id,
       name: `AI Exercise: ${prompt.slice(0, 30)}`,

@@ -8,10 +8,12 @@ import {
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedProps,
   withTiming,
   withRepeat,
   withSpring,
   interpolate,
+  Extrapolate,
   withSequence,
   withDelay,
   Easing,
@@ -26,12 +28,16 @@ import Svg, {
   G,
   Text as SvgText,
   Circle,
+  Path,
 } from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '@/theme/hooks/useTheme';
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
 const AnimatedG = Animated.createAnimatedComponent(G);
+const AnimatedSvgText = Animated.createAnimatedComponent(SvgText);
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 interface NexAILogoProps {
   size?: number;
@@ -61,18 +67,12 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
   const opacity = useSharedValue(variant === 'splash' ? 0 : 1);
   const pulseScale = useSharedValue(1);
   const glowOpacity = useSharedValue(0);
-  const textOpacity = useSharedValue(variant === 'splash' ? 0 : 1); // Show text immediately for static
+  const textOpacity = useSharedValue(variant === 'splash' ? 0 : 1);
   const textScale = useSharedValue(variant === 'splash' ? 0.8 : 1);
   const particleProgress = useSharedValue(0);
   
-  // Hexagon face animations for 3D effect
-  const face1Opacity = useSharedValue(1);
-  const face2Opacity = useSharedValue(0.8);
-  const face3Opacity = useSharedValue(0.6);
-  
   useEffect(() => {
     if (!animated) {
-      // For static version, ensure text is visible
       textOpacity.value = 1;
       textScale.value = 1;
       return;
@@ -95,7 +95,6 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
         })
       );
       
-      // Text animations for splash
       textOpacity.value = withDelay(800,
         withTiming(1, {
           duration: 1000,
@@ -111,65 +110,31 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
       );
     }
     
-    // 3D rotation animations - spend more time facing forward
+    // 3D rotation animations
     rotationY.value = withRepeat(
       withSequence(
-        // Face forward for 3 seconds
         withTiming(0, { duration: 3000 }),
-        // Rotate to back in 1 second
-        withTiming(180, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
-        // Stay at back for 0.5 seconds
+        withTiming(180, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
         withTiming(180, { duration: 500 }),
-        // Rotate back to front in 1 second
-        withTiming(360, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(360, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
       ),
       -1,
       false
     );
     
-    // Subtle X rotation
     rotationX.value = withRepeat(
       withSequence(
-        withTiming(10, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-10, { duration: 3000, easing: Easing.inOut(Easing.ease) })
+        withTiming(15, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-15, { duration: 3000, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
       true
     );
     
-    // Very subtle Z rotation
     rotationZ.value = withRepeat(
       withSequence(
         withTiming(5, { duration: 4000, easing: Easing.inOut(Easing.ease) }),
         withTiming(-5, { duration: 4000, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1,
-      true
-    );
-    
-    // Face opacity animations for 3D depth
-    face1Opacity.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 2000 }),
-        withTiming(0.7, { duration: 2000 })
-      ),
-      -1,
-      true
-    );
-    
-    face2Opacity.value = withRepeat(
-      withSequence(
-        withTiming(0.8, { duration: 2000 }),
-        withTiming(0.9, { duration: 2000 })
-      ),
-      -1,
-      true
-    );
-    
-    face3Opacity.value = withRepeat(
-      withSequence(
-        withTiming(0.6, { duration: 2000 }),
-        withTiming(0.7, { duration: 2000 })
       ),
       -1,
       true
@@ -209,12 +174,10 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
       false
     );
     
-    // Call completion callback
     if (onAnimationComplete && variant === 'splash') {
       setTimeout(onAnimationComplete, 1500);
     }
     
-    // Cleanup
     return () => {
       cancelAnimation(rotationX);
       cancelAnimation(rotationY);
@@ -226,28 +189,34 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
       cancelAnimation(textOpacity);
       cancelAnimation(textScale);
       cancelAnimation(particleProgress);
-      cancelAnimation(face1Opacity);
-      cancelAnimation(face2Opacity);
-      cancelAnimation(face3Opacity);
     };
   }, [animated, variant, showGlow]);
   
-  // Calculate if logo is facing backward (to hide text when rotated)
-  const isBackFacing = useDerivedValue(() => {
-    const normalizedRotation = rotationY.value % 360;
-    return normalizedRotation > 90 && normalizedRotation < 270;
+  // Calculate 3D transformation for hexagon faces
+  const transform3D = useDerivedValue(() => {
+    const rx = rotationX.value * Math.PI / 180;
+    const ry = rotationY.value * Math.PI / 180;
+    const rz = rotationZ.value * Math.PI / 180;
+    
+    // Calculate which faces are visible based on rotation
+    const normalizedY = ((rotationY.value % 360) + 360) % 360;
+    const isFrontFacing = normalizedY <= 90 || normalizedY >= 270;
+    const isBackFacing = normalizedY > 90 && normalizedY < 270;
+    
+    return {
+      rx,
+      ry,
+      rz,
+      isFrontFacing,
+      isBackFacing,
+      normalizedY,
+    };
   });
   
   // Container animation
   const containerStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [
-      { scale: scale.value * pulseScale.value },
-      { perspective: 800 },
-      { rotateX: `${rotationX.value}deg` },
-      { rotateY: `${rotationY.value}deg` },
-      { rotateZ: `${rotationZ.value}deg` },
-    ],
+    transform: [{ scale: scale.value * pulseScale.value }],
   }));
   
   // Glow animation
@@ -256,11 +225,96 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
     transform: [{ scale: interpolate(glowOpacity.value, [0.3, 1], [1, 1.2]) }],
   }));
   
-  // Text container animation - hide when back facing
-  const textContainerStyle = useAnimatedStyle(() => ({
-    opacity: isBackFacing.value ? 0 : textOpacity.value,
-    transform: [{ scale: textScale.value }],
+  // SVG rotation style
+  const svgRotationStyle = useAnimatedStyle(() => ({
+    transform: [
+      { perspective: 1000 },
+      { rotateX: `${rotationX.value}deg` },
+      { rotateY: `${rotationY.value}deg` },
+      { rotateZ: `${rotationZ.value}deg` },
+    ],
   }));
+  
+  // Calculate hexagon points
+  const calculateHexagonPoints = (centerX: number, centerY: number, radius: number, depth: number = 0) => {
+    const points = [];
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI / 3) * i - Math.PI / 2;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle) + depth;
+      points.push(`${x},${y}`);
+    }
+    return points.join(' ');
+  };
+  
+  const hexSize = actualSize * 0.4;
+  const center = actualSize / 2;
+  const depth = 10; // 3D depth offset
+  
+  // Front face style
+  const frontFaceStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      transform3D.value.normalizedY,
+      [0, 90, 270, 360],
+      [1, 0, 0, 1],
+      Extrapolate.CLAMP
+    );
+    return { opacity };
+  });
+  
+  // Back face style
+  const backFaceStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      transform3D.value.normalizedY,
+      [0, 90, 270, 360],
+      [0, 1, 1, 0],
+      Extrapolate.CLAMP
+    );
+    return { opacity };
+  });
+  
+  // Side faces animated props for more compelling animations
+  const createSideFaceProps = (faceIndex: number) => {
+    return useAnimatedProps(() => {
+      const baseOpacity = 0.7;
+      const rotY = transform3D.value.normalizedY;
+      
+      // Calculate visibility based on rotation and face position
+      let opacity = baseOpacity;
+      
+      // Adjust opacity based on which face should be visible
+      if (faceIndex === 0 || faceIndex === 1) { // Top faces
+        opacity = interpolate(rotY, [0, 90, 180, 270, 360], [0.7, 0.9, 0.5, 0.2, 0.7]);
+      } else if (faceIndex === 2 || faceIndex === 3) { // Side faces
+        opacity = interpolate(rotY, [0, 90, 180, 270, 360], [0.3, 0.7, 0.9, 0.7, 0.3]);
+      } else { // Bottom faces
+        opacity = interpolate(rotY, [0, 90, 180, 270, 360], [0.2, 0.5, 0.7, 0.9, 0.2]);
+      }
+      
+      // Add subtle animation to strokeWidth for depth effect
+      const strokeWidth = interpolate(opacity, [0.2, 0.9], [0.5, 1.5]);
+      
+      return { 
+        opacity,
+        strokeWidth,
+      };
+    });
+  };
+  
+  // Text style - keep visible on front, hide on back
+  const textStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      transform3D.value.normalizedY,
+      [0, 90, 270, 360],
+      [1, 0, 0, 1],
+      Extrapolate.CLAMP
+    ) * textOpacity.value;
+    
+    return {
+      opacity,
+      transform: [{ scale: textScale.value }],
+    };
+  });
   
   // Particle styles
   const createParticleStyle = (index: number) => {
@@ -279,22 +333,28 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
     });
   };
   
-  // Calculate hexagon points
-  const hexagonPoints = (sizeMultiplier: number = 1) => {
-    const points = [];
-    const hexSize = actualSize * 0.4 * sizeMultiplier;
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 3) * i - Math.PI / 2;
-      const x = actualSize / 2 + hexSize * Math.cos(angle);
-      const y = actualSize / 2 + hexSize * Math.sin(angle);
-      points.push(`${x},${y}`);
-    }
-    return points.join(' ');
+  // Create side face paths for 3D effect
+  const createSideFacePath = (startIndex: number) => {
+    const angle1 = (Math.PI / 3) * startIndex - Math.PI / 2;
+    const angle2 = (Math.PI / 3) * ((startIndex + 1) % 6) - Math.PI / 2;
+    
+    const x1 = center + hexSize * Math.cos(angle1);
+    const y1 = center + hexSize * Math.sin(angle1);
+    const x2 = center + hexSize * Math.cos(angle2);
+    const y2 = center + hexSize * Math.sin(angle2);
+    
+    return `
+      M ${x1} ${y1}
+      L ${x2} ${y2}
+      L ${x2} ${y2 + depth}
+      L ${x1} ${y1 + depth}
+      Z
+    `;
   };
   
   return (
     <Animated.View style={[styles.container, { width: actualSize, height: actualSize }, containerStyle]}>
-      {/* Glow effect */}
+      {/* Glow effect - not rotated */}
       {showGlow && (
         <Animated.View style={[styles.glowContainer, glowStyle]}>
           <LinearGradient
@@ -304,107 +364,122 @@ export const NexAILogo: React.FC<NexAILogoProps> = ({
         </Animated.View>
       )}
       
-      <Svg width={actualSize} height={actualSize} style={StyleSheet.absoluteFillObject}>
-        <Defs>
-          {/* Gradient definitions */}
-          <SvgLinearGradient id="hexGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={theme.colors.primary} stopOpacity="1" />
-            <Stop offset="100%" stopColor={theme.colors.secondary} stopOpacity="1" />
-          </SvgLinearGradient>
+      <Animated.View style={[StyleSheet.absoluteFillObject, svgRotationStyle]}>
+        <Svg width={actualSize} height={actualSize} style={StyleSheet.absoluteFillObject}>
+          <Defs>
+            {/* Gradient definitions */}
+            <SvgLinearGradient id="frontGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor={theme.colors.primary} stopOpacity="1" />
+              <Stop offset="100%" stopColor={theme.colors.secondary} stopOpacity="1" />
+            </SvgLinearGradient>
+            
+            <SvgLinearGradient id="backGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor={theme.colors.secondary} stopOpacity="0.9" />
+              <Stop offset="100%" stopColor={theme.colors.primary} stopOpacity="0.9" />
+            </SvgLinearGradient>
+            
+            <SvgLinearGradient id="sideGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor={theme.colors.primary} stopOpacity="0.8" />
+              <Stop offset="100%" stopColor={theme.colors.secondary} stopOpacity="0.6" />
+            </SvgLinearGradient>
+            
+            <SvgLinearGradient id="sideGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <Stop offset="0%" stopColor={theme.colors.secondary} stopOpacity="0.7" />
+              <Stop offset="100%" stopColor={theme.colors.primary} stopOpacity="0.5" />
+            </SvgLinearGradient>
+            
+            <SvgLinearGradient id="textGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#E0E0E0" stopOpacity="1" />
+            </SvgLinearGradient>
+          </Defs>
           
-          <SvgLinearGradient id="hexGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor={theme.colors.secondary} stopOpacity="0.8" />
-            <Stop offset="100%" stopColor={theme.colors.primary} stopOpacity="0.8" />
-          </SvgLinearGradient>
-          
-          <SvgLinearGradient id="hexGradient3" x1="50%" y1="0%" x2="50%" y2="100%">
-            <Stop offset="0%" stopColor={theme.colors.primary} stopOpacity="0.6" />
-            <Stop offset="100%" stopColor={theme.colors.secondary} stopOpacity="0.6" />
-          </SvgLinearGradient>
-          
-          <SvgLinearGradient id="textGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
-            <Stop offset="100%" stopColor="#E0E0E0" stopOpacity="1" />
-          </SvgLinearGradient>
-        </Defs>
-        
-        {/* 3D Hexagon layers */}
-        <AnimatedG>
-          {/* Back face */}
-          <AnimatedPolygon
-            points={hexagonPoints(0.95)}
-            fill="url(#hexGradient3)"
-            opacity={face3Opacity.value}
-            strokeWidth="2"
-            stroke={theme.colors.glass_border}
-          />
-          
-          {/* Middle face */}
-          <AnimatedPolygon
-            points={hexagonPoints(0.97)}
-            fill="url(#hexGradient2)"
-            opacity={face2Opacity.value}
-            strokeWidth="2"
-            stroke={theme.colors.glass_border}
-          />
-          
-          {/* Front face */}
-          <AnimatedPolygon
-            points={hexagonPoints(1)}
-            fill="url(#hexGradient1)"
-            opacity={face1Opacity.value}
-            strokeWidth="3"
-            stroke={theme.colors.primary}
-          />
-        </AnimatedG>
-        
-        {/* Text container - Always visible for static, hidden when back-facing for animated */}
-        <G style={animated ? textContainerStyle : undefined} opacity={animated ? undefined : 1}>
-          {/* Large N */}
-          <SvgText
-            x={actualSize / 2}
-            y={actualSize / 2 - actualSize * 0.05}
-            fontSize={actualSize * 0.35}
-            fontWeight="900"
-            fill="url(#textGradient)"
-            textAnchor="middle"
-            alignmentBaseline="middle"
-          >
-            N
-          </SvgText>
-          
-          {/* Small AI */}
-          <SvgText
-            x={actualSize / 2}
-            y={actualSize / 2 + actualSize * 0.18}
-            fontSize={actualSize * 0.12}
-            fontWeight="700"
-            fill="url(#textGradient)"
-            textAnchor="middle"
-            alignmentBaseline="middle"
-            letterSpacing="2"
-          >
-            AI
-          </SvgText>
-        </G>
-        
-        {/* Orbital rings */}
-        {animated && (
-          <AnimatedG opacity={0.3}>
-            <Circle
-              cx={actualSize / 2}
-              cy={actualSize / 2}
-              r={actualSize * 0.45}
-              fill="none"
+          {/* Back face (drawn first, behind everything) */}
+          <AnimatedG style={backFaceStyle}>
+            <AnimatedPolygon
+              points={calculateHexagonPoints(center, center + depth, hexSize)}
+              fill="url(#backGradient)"
+              strokeWidth="2"
               stroke={theme.colors.glass_border}
-              strokeWidth="1"
-              strokeDasharray="5 10"
             />
           </AnimatedG>
-        )}
-      </Svg>
+          
+          {/* Side faces for 3D effect */}
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <AnimatedPath
+              key={`side-${i}`}
+              d={createSideFacePath(i)}
+              fill={i % 2 === 0 ? "url(#sideGradient1)" : "url(#sideGradient2)"}
+              animatedProps={createSideFaceProps(i)}
+              strokeWidth="1"
+              stroke={theme.colors.glass_border}
+              opacity={0.8}
+            />
+          ))}
+          
+          {/* Front face */}
+          <AnimatedG style={frontFaceStyle}>
+            <AnimatedPolygon
+              points={calculateHexagonPoints(center, center, hexSize)}
+              fill="url(#frontGradient)"
+              strokeWidth="3"
+              stroke={theme.colors.primary}
+            />
+          </AnimatedG>
+          
+          {/* Text - only on front face */}
+          <AnimatedG style={textStyle}>
+            <AnimatedSvgText
+              x={center}
+              y={center - actualSize * 0.05}
+              fontSize={actualSize * 0.35}
+              fontWeight="900"
+              fill="url(#textGradient)"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              N
+            </AnimatedSvgText>
+            
+            <AnimatedSvgText
+              x={center}
+              y={center + actualSize * 0.18}
+              fontSize={actualSize * 0.12}
+              fontWeight="700"
+              fill="url(#textGradient)"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+              letterSpacing="2"
+            >
+              AI
+            </AnimatedSvgText>
+          </AnimatedG>
+          
+          {/* Orbital rings */}
+          {animated && (
+            <AnimatedG animatedProps={useAnimatedProps(() => ({ opacity: 0.3 * opacity.value }))}>
+              <AnimatedCircle
+                cx={center}
+                cy={center}
+                r={actualSize * 0.45}
+                fill="none"
+                stroke={theme.colors.glass_border}
+                strokeWidth="1"
+                strokeDasharray="5 10"
+                animatedProps={useAnimatedProps(() => ({
+                  strokeDashoffset: interpolate(
+                    particleProgress.value,
+                    [0, 1],
+                    [0, -15]
+                  ),
+                }))}
+              />
+            </AnimatedG>
+          )}
+        </Svg>
+      </Animated.View>
       
-      {/* Floating particles */}
+      {/* Floating particles - not rotated */}
       {variant === 'splash' && animated && (
         <View style={styles.particleContainer}>
           {[0, 1, 2, 3].map((i) => (

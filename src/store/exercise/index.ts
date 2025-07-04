@@ -11,6 +11,7 @@ import type {
   ApiError,
 } from '@/types';
 import type { Exercise } from '@/types/database/models';
+import { authService } from '@/services/auth.service';
 import { mockApi } from '@/services/mockApi';
 import { createEmptyExerciseFilters } from '@/types/business/filters';
 
@@ -102,7 +103,11 @@ export const useExerciseStore = create<ExerciseStore>()(
         
         try {
           // Get current user (from auth context in real app)
-          const user_id = 'user_123'; // TODO: Get from auth
+          const current_user = authService.get_current_user();
+          if (!current_user) {
+            throw new Error('User not authenticated');
+          }
+          const user_id = current_user.id;
           
           const exercises = await mockApi.getExercises(user_id);
           
@@ -222,7 +227,11 @@ export const useExerciseStore = create<ExerciseStore>()(
         });
         
         try {
-          const user_id = 'user_123'; // TODO: Get from auth
+          const current_user = authService.get_current_user();
+          if (!current_user) {
+            throw new Error('User not authenticated');
+          }
+          const user_id = current_user.id;
           const copied = await mockApi.copyExerciseFromLibrary(library_exercise_id, user_id);
           
           set(state => {

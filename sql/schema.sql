@@ -38,7 +38,7 @@ CREATE TYPE equipment AS ENUM (
 
 CREATE TYPE measurement_type AS ENUM (
     'reps',          -- count based
-    'time',          -- duration based (seconds)
+    'duration',          -- duration based (seconds)
     'distance'       -- distance based (meters)
 );
 
@@ -51,6 +51,7 @@ CREATE TYPE difficulty AS ENUM (
 -- Users Table
 CREATE TABLE sys_user (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    firebase_uid VARCHAR(128) UNIQUE NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(100),
     date_of_birth DATE,
@@ -88,21 +89,24 @@ CREATE TABLE exercise (
     -- Default recommendations
     default_sets INTEGER NOT NULL,
     default_reps INTEGER, -- NULL for time/distance based
-    default_duration_seconds INTEGER, -- NULL for rep based
-    default_rest_seconds INTEGER NOT NULL DEFAULT 60,
+    default_duration INTEGER, -- NULL for rep based
+    default_rest INTEGER NOT NULL DEFAULT 60,
     -- User specific fields (only used when user_id is not null)
     notes TEXT,
     is_favorite BOOLEAN DEFAULT FALSE,
     -- Embeddings for semantic search and recommendations
     embedding vector(1536), -- OpenAI ada-002 embeddings
+    is_archived BOOLEAN DEFAULT FALSE,
+    is_ai_generated BOOLEAN DEFAULT FALSE,
+    ai_prompt TEXT,
     -- Metadata for better filtering/recommendations
     difficulty_score INTEGER CHECK (difficulty_score BETWEEN 1 AND 10), -- 1-10 scale
     popularity_score INTEGER DEFAULT 0, -- track usage across users
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT check_measurement_values CHECK (
-        (measurement_type = 'reps' AND default_reps IS NOT NULL AND default_duration_seconds IS NULL) OR
-        (measurement_type IN ('time', 'distance') AND default_duration_seconds IS NOT NULL AND default_reps IS NULL)
+        (measurement_type = 'reps' AND default_reps IS NOT NULL AND default_duration IS NULL) OR
+        (measurement_type IN ('time', 'distance') AND default_duration IS NOT NULL AND default_reps IS NULL)
     )
 );
 
@@ -119,6 +123,9 @@ CREATE TABLE workout (
     -- User specific fields
     notes TEXT,
     is_favorite BOOLEAN DEFAULT FALSE,
+    is_archived BOOLEAN DEFAULT FALSE,
+    is_ai_generated BOOLEAN DEFAULT FALSE,
+    ai_prompt TEXT,
     -- Embeddings for semantic search and recommendations
     embedding vector(1536), -- OpenAI ada-002 embeddings
     -- Metadata
@@ -132,18 +139,18 @@ CREATE TABLE workout (
 CREATE TABLE workout_exercise (
     workout_id UUID REFERENCES workout(id) ON DELETE CASCADE,
     exercise_id UUID REFERENCES exercise(id) ON DELETE CASCADE,
-    exercise_order INTEGER NOT NULL,
+    exercise_order NUMERIC(10, 6) NOT NULL  -- For fractional ordering
     -- These can override exercise defaults
     sets INTEGER NOT NULL,
     reps INTEGER,
-    duration_seconds INTEGER,
-    rest_seconds INTEGER NOT NULL DEFAULT 60,
+    duration INTEGER,
+    rest INTEGER NOT NULL DEFAULT 60,
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (workout_id, exercise_id),
     CONSTRAINT check_workout_measurement_values CHECK (
-        (reps IS NOT NULL AND duration_seconds IS NULL) OR
-        (duration_seconds IS NOT NULL AND reps IS NULL)
+        (reps IS NOT NULL AND duration IS NULL) OR
+        (duration IS NOT NULL AND reps IS NULL)
     )
 );
 
@@ -174,8 +181,8 @@ CREATE TABLE workout_performance (
             "exercise_name": "Plank",
             "exercise_order": 2,
             "sets": [
-                {"set_number": 1, "duration_seconds": 60, "completed": true, "notes": null},
-                {"set_number": 2, "duration_seconds": 45, "completed": true, "notes": null}
+                {"set_number": 1, "duration": 60, "completed": true, "notes": null},
+                {"set_number": 2, "duration": 45, "completed": true, "notes": null}
             ]
         }
     ]
@@ -244,13 +251,13 @@ BEGIN
     INSERT INTO exercise (
         user_id, source_id, name, muscle_groups, category, 
         equipment, instructions, measurement_type,
-        default_sets, default_reps, default_duration_seconds, default_rest_seconds
+        default_sets, default_reps, default_duration, default_rest
     )
     SELECT 
         p_user_id,
         COALESCE(source_id, id), -- Point to original library exercise
         name, muscle_groups, category, equipment, instructions, measurement_type,
-        default_sets, default_reps, default_duration_seconds, default_rest_seconds
+        default_sets, default_reps, default_duration, default_rest
     FROM exercise
     WHERE id = p_exercise_id
     RETURNING id INTO v_new_id;
@@ -309,11 +316,11 @@ BEGIN
         -- Create the relationship
         INSERT INTO workout_exercise (
             workout_id, exercise_id, exercise_order,
-            sets, reps, duration_seconds, rest_seconds, notes
+            sets, reps, duration, rest, notes
         )
         VALUES (
             v_new_workout_id, v_new_exercise_id, r.exercise_order,
-            r.sets, r.reps, r.duration_seconds, r.rest_seconds, r.notes
+            r.sets, r.reps, r.duration, r.rest, r.notes
         );
     END LOOP;
     

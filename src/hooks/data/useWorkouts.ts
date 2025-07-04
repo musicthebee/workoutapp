@@ -8,6 +8,7 @@ import {
   useFilteredWorkouts,
 } from '@/store/workout';
 import { useExerciseStore } from '@/store/exercise';
+import { authService } from '@/services/auth.service';
 import type {
   Workout,
   WorkoutExercise,
@@ -323,7 +324,11 @@ export const useWorkoutCreation = () => {
   const create_manual = useCallback(async (
     input: Omit<CreateWorkoutInput, 'user_id' | 'exercises'>
   ) => {
-    const user_id = 'user_123'; // TODO: Get from auth
+    const current_user = authService.get_current_user();
+    if (!current_user) {
+      throw new Error('User not authenticated');
+    }
+    const user_id = current_user.id;
     
     // Build exercise list with default ordering
     const exercises = selected_exercises.map((exercise_id, index) => ({
@@ -344,7 +349,11 @@ export const useWorkoutCreation = () => {
   
   const create_with_ai = useCallback(async (prompt: string) => {
     // TODO: Call AI service to generate workout
-    const user_id = 'user_123';
+    const current_user = authService.get_current_user();
+    if (!current_user) {
+      throw new Error('User not authenticated');
+    }
+    const user_id = current_user.id;
     const generated: CreateWorkoutInput = {
       user_id,
       name: `AI Workout: ${prompt.slice(0, 30)}`,

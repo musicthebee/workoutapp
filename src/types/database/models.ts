@@ -93,6 +93,7 @@ export interface WorkoutPerformance {
 export interface User {
   id: UUID;
   email: string;
+  firebase_uid: string;
   name: string | null;
   created_at: string;
   updated_at: string;

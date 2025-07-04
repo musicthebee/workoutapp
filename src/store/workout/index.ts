@@ -12,6 +12,7 @@ import type {
   ApiError,
 } from '@/types';
 import type { Workout, WorkoutExercise } from '@/types/database/models';
+import { authService } from '@/services/auth.service';
 import { mockApi } from '@/services/mockApi';
 import { createEmptyWorkoutFilters } from '@/types/business/filters';
 import { orderingHelpers } from '@/types/utils/ordering';
@@ -111,7 +112,11 @@ export const useWorkoutStore = create<WorkoutStore>()(
         });
         
         try {
-          const user_id = 'user_123'; // TODO: Get from auth
+          const current_user = authService.get_current_user();
+          if (!current_user) {
+            throw new Error('User not authenticated');
+          }
+          const user_id = current_user.id;
           const workouts = await mockApi.getWorkouts(user_id);
           
           set(state => {
@@ -255,7 +260,11 @@ export const useWorkoutStore = create<WorkoutStore>()(
         });
         
         try {
-          const user_id = 'user_123'; // TODO: Get from auth
+          const current_user = authService.get_current_user();
+          if (!current_user) {
+            throw new Error('User not authenticated');
+          }
+          const user_id = current_user.id;
           
           // This would handle smart exercise copying in real implementation
           const library_workout = get().workouts.get(library_workout_id);

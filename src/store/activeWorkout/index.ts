@@ -11,6 +11,7 @@ import type {
   CompleteWorkoutInput,
 } from '@/types';
 import type { WorkoutExercise, Exercise } from '@/types/database/models';
+import { authService } from '@/services/auth.service';
 import { mockApi } from '@/services/mockApi';
 import { orderingHelpers } from '@/types/utils/ordering';
 import { useExerciseStore } from '../exercise';
@@ -117,7 +118,11 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>()(
         });
         
         try {
-          const user_id = 'user_123'; // TODO: Get from auth
+          const current_user = authService.get_current_user();
+          if (!current_user) {
+            throw new Error('User not authenticated');
+          }
+          const user_id = current_user.id;
           
           let exercises: ActiveExercise[] = [];
           let workoutName = 'Quick Workout';
