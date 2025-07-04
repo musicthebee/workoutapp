@@ -1,118 +1,119 @@
-import type { UUID } from '../common';
-
 /**
- * Shared database model types
- * These will be REPLACED by generated types after running codegen
- * For now, they prevent duplication between mockApi and other services
+ * Clean database model types extracted from generated GraphQL types
+ * Preserves snake_case architecture while removing GraphQL metadata
  */
 
-// Database enum types matching schema
-export type MuscleGroup = 
-  | 'chest' | 'back' | 'shoulders' 
-  | 'biceps' | 'triceps' | 'forearms'
-  | 'abs' | 'obliques' | 'core'
-  | 'quads' | 'hamstrings' | 'glutes' | 'calves'
-  | 'cardio';
+import type {
+  Exercise as GQLExercise,
+  Sys_User as GQLUser,
+  Workout as GQLWorkout,
+  Workout_Exercise as GQLWorkoutExercise,
+  Workout_Performance as GQLWorkoutPerformance,
+} from '@/api/generated/graphql';
 
-export type ExerciseCategory = 
-  | 'strength'      // traditional resistance training
-  | 'cardio'        // endurance/aerobic
-  | 'plyometric'    // explosive movements
-  | 'mobility'      // stretching/flexibility
-  | 'balance'       // stability work
-  | 'power';        // olympic lifts, explosive strength
-
-export type WorkoutCategory = 
-  | 'strength'      // traditional lifting session
-  | 'cardio'        // endurance focused session
-  | 'hiit'          // high intensity intervals
-  | 'circuit'       // rotating exercises, minimal rest
-  | 'mobility'      // yoga/stretching session
-  | 'hybrid';       // mixed goals
-
-export type Equipment = 
-  | 'barbell' | 'dumbbell' | 'kettlebell'
-  | 'cable' | 'machine' | 'bodyweight'
-  | 'bands' | 'medicine_ball' | 'trx'
-  | 'cardio_machine' | 'none';
-
-export type MeasurementType = 
-  | 'reps'          // count based
-  | 'duration'      // duration based (seconds)
-  | 'distance';     // distance based (meters)
-
-export type Difficulty = 
-  | 'beginner'
-  | 'intermediate'
-  | 'advanced';
-
-// Exercise model matching database schema
-export interface Exercise {
-  id: UUID;
-  user_id: UUID | null;
-  source_id: UUID | null;
-  name: string;
-  muscle_groups: MuscleGroup[];
-  category: ExerciseCategory;
-  equipment: Equipment;
-  instructions: string;
-  measurement_type: MeasurementType;
-  default_sets: number;
-  default_reps: number | null;
-  default_duration: number | null;  // Duration in seconds
-  default_rest: number;  // Rest time in seconds
-  is_favorite: boolean;
-  is_archived: boolean;
-  is_ai_generated: boolean;
+// Clean core types - remove GraphQL metadata and unwrap scalars
+export type Exercise = Omit<
+  GQLExercise,
+  | 'exercise'
+  | 'exercises'
+  | 'exercises_aggregate'
+  | 'workout_exercises'
+  | 'workout_exercises_aggregate'
+  | 'sys_user'
+> & {
+  id: string;
+  user_id: string | null;
+  source_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  muscle_groups: string[];
+  embedding: number[] | null;
+  difficulty_score: number | null;
+  popularity_score: number | null;
   ai_prompt: string | null;
   notes: string | null;
-  // AI/ML fields
-  embedding: number[] | null;  // Vector embeddings for semantic search
-  difficulty_score: number | null;  // 1-10 scale
-  popularity_score: number;
-  created_at: string;
-  updated_at: string;
-}
+  is_favorite: boolean | null;
+  is_archived: boolean | null;
+  is_ai_generated: boolean | null;
+};
 
-// Workout exercise junction
-export interface WorkoutExercise {
-  workout_id: UUID;
-  exercise_id: UUID;
+export type WorkoutExercise = Omit<GQLWorkoutExercise, 'exercise' | 'workout'> & {
+  workout_id: string;
+  exercise_id: string;
   exercise_order: number;
-  sets: number;
+  duration: number | null;
   reps: number | null;
-  duration: number | null;  // Duration in seconds
-  rest: number;  // Rest time in seconds
-  notes: string | null;  // Missing field from schema
-  created_at: string;
+  notes: string | null;
+  created_at: string | null;
   exercise?: Exercise; // Populated on fetch
-}
+};
 
-// Workout model
-export interface Workout {
-  id: UUID;
-  user_id: UUID | null;
-  source_id: UUID | null;
-  name: string;
-  description: string | null;
-  category: WorkoutCategory;
-  difficulty: Difficulty;
-  estimated_duration_minutes: number;  // NOT NULL in schema
-  is_favorite: boolean;
-  is_archived: boolean;
-  is_ai_generated: boolean;
+export type Workout = Omit<
+  GQLWorkout,
+  | 'workout'
+  | 'workouts'
+  | 'workouts_aggregate'
+  | 'workout_exercises'
+  | 'workout_exercises_aggregate'
+  | 'workout_performances'
+  | 'workout_performances_aggregate'
+  | 'sys_user'
+> & {
+  id: string;
+  user_id: string | null;
+  source_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  embedding: number[] | null;
+  total_volume_estimate: number | null;
+  popularity_score: number | null;
   ai_prompt: string | null;
-  notes: string | null;  // Missing field from schema
-  // AI/ML fields
-  embedding: number[] | null;  // Vector embeddings for semantic search
-  total_volume_estimate: number | null;  // Estimated total volume for tracking
-  popularity_score: number;
-  created_at: string;
-  updated_at: string;
+  notes: string | null;
+  is_favorite: boolean | null;
+  is_archived: boolean | null;
+  is_ai_generated: boolean | null;
   workout_exercises: WorkoutExercise[];
-}
+};
 
-// Performance models
+export type User = Omit<
+  GQLUser,
+  | 'exercises'
+  | 'exercises_aggregate'
+  | 'user_weight_histories'
+  | 'user_weight_histories_aggregate'
+  | 'workout_performances'
+  | 'workout_performances_aggregate'
+  | 'workouts'
+  | 'workouts_aggregate'
+> & {
+  id: string;
+  created_at: string | null;
+  updated_at: string | null;
+  date_of_birth: string | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  name: string | null;
+  last_login: string | null;
+  primary_goal: string | null;
+  preferred_units: string | null;
+  rest_timer_enabled: boolean | null;
+  rest_timer_auto_start: boolean | null;
+  workout_reminders: boolean | null;
+  achievement_notifications: boolean | null;
+  is_active: boolean | null;
+};
+
+// Extract enum values from GraphQL scalars
+export type MuscleGroup = string; // Will be constrained by GraphQL schema
+export type ExerciseCategory = string;
+export type WorkoutCategory = string;
+export type Equipment = string;
+export type MeasurementType = string;
+export type Difficulty = string;
+
+// Application-specific types (not database tables)
+// These represent JSON structures stored in the database
+
 export interface SetPerformance {
   set_number: number;
   reps?: number | null;
@@ -124,52 +125,21 @@ export interface SetPerformance {
 }
 
 export interface ExercisePerformance {
-  exercise_id: UUID;
+  exercise_id: string;
   exercise_name: string;
   exercise_order: number;
   set_performances: SetPerformance[];
 }
 
-export interface WorkoutPerformance {
-  id: UUID;
-  user_id: UUID;
-  workout_id: UUID;
+export type WorkoutPerformance = Omit<GQLWorkoutPerformance, 'sys_user' | 'workout'> & {
+  id: string;
+  user_id: string;
+  workout_id: string;
   started_at: string;
   completed_at: string | null;
   notes: string | null;
-  exercise_performances: ExercisePerformance[];
-}
-
-// User model matching database schema
-export interface User {
-  id: UUID;
-  firebase_uid: string;
-  email: string;
-  name: string | null;
-  date_of_birth: string | null;  // DATE type
-  // Physical attributes for tracking
-  height_cm: number | null;
-  weight_kg: number | null;
-  // Preferences
-  preferred_units: 'metric' | 'imperial';
-  rest_timer_enabled: boolean;
-  rest_timer_auto_start: boolean;
-  // Notification preferences
-  workout_reminders: boolean;
-  achievement_notifications: boolean;
-  // Training preferences
-  training_experience: Difficulty;
-  primary_goal: string | null;  // 'strength', 'muscle', 'endurance', 'weight_loss', 'general_fitness'
-  // Account status
-  is_active: boolean;
-  last_login: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * IMPORTANT: After running GraphQL codegen:
- * 1. Delete this file
- * 2. Update all imports to use generated types from 'src/types/generated/graphql'
- * 3. The generated types will have the exact same shape but be auto-maintained
- */
+  created_at: string | null;
+  exercises_performed: any; // JSONB field containing ExercisePerformance[]
+  // Helper for application use
+  exercise_performances?: ExercisePerformance[]; // Parsed from exercises_performed JSONB
+};

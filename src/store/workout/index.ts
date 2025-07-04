@@ -3,13 +3,13 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import type { 
-  UUID, 
-  WorkoutFilters,
-  CreateWorkoutInput,
-  UpdateWorkoutInput,
+import type {
   AddExerciseToWorkoutInput,
   ApiError,
+  CreateWorkoutInput,
+  UpdateWorkoutInput,
+  UUID,
+  WorkoutFilters,
 } from '@/types';
 import type { Workout, WorkoutExercise } from '@/types/database/models';
 import { authService } from '@/services/auth.service';
@@ -22,19 +22,19 @@ interface WorkoutState {
   // Data - normalized structure
   workouts: Map<UUID, Workout>;
   workout_exercises: Map<UUID, WorkoutExercise[]>; // workout_id -> exercises
-  
+
   // UI State
   filters: WorkoutFilters;
   search_query: string;
-  
+
   // Loading states
   is_loading: boolean;
   is_creating: boolean;
   is_updating: boolean;
-  
+
   // Error handling
   error: ApiError | null;
-  
+
   // Cache management
   last_fetch: number | null;
   cache_duration: number;
@@ -45,25 +45,33 @@ interface WorkoutActions {
   // Fetch operations
   fetch_workouts: () => Promise<void>;
   fetch_workout_by_id: (id: UUID) => Promise<Workout | undefined>;
-  
+
   // CRUD operations
   create_workout: (input: CreateWorkoutInput) => Promise<Workout>;
   update_workout: (id: UUID, updates: UpdateWorkoutInput) => Promise<Workout>;
   copy_from_library: (library_workout_id: UUID) => Promise<Workout>;
   toggle_favorite: (id: UUID) => Promise<void>;
   archive_workout: (id: UUID) => Promise<void>;
-  
+
   // Exercise management (living workouts!)
-  add_exercise_to_workout: (workout_id: UUID, exercise_id: UUID, config?: Partial<AddExerciseToWorkoutInput>) => Promise<void>;
-  update_workout_exercise: (workout_id: UUID, exercise_id: UUID, updates: Partial<WorkoutExercise>) => Promise<void>;
+  add_exercise_to_workout: (
+    workout_id: UUID,
+    exercise_id: UUID,
+    config?: Partial<AddExerciseToWorkoutInput>,
+  ) => Promise<void>;
+  update_workout_exercise: (
+    workout_id: UUID,
+    exercise_id: UUID,
+    updates: Partial<WorkoutExercise>,
+  ) => Promise<void>;
   remove_exercise_from_workout: (workout_id: UUID, exercise_id: UUID) => Promise<void>;
   reorder_exercises: (workout_id: UUID, exercises: WorkoutExercise[]) => Promise<void>;
-  
+
   // Filter operations
   set_filter: <K extends keyof WorkoutFilters>(key: K, value: WorkoutFilters[K]) => void;
   reset_filters: () => void;
   set_search: (query: string) => void;
-  
+
   // Utility
   clear_error: () => void;
   invalidate_cache: () => void;
@@ -92,25 +100,25 @@ export const useWorkoutStore = create<WorkoutStore>()(
     immer((set, get) => ({
       // State
       ...initial_state,
-      
+
       // Fetch all workouts
       fetch_workouts: async () => {
         const state = get();
-        
+
         // Check cache
         if (
-          state.last_fetch && 
+          state.last_fetch &&
           Date.now() - state.last_fetch < state.cache_duration &&
           state.workouts.size > 0
         ) {
           return;
         }
-        
+
         set(state => {
           state.is_loading = true;
           state.error = null;
         });
-        
+
         try {
           const current_user = authService.get_current_user();
           if (!current_user) {
@@ -118,23 +126,23 @@ export const useWorkoutStore = create<WorkoutStore>()(
           }
           const user_id = current_user.id;
           const workouts = await mockApi.getWorkouts(user_id);
-          
+
           set(state => {
             // Clear existing data
             state.workouts.clear();
             state.workout_exercises.clear();
-            
+
             // Populate normalized data
             workouts.forEach(workout => {
               state.workouts.set(workout.id, {
                 ...workout,
                 workout_exercises: [], // Don't store exercises in workout
               });
-              
+
               // Store exercises separately
               state.workout_exercises.set(workout.id, workout.workout_exercises);
             });
-            
+
             state.is_loading = false;
             state.last_fetch = Date.now();
           });
@@ -148,15 +156,17 @@ export const useWorkoutStore = create<WorkoutStore>()(
           });
         }
       },
-      
+
       // Fetch single workout
       fetch_workout_by_id: async (id: UUID) => {
         const existing = get().workouts.get(id);
-        if (existing && get().workout_exercises.has(id)) return existing;
-        
+        if (existing && get().workout_exercises.has(id)) {
+          return existing;
+        }
+
         try {
           const workout = await mockApi.getWorkoutById(id);
-          
+
           set(state => {
             state.workouts.set(id, {
               ...workout,
@@ -164,7 +174,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
             });
             state.workout_exercises.set(id, workout.workout_exercises);
           });
-          
+
           return workout;
         } catch (error) {
           set(state => {
@@ -176,17 +186,17 @@ export const useWorkoutStore = create<WorkoutStore>()(
           return undefined;
         }
       },
-      
+
       // Create new workout
       create_workout: async (input: CreateWorkoutInput) => {
         set(state => {
           state.is_creating = true;
           state.error = null;
         });
-        
+
         try {
           const created = await mockApi.createWorkout(input);
-          
+
           set(state => {
             state.workouts.set(created.id, {
               ...created,
@@ -195,7 +205,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
             state.workout_exercises.set(created.id, created.workout_exercises);
             state.is_creating = false;
           });
-          
+
           return created;
         } catch (error) {
           set(state => {
@@ -208,14 +218,14 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Update workout
       update_workout: async (id: UUID, updates: UpdateWorkoutInput) => {
         const original = get().workouts.get(id);
         if (!original) {
           throw new Error('Workout not found');
         }
-        
+
         // Optimistic update
         set(state => {
           const workout = state.workouts.get(id);
@@ -225,10 +235,10 @@ export const useWorkoutStore = create<WorkoutStore>()(
           state.is_updating = true;
           state.error = null;
         });
-        
+
         try {
           const updated = await mockApi.updateWorkout(id, updates);
-          
+
           set(state => {
             state.workouts.set(id, {
               ...updated,
@@ -236,7 +246,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
             });
             state.is_updating = false;
           });
-          
+
           return updated;
         } catch (error) {
           // Rollback
@@ -251,27 +261,27 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Copy from library
       copy_from_library: async (library_workout_id: UUID) => {
         set(state => {
           state.is_creating = true;
           state.error = null;
         });
-        
+
         try {
           const current_user = authService.get_current_user();
           if (!current_user) {
             throw new Error('User not authenticated');
           }
           const user_id = current_user.id;
-          
+
           // This would handle smart exercise copying in real implementation
           const library_workout = get().workouts.get(library_workout_id);
           if (!library_workout) {
             throw new Error('Library workout not found');
           }
-          
+
           // Create copy
           const input: CreateWorkoutInput = {
             user_id,
@@ -281,18 +291,20 @@ export const useWorkoutStore = create<WorkoutStore>()(
             category: library_workout.category,
             difficulty: library_workout.difficulty,
             estimated_duration_minutes: library_workout.estimated_duration_minutes || 30,
-            exercises: get().workout_exercises.get(library_workout_id)?.map(we => ({
-              exercise_id: we.exercise_id,
-              exercise_order: we.exercise_order,
-              sets: we.sets,
-              reps: we.reps,
-              duration: we.duration,
-              rest: we.rest,
-            })),
+            exercises: get()
+              .workout_exercises.get(library_workout_id)
+              ?.map(we => ({
+                exercise_id: we.exercise_id,
+                exercise_order: we.exercise_order,
+                sets: we.sets,
+                reps: we.reps,
+                duration: we.duration,
+                rest: we.rest,
+              })),
           };
-          
+
           const copied = await mockApi.createWorkout(input);
-          
+
           set(state => {
             state.workouts.set(copied.id, {
               ...copied,
@@ -301,7 +313,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
             state.workout_exercises.set(copied.id, copied.workout_exercises);
             state.is_creating = false;
           });
-          
+
           return copied;
         } catch (error) {
           set(state => {
@@ -314,12 +326,12 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Add exercise to workout (Living workouts!)
       add_exercise_to_workout: async (workout_id: UUID, exercise_id: UUID, config) => {
         const exercises = get().workout_exercises.get(workout_id) || [];
         const exercise_order = orderingHelpers.getOrderForAppend(exercises);
-        
+
         const new_exercise: WorkoutExercise = {
           workout_id,
           exercise_id,
@@ -331,25 +343,24 @@ export const useWorkoutStore = create<WorkoutStore>()(
           notes: null,
           created_at: new Date().toISOString(),
         };
-        
+
         // Optimistic update
         set(state => {
           const current = state.workout_exercises.get(workout_id) || [];
           state.workout_exercises.set(workout_id, [...current, new_exercise]);
         });
-        
+
         try {
-          await mockApi.addExerciseToWorkout(
+          await mockApi.addExerciseToWorkout(workout_id, {
             workout_id,
             exercise_id,
             exercise_order,
-            {
-              sets: new_exercise.sets,
-              reps: new_exercise.reps,
-              duration: new_exercise.duration,
-              rest: new_exercise.rest,
-            }
-          );
+            sets: new_exercise.sets,
+            reps: new_exercise.reps,
+            duration: new_exercise.duration,
+            rest: new_exercise.rest,
+            notes: new_exercise.notes,
+          });
         } catch (error) {
           // Rollback
           set(state => {
@@ -362,25 +373,29 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Update exercise in workout
-      update_workout_exercise: async (workout_id: UUID, exercise_id: UUID, updates: Partial<WorkoutExercise>) => {
+      update_workout_exercise: async (
+        workout_id: UUID,
+        exercise_id: UUID,
+        updates: Partial<WorkoutExercise>,
+      ) => {
         const exercises = get().workout_exercises.get(workout_id) || [];
         const index = exercises.findIndex(e => e.exercise_id === exercise_id);
-        
+
         if (index === -1) {
           throw new Error('Exercise not found in workout');
         }
-        
+
         const original = [...exercises];
-        
+
         // Optimistic update
         set(state => {
           const current = state.workout_exercises.get(workout_id) || [];
           current[index] = { ...current[index]!, ...updates };
           state.workout_exercises.set(workout_id, [...current]);
         });
-        
+
         try {
           // API call would go here
           // await mockApi.updateWorkoutExercise(workout_id, exercise_id, updates);
@@ -396,17 +411,17 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Remove exercise from workout
       remove_exercise_from_workout: async (workout_id: UUID, exercise_id: UUID) => {
         const exercises = get().workout_exercises.get(workout_id) || [];
         const filtered = exercises.filter(e => e.exercise_id !== exercise_id);
-        
+
         // Optimistic update
         set(state => {
           state.workout_exercises.set(workout_id, filtered);
         });
-        
+
         try {
           // API call would go here
           // await mockApi.removeExerciseFromWorkout(workout_id, exercise_id);
@@ -422,16 +437,16 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Reorder exercises
       reorder_exercises: async (workout_id: UUID, exercises: WorkoutExercise[]) => {
         const original = get().workout_exercises.get(workout_id) || [];
-        
+
         // Update with new order
         set(state => {
           state.workout_exercises.set(workout_id, exercises);
         });
-        
+
         try {
           // API call would update all exercise_order values
           // await mockApi.updateWorkoutExerciseOrder(workout_id, exercises);
@@ -447,57 +462,59 @@ export const useWorkoutStore = create<WorkoutStore>()(
           throw error;
         }
       },
-      
+
       // Toggle favorite
       toggle_favorite: async (id: UUID) => {
         const workout = get().workouts.get(id);
-        if (!workout) return;
-        
+        if (!workout) {
+          return;
+        }
+
         await get().update_workout(id, {
           is_favorite: !workout.is_favorite,
         });
       },
-      
+
       // Archive workout
       archive_workout: async (id: UUID) => {
         await get().update_workout(id, {
           is_archived: true,
         });
-        
+
         // Remove from local cache
         set(state => {
           state.workouts.delete(id);
           state.workout_exercises.delete(id);
         });
       },
-      
+
       // Filter operations
       set_filter: (key, value) => {
         set(state => {
           (state.filters as any)[key] = value;
         });
       },
-      
+
       reset_filters: () => {
         set(state => {
           state.filters = createEmptyWorkoutFilters() as any;
           state.search_query = '';
         });
       },
-      
+
       set_search: (query: string) => {
         set(state => {
           state.search_query = query;
         });
       },
-      
+
       // Utility
       clear_error: () => {
         set(state => {
           state.error = null;
         });
       },
-      
+
       invalidate_cache: () => {
         set(state => {
           state.last_fetch = null;
@@ -506,18 +523,18 @@ export const useWorkoutStore = create<WorkoutStore>()(
     })),
     {
       name: 'workout-store',
-    }
-  )
+    },
+  ),
 );
 
 // Selector hooks
 export const useWorkoutById = (id: UUID | null | undefined): Workout | undefined => {
-  return useWorkoutStore(state => id ? state.workouts.get(id) : undefined);
+  return useWorkoutStore(state => (id ? state.workouts.get(id) : undefined));
 };
 
 export const useWorkoutExercises = (workout_id: UUID | null | undefined): WorkoutExercise[] => {
-  return useWorkoutStore(state => 
-    workout_id ? (state.workout_exercises.get(workout_id) || []) : []
+  return useWorkoutStore(state =>
+    workout_id ? state.workout_exercises.get(workout_id) || [] : [],
   );
 };
 

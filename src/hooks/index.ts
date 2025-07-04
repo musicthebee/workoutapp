@@ -7,5 +7,5 @@ export * from './utility';
 // Re-export theme hook for convenience
 export { useTheme, useThemeControls, useThemeToken, useThemeValue } from '@/theme/hooks/useTheme';
 
-// Re-export glass variant hook for convenience  
+// Re-export glass variant hook for convenience
 export { useGlassVariant } from '@/contexts/GlassVariantContext';

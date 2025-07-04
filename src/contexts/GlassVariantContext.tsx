@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 export type GlassVariant = 'light' | 'medium' | 'heavy';
 
@@ -25,10 +25,10 @@ export const GlassVariantProvider: React.FC<GlassVariantProviderProps> = ({ chil
 
 export const useGlassVariant = (): GlassVariantContextType => {
   const context = useContext(GlassVariantContext);
-  
+
   if (!context) {
     throw new Error('useGlassVariant must be used within GlassVariantProvider');
   }
-  
+
   return context;
 };

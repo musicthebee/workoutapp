@@ -32,32 +32,32 @@ export const validationRules = {
     validate: (value: number): boolean => value > 0,
     message,
   }),
-  
+
   nonEmptyString: (message = 'This field is required'): ValidationRule<string> => ({
     validate: (value: string): boolean => value.trim().length > 0,
     message,
   }),
-  
+
   validEmail: (message = 'Please enter a valid email'): ValidationRule<string> => ({
     validate: (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
     message,
   }),
-  
+
   minLength: (min: number, message?: string): ValidationRule<string> => ({
     validate: (value: string): boolean => value.length >= min,
     message: message || `Must be at least ${min} characters`,
   }),
-  
+
   maxLength: (max: number, message?: string): ValidationRule<string> => ({
     validate: (value: string): boolean => value.length <= max,
     message: message || `Must be no more than ${max} characters`,
   }),
-  
+
   inRange: (min: number, max: number, message?: string): ValidationRule<number> => ({
     validate: (value: number): boolean => value >= min && value <= max,
     message: message || `Must be between ${min} and ${max}`,
   }),
-  
+
   pattern: (regex: RegExp, message: string): ValidationRule<string> => ({
     validate: (value: string): boolean => regex.test(value),
     message,
@@ -73,7 +73,9 @@ export const validateForm = <T extends Record<string, unknown>>(
   let valid = true;
 
   Object.entries(validation).forEach(([field, fieldValidation]) => {
-    if (!fieldValidation) return;
+    if (!fieldValidation) {
+      return;
+    }
 
     const value = values[field];
     const { required, rules } = fieldValidation;
@@ -115,29 +117,25 @@ export const exerciseValidation: FormValidation<{
 }> = {
   name: {
     required: true,
-    rules: [
-      validationRules.minLength(3),
-      validationRules.maxLength(100),
-    ],
+    rules: [validationRules.minLength(3), validationRules.maxLength(100)],
   },
   muscle_groups: {
     required: true,
-    rules: [{
-      validate: (value: string[]): boolean => value.length > 0,
-      message: 'Select at least one muscle group',
-    }],
+    rules: [
+      {
+        validate: (value: string[]): boolean => value.length > 0,
+        message: 'Select at least one muscle group',
+      },
+    ],
   },
   default_sets: {
     required: true,
-    rules: [
-      validationRules.positiveNumber(),
-      validationRules.inRange(1, 10),
-    ],
+    rules: [validationRules.positiveNumber(), validationRules.inRange(1, 10)],
   },
   default_reps: {
     rules: [
       {
-        validate: (value: number | null | undefined): boolean => 
+        validate: (value: number | null | undefined): boolean =>
           value === null || value === undefined || (value >= 1 && value <= 100),
         message: 'Reps must be between 1 and 100',
       },
@@ -145,9 +143,7 @@ export const exerciseValidation: FormValidation<{
   },
   default_rest_seconds: {
     required: true,
-    rules: [
-      validationRules.inRange(0, 600, 'Rest must be between 0 and 10 minutes'),
-    ],
+    rules: [validationRules.inRange(0, 600, 'Rest must be between 0 and 10 minutes')],
   },
 };
 
@@ -159,15 +155,12 @@ export const workoutValidation: FormValidation<{
 }> = {
   name: {
     required: true,
-    rules: [
-      validationRules.minLength(3),
-      validationRules.maxLength(100),
-    ],
+    rules: [validationRules.minLength(3), validationRules.maxLength(100)],
   },
   description: {
     rules: [
       {
-        validate: (value: string | undefined): boolean => 
+        validate: (value: string | undefined): boolean =>
           value === undefined || value.length <= 500,
         message: 'Must be no more than 500 characters',
       },

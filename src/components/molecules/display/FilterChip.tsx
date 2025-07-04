@@ -1,6 +1,6 @@
 // src/components/molecules/display/FilterChip.tsx
 import React from 'react';
-import { StyleSheet, Pressable, View, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
@@ -39,7 +39,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const size_config = {
     default: {
       height: theme.sizes.touchTargets.small,
@@ -60,37 +60,37 @@ export const FilterChip: React.FC<FilterChipProps> = ({
       font_variant: 'body_medium' as const,
     },
   };
-  
+
   const config = size_config[variant];
-  
+
   const styles = StyleSheet.create({
     container: {
-      height: config.height,
-      paddingHorizontal: config.padding_horizontal,
+      alignItems: 'center',
       borderRadius: theme.borders.radii.full,
       flexDirection: 'row',
-      alignItems: 'center',
       gap: theme.spacing.xs,
-    },
-    selected: {
-      backgroundColor: theme.colors.primary,
+      height: config.height,
+      paddingHorizontal: config.padding_horizontal,
     },
     content: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.xs,
+    },
+    count: {
+      color: is_selected ? theme.colors.text_inverse : theme.colors.text_secondary,
+      marginLeft: theme.spacing.xxs,
     },
     label: {
       color: is_selected ? theme.colors.text_inverse : theme.colors.text_primary,
-    },
-    count: {
-      marginLeft: theme.spacing.xxs,
-      color: is_selected ? theme.colors.text_inverse : theme.colors.text_secondary,
     },
     removeButton: {
       marginLeft: theme.spacing.xs,
       marginRight: -theme.spacing.xs,
       padding: theme.spacing.xxs,
+    },
+    selected: {
+      backgroundColor: theme.colors.primary,
     },
   });
 
@@ -105,29 +105,23 @@ export const FilterChip: React.FC<FilterChipProps> = ({
   const chip_content = (
     <View style={styles.content}>
       {icon && (
-        <Ionicons 
-          name={icon as any} 
-          size={config.icon_size} 
+        <Ionicons
+          name={icon as any}
+          size={config.icon_size}
           color={is_selected ? theme.colors.text_inverse : theme.colors.text_secondary}
         />
       )}
-      
-      <TextBase 
-        variant={config.font_variant} 
-        style={styles.label}
-      >
+
+      <TextBase variant={config.font_variant} style={styles.label}>
         {label}
       </TextBase>
-      
+
       {count !== undefined && count > 0 && (
-        <TextBase 
-          variant="caption" 
-          style={styles.count}
-        >
+        <TextBase variant="caption" style={styles.count}>
           ({count})
         </TextBase>
       )}
-      
+
       {variant === 'removable' && (
         <Pressable
           onPress={on_remove}
@@ -138,9 +132,9 @@ export const FilterChip: React.FC<FilterChipProps> = ({
           accessibilityLabel="Remove filter"
           accessibilityRole="button"
         >
-          <Ionicons 
-            name="close" 
-            size={config.icon_size} 
+          <Ionicons
+            name="close"
+            size={config.icon_size}
             color={is_selected ? theme.colors.text_inverse : theme.colors.text_secondary}
           />
         </Pressable>
@@ -153,14 +147,13 @@ export const FilterChip: React.FC<FilterChipProps> = ({
       <PressableGlass
         variant={is_selected ? 'medium' : 'light'}
         onPress={handle_press}
-        glass_style={[
-          styles.container,
-          is_selected ? styles.selected : {},
-          style,
-        ] as any}
+        glass_style={[styles.container, is_selected ? styles.selected : {}, style] as any}
         testID={testID}
         accessible={accessible}
-        accessibilityLabel={accessibilityLabel || `${label} filter${is_selected ? ', selected' : ''}${count ? `, ${count} items` : ''}`}
+        accessibilityLabel={
+          accessibilityLabel ||
+          `${label} filter${is_selected ? ', selected' : ''}${count ? `, ${count} items` : ''}`
+        }
         accessibilityRole="button"
         accessibilityState={{ selected: is_selected }}
       >
@@ -172,11 +165,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({
   return (
     <GlassBase
       variant={is_selected ? 'medium' : 'light'}
-      style={[
-        styles.container,
-        is_selected && styles.selected,
-        style,
-      ]}
+      style={[styles.container, is_selected && styles.selected, style]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
@@ -222,17 +211,17 @@ export const FilterChipGroup: React.FC<FilterChipGroupProps> = ({
     staggerDelay: 30,
     type: 'scale',
   });
-  
+
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
-      gap: theme.spacing.sm,
       flexWrap: wrap ? 'wrap' : 'nowrap',
+      gap: theme.spacing.sm,
     },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -282,36 +271,38 @@ export const ActiveFilters: React.FC<ActiveFiltersProps> = ({
   accessibilityLabel = 'Active filters',
 }) => {
   const theme = useTheme();
-  
-  if (filters.length === 0) return null;
-  
+
+  if (filters.length === 0) {
+    return null;
+  }
+
   const styles = StyleSheet.create({
-    container: {
-      gap: theme.spacing.sm,
-    },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    title: {
-      color: theme.colors.text_secondary,
-    },
     clearButton: {
       padding: theme.spacing.xs,
     },
     clearText: {
       color: theme.colors.primary,
     },
+    container: {
+      gap: theme.spacing.sm,
+    },
     filters: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: theme.spacing.sm,
     },
+    header: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    title: {
+      color: theme.colors.text_secondary,
+    },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -321,7 +312,7 @@ export const ActiveFilters: React.FC<ActiveFiltersProps> = ({
         <TextBase variant="body_small" style={styles.title}>
           Active Filters ({filters.length})
         </TextBase>
-        
+
         {on_clear_all && filters.length > 1 && (
           <Pressable
             onPress={on_clear_all}
@@ -337,9 +328,9 @@ export const ActiveFilters: React.FC<ActiveFiltersProps> = ({
           </Pressable>
         )}
       </View>
-      
+
       <View style={styles.filters}>
-        {filters.map((filter) => (
+        {filters.map(filter => (
           <FilterChip
             key={filter.id}
             label={`${filter.label}: ${filter.value}`}

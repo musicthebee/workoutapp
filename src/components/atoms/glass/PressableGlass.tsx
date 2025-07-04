@@ -1,11 +1,13 @@
 // src/components/atoms/glass/PressableGlass.tsx
 import React from 'react';
-import { Pressable, Animated, ViewStyle, PressableProps } from 'react-native';
+import { Animated, Pressable, PressableProps, ViewStyle } from 'react-native';
 
 import { GlassBase, type GlassBaseProps } from './GlassBase';
 import { usePressAnimation } from '@/hooks/ui/animations';
 
-interface PressableGlassProps extends Omit<GlassBaseProps, 'style'>, Omit<PressableProps, 'style' | 'children'> {
+interface PressableGlassProps
+  extends Omit<GlassBaseProps, 'style'>,
+    Omit<PressableProps, 'style' | 'children'> {
   children: React.ReactNode;
   style?: ViewStyle | ViewStyle[];
   glass_style?: ViewStyle | ViewStyle[];
@@ -25,7 +27,7 @@ export const PressableGlass: React.FC<PressableGlassProps> = ({
   glow = false,
   shimmer = false,
   glass_style,
-  
+
   // Pressable props
   onPress,
   onPressIn,
@@ -33,12 +35,12 @@ export const PressableGlass: React.FC<PressableGlassProps> = ({
   onLongPress,
   disabled,
   hitSlop,
-  
+
   // Animation props
   press_scale,
   press_opacity,
   disable_press_animation = false,
-  
+
   // Common props
   children,
   style,
@@ -47,7 +49,7 @@ export const PressableGlass: React.FC<PressableGlassProps> = ({
   accessibilityLabel,
   accessibilityRole = 'button',
   accessibilityState,
-  
+
   // Rest of pressable props
   ...pressableProps
 }) => {
@@ -104,12 +106,7 @@ export const PressableGlass: React.FC<PressableGlassProps> = ({
       {...pressableProps}
     >
       <Animated.View style={disable_press_animation ? undefined : pressAnimation.animatedStyle}>
-        <GlassBase
-          variant={variant}
-          glow={glow}
-          shimmer={shimmer}
-          style={glass_style}
-        >
+        <GlassBase variant={variant} glow={glow} shimmer={shimmer} style={glass_style}>
           {children}
         </GlassBase>
       </Animated.View>

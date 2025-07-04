@@ -7,13 +7,13 @@ import type { MeasurementType } from '../database/models';
  */
 
 // Workout states during execution
-export type WorkoutState = 
-  | 'preparing'  // Initial state, setting up
-  | 'warmup'     // Warmup timer running
-  | 'active'     // Performing exercises
-  | 'rest'       // Rest between sets
-  | 'paused'     // Workout paused
-  | 'complete';  // Workout finished
+export type WorkoutState =
+  | 'preparing' // Initial state, setting up
+  | 'warmup' // Warmup timer running
+  | 'active' // Performing exercises
+  | 'rest' // Rest between sets
+  | 'paused' // Workout paused
+  | 'complete'; // Workout finished
 
 // Represents a set being performed
 export interface ActiveSet {
@@ -68,7 +68,7 @@ export const canAddExercise = (state: WorkoutState): boolean =>
   state === 'preparing' || state === 'active' || state === 'rest';
 
 export const isSetComplete = (performance: ActiveSetPerformance): boolean =>
-  performance.completed && 
-  (performance.reps !== undefined || 
-   performance.duration !== undefined || 
-   performance.distance !== undefined);
+  performance.completed &&
+  (performance.reps !== undefined ||
+    performance.duration !== undefined ||
+    performance.distance !== undefined);

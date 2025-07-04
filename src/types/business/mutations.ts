@@ -1,5 +1,12 @@
 import type { UUID } from '../common';
-import type { MuscleGroup, ExerciseCategory, WorkoutCategory, Equipment, MeasurementType, Difficulty } from '../database/models';
+import type {
+  Difficulty,
+  Equipment,
+  ExerciseCategory,
+  MeasurementType,
+  MuscleGroup,
+  WorkoutCategory,
+} from '../database/models';
 
 /**
  * Input types for GraphQL mutations
@@ -15,6 +22,10 @@ export interface AddExerciseToWorkoutInput {
   readonly reps?: number | null;
   readonly duration?: number | null;
   readonly rest: number;
+  readonly notes?: string | null;
+  // For positioning exercises in workout
+  readonly insert_after_position?: number;
+  readonly insert_before_position?: number;
 }
 
 // For creating new exercise (manual or AI-assisted)
@@ -33,6 +44,7 @@ export interface CreateExerciseInput {
   readonly default_rest: number;
   readonly is_ai_generated?: boolean; // Just a flag!
   readonly ai_prompt?: string | null; // Store the prompt if AI
+  readonly notes?: string | null;
 }
 
 // For updating existing exercise
@@ -63,6 +75,7 @@ export interface CreateWorkoutInput {
   readonly estimated_duration_minutes: number;
   readonly is_ai_generated?: boolean; // Just a flag!
   readonly ai_prompt?: string | null;
+  readonly notes?: string | null;
   readonly exercises?: ReadonlyArray<{
     readonly exercise_id: UUID;
     readonly exercise_order: number;
@@ -70,6 +83,7 @@ export interface CreateWorkoutInput {
     readonly reps?: number | null;
     readonly duration?: number | null;
     readonly rest: number;
+    readonly notes?: string | null;
   }>;
 }
 
@@ -82,6 +96,7 @@ export interface UpdateWorkoutInput {
   readonly estimated_duration_minutes?: number;
   readonly is_favorite?: boolean;
   readonly is_archived?: boolean;
+  readonly notes?: string | null;
 }
 
 // For AI generation requests (NOT a separate type!)
@@ -94,9 +109,11 @@ export interface AIGenerationRequest {
     readonly muscle_groups?: MuscleGroup[];
     readonly equipment?: Equipment[];
     readonly exercise_type?: string;
-    
-    // For workouts  
+    readonly difficulty?: Difficulty;
+
+    // For workouts
     readonly duration_minutes?: number;
+    readonly duration?: number; // Alias for duration_minutes
     readonly workout_type?: string;
     readonly exercise_count?: number;
     readonly fitness_level?: string;

@@ -1,13 +1,20 @@
 overwrite: true
-schema: "${HASURA_ENDPOINT}"
+schema:
+  - "${HASURA_GRAPHQL_URL}":
+      headers:
+        x-hasura-admin-secret: "${HASURA_ADMIN_SECRET}"
 documents: "src/api/queries/**/*.graphql"
 generates:
   src/api/generated/graphql.ts:
     plugins:
       - typescript
       - typescript-operations
+      - typescript-react-apollo
     config:
       skipTypename: true
       enumsAsTypes: true
       avoidOptionals: false
       maybeValue: T | null
+      withHooks: true
+      withComponent: false
+      withHOC: false

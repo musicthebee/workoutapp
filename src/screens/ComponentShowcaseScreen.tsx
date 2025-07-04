@@ -1,44 +1,35 @@
 // src/screens/ComponentShowcaseV2Screen.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useTheme } from '@/hooks';
 import type { MuscleGroup } from '@/types';
-import { 
-  Spacer, 
-  TextBase,
-  GlassBase,
-} from '@/components/atoms';
+import { GlassBase, Spacer, TextBase } from '@/components/atoms';
 import {
-  ModalTemplate,
-  ModalHeader,
-  NumberStepper,
-  QuickSelectRow,
+  ActiveFilters,
+  Badge,
   BigButton,
-  QuickActionButton,
-  FloatingActionButton,
   EmptyState,
-  ListEmptyState,
-  SearchEmptyState,
   ErrorEmptyState,
-  SearchInput,
-  SearchBar,
   FilterChip,
   FilterChipGroup,
-  ActiveFilters,
+  FloatingActionButton,
+  ListEmptyState,
+  MiniStat,
+  ModalHeader,
+  ModalTemplate,
+  NumberStepper,
+  PerformanceComparison,
+  PerformanceHint,
+  QuickActionButton,
+  QuickSelectRow,
+  SearchBar,
+  SearchEmptyState,
+  SearchInput,
   StatCard,
   StatCardGrid,
-  MiniStat,
-  PerformanceHint,
-  PerformanceComparison,
-  Badge,
 } from '@/components/molecules';
-import { 
-  useExercises, 
-  useWorkouts, 
-  useActiveWorkout,
-  useTimer,
-} from '@/hooks';
+import { useActiveWorkout, useExercises, useTimer, useWorkouts } from '@/hooks';
 
 /**
  * Component Showcase Screen
@@ -47,24 +38,24 @@ import {
  */
 export const ComponentShowcaseScreen: React.FC = () => {
   const theme = useTheme();
-  
+
   // Demo state using our hooks - ALL FIXED!
   const { filters, handle_filter_change, toggle_favorites_filter } = useExercises(); // ✅ FIXED
   useWorkouts(); // ✅ FIXED
   const { is_active, start_empty_workout, end_workout } = useActiveWorkout(); // ✅ FIXED
   const timer = useTimer({ mode: 'countdown', initial_seconds: 90 });
-  
+
   // Mock data for better showcase since filtering is disabled
-  const demo_exercises = Array.from({ length: 12 }, (_, i) => ({ 
-    id: `ex-${i}`, 
-    name: `Exercise ${i + 1}` 
+  const demo_exercises = Array.from({ length: 12 }, (_, i) => ({
+    id: `ex-${i}`,
+    name: `Exercise ${i + 1}`,
   }));
-  const demo_workouts = Array.from({ length: 8 }, (_, i) => ({ 
-    id: `wo-${i}`, 
-    name: `Workout ${i + 1}` 
+  const demo_workouts = Array.from({ length: 8 }, (_, i) => ({
+    id: `wo-${i}`,
+    name: `Workout ${i + 1}`,
   }));
   const demo_workout_counts = { total: 25, library: 15, mine: 10 };
-  
+
   // Local demo state
   const [search_query, setSearchQuery] = useState('');
   const [stepper_value, setStepperValue] = useState(10);
@@ -74,28 +65,49 @@ export const ComponentShowcaseScreen: React.FC = () => {
     { id: '1', label: 'Muscle', value: 'Chest' },
     { id: '2', label: 'Equipment', value: 'Barbell' },
   ]);
-  
+
   const demo_chips = [
     { id: 'chest', label: 'Chest', count: 15, is_selected: true },
     { id: 'back', label: 'Back', count: 12, is_selected: false },
     { id: 'quads', label: 'Quads', count: 18, is_selected: false },
     { id: 'shoulders', label: 'Shoulders', count: 10, is_selected: false },
   ];
-  
+
   const demo_stats = [
-    { id: '1', label: 'Total', value: demo_workout_counts.total, icon: 'fitness' as const, trend: 'up' as const, trend_value: '+12%' },
-    { id: '2', label: 'Library', value: demo_exercises.length, icon: 'barbell' as const, trend: 'up' as const, trend_value: '+5' },
+    {
+      id: '1',
+      label: 'Total',
+      value: demo_workout_counts.total,
+      icon: 'fitness' as const,
+      trend: 'up' as const,
+      trend_value: '+12%',
+    },
+    {
+      id: '2',
+      label: 'Library',
+      value: demo_exercises.length,
+      icon: 'barbell' as const,
+      trend: 'up' as const,
+      trend_value: '+5',
+    },
     { id: '3', label: 'Week', value: 4, icon: 'calendar' as const },
-    { id: '4', label: 'Streak', value: 7, icon: 'flame' as const, trend: 'up' as const, trend_value: '+2' },
+    {
+      id: '4',
+      label: 'Streak',
+      value: 7,
+      icon: 'flame' as const,
+      trend: 'up' as const,
+      trend_value: '+2',
+    },
   ];
-  
+
   const demo_performance = {
     reps: 8,
     weight: 225,
     is_pr: true,
     date: new Date().toISOString(),
   };
-  
+
   const previous_performance = {
     reps: 6,
     weight: 205,
@@ -103,18 +115,16 @@ export const ComponentShowcaseScreen: React.FC = () => {
   };
 
   const styles = StyleSheet.create({
+    buttonRow: {
+      flexDirection: 'row',
+    },
     container: {
-      flex: 1,
       backgroundColor: theme.colors.background,
+      flex: 1,
     },
-    section: {
-      marginBottom: theme.spacing.xxxl,
-    },
-    sectionHeader: {
-      marginBottom: theme.spacing.lg,
-    },
-    sectionTitle: {
-      marginBottom: theme.spacing.xs,
+    demoBox: {
+      borderRadius: theme.borders.radii.md,
+      padding: theme.spacing.lg,
     },
     grid: {
       flexDirection: 'row',
@@ -125,28 +135,30 @@ export const ComponentShowcaseScreen: React.FC = () => {
       flex: 1,
       minWidth: 160,
     },
-    buttonRow: {
-      flexDirection: 'row',
-    },
-    quickButtonRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      flexWrap: 'wrap',
-      paddingTop: theme.spacing.xl,
-      paddingBottom: theme.spacing.sm,
-    },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    demoBox: {
-      padding: theme.spacing.lg,
-      borderRadius: theme.borders.radii.md,
-    },
     modalContent: {
       padding: theme.spacing.xl,
+    },
+    quickButtonRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.xs,
+      paddingBottom: theme.spacing.sm,
+      paddingTop: theme.spacing.xl,
+    },
+    row: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    section: {
+      marginBottom: theme.spacing.xxxl,
+    },
+    sectionHeader: {
+      marginBottom: theme.spacing.lg,
+    },
+    sectionTitle: {
+      marginBottom: theme.spacing.xs,
     },
   });
 
@@ -162,7 +174,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
       }
       scrollable
     >
-        <View style={{ marginTop: theme.spacing.xl }}>
+      <View style={{ marginTop: theme.spacing.xl }}>
         {/* Phase 5: Hooks Demo */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -173,23 +185,34 @@ export const ComponentShowcaseScreen: React.FC = () => {
               State management in action
             </TextBase>
           </View>
-          
+
           <GlassBase variant="light" style={styles.demoBox}>
-            <TextBase variant="body_small" color="secondary">Active Hooks:</TextBase>
+            <TextBase variant="body_small" color="secondary">
+              Active Hooks:
+            </TextBase>
             <Spacer size="sm" />
-            <TextBase variant="body_medium">• useExercises: {demo_exercises.length} exercises loaded</TextBase>
-            <TextBase variant="body_medium">• useWorkouts: {demo_workouts.length} workouts, {demo_workout_counts.total} total</TextBase>
-            <TextBase variant="body_medium">• useActiveWorkout: {is_active ? 'Active' : 'Inactive'}</TextBase>
+            <TextBase variant="body_medium">
+              • useExercises: {demo_exercises.length} exercises loaded
+            </TextBase>
+            <TextBase variant="body_medium">
+              • useWorkouts: {demo_workouts.length} workouts, {demo_workout_counts.total} total
+            </TextBase>
+            <TextBase variant="body_medium">
+              • useActiveWorkout: {is_active ? 'Active' : 'Inactive'}
+            </TextBase>
             <TextBase variant="body_medium">• useTimer: {timer.display}</TextBase>
-            <TextBase variant="body_medium">• Filters active: {Object.keys(filters).length}</TextBase>
+            <TextBase variant="body_medium">
+              • Filters active: {Object.keys(filters).length}
+            </TextBase>
             <Spacer size="md" />
             <View style={styles.row}>
               <BigButton
-                label={is_active ? "End Workout" : "Start Workout"}
+                label={is_active ? 'End Workout' : 'Start Workout'}
                 onPress={is_active ? end_workout : start_empty_workout}
-                variant={is_active ? "secondary" : "primary"}
-                icon={is_active ? "stop-circle" : "play-circle"}>
-                {is_active ? "End Workout" : "Start Workout"}
+                variant={is_active ? 'secondary' : 'primary'}
+                icon={is_active ? 'stop-circle' : 'play-circle'}
+              >
+                {is_active ? 'End Workout' : 'Start Workout'}
               </BigButton>
             </View>
             <Spacer size="sm" />
@@ -199,8 +222,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 onPress={toggle_favorites_filter}
                 variant="secondary"
                 icon="heart"
-              >
-              </BigButton>
+              />
             </View>
           </GlassBase>
         </View>
@@ -210,7 +232,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Input Components
           </TextBase>
-          
+
           {/* Search Inputs */}
           <TextBase variant="heading_4">Search Input</TextBase>
           <Spacer size="sm" />
@@ -220,7 +242,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             placeholder="Search exercises..."
           />
           <Spacer size="md" />
-          
+
           <SearchBar
             value={search_query}
             on_change_text={setSearchQuery}
@@ -228,7 +250,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             filter_count={active_filters.length}
           />
           <Spacer size="lg" />
-          
+
           {/* Number Stepper */}
           <TextBase variant="heading_4">Number Stepper</TextBase>
           <Spacer size="sm" />
@@ -240,7 +262,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             max={30}
           />
           <Spacer size="lg" />
-          
+
           {/* Quick Select */}
           <TextBase variant="heading_4">Quick Select Row</TextBase>
           <Spacer size="sm" />
@@ -257,15 +279,14 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Button Components
           </TextBase>
-          
+
           <View style={styles.buttonRow}>
             <BigButton
               label="Complete Set"
               icon="checkmark-circle"
               onPress={() => {}}
               variant="primary"
-            >
-            </BigButton>
+            />
           </View>
           <Spacer size="sm" />
           <View style={styles.buttonRow}>
@@ -274,11 +295,10 @@ export const ComponentShowcaseScreen: React.FC = () => {
               icon="timer"
               variant="secondary"
               onPress={() => timer.toggle()}
-            >
-            </BigButton>
+            />
           </View>
           <Spacer size="md" />
-          
+
           <View style={styles.quickButtonRow}>
             <QuickActionButton
               label="History"
@@ -301,7 +321,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Filter Components
           </TextBase>
-          
+
           <TextBase variant="heading_4">Filter Chips</TextBase>
           <Spacer size="sm" />
           <FilterChipGroup
@@ -312,7 +332,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             }}
           />
           <Spacer size="md" />
-          
+
           <TextBase variant="heading_4">Individual Filter Chip</TextBase>
           <Spacer size="sm" />
           <View style={styles.row}>
@@ -332,7 +352,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             />
           </View>
           <Spacer size="lg" />
-          
+
           <TextBase variant="heading_4">Active Filters</TextBase>
           <Spacer size="sm" />
           <ActiveFilters
@@ -347,13 +367,13 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Display Components
           </TextBase>
-          
+
           {/* Stat Cards */}
           <TextBase variant="heading_4">Stat Card Grid</TextBase>
           <Spacer size="sm" />
           <StatCardGrid stats={demo_stats} columns={2} animated />
           <Spacer size="md" />
-          
+
           <TextBase variant="heading_4">Individual Stat Card</TextBase>
           <Spacer size="sm" />
           <StatCard
@@ -367,7 +387,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
             animated={true}
           />
           <Spacer size="lg" />
-          
+
           {/* Mini Stats */}
           <TextBase variant="heading_4">Mini Stats</TextBase>
           <Spacer size="sm" />
@@ -377,22 +397,15 @@ export const ComponentShowcaseScreen: React.FC = () => {
             <MiniStat label="Rest" value="90s" icon="timer" />
           </View>
           <Spacer size="lg" />
-          
+
           {/* Performance Hints */}
           <TextBase variant="heading_4">Performance Hints</TextBase>
           <Spacer size="sm" />
-          <PerformanceHint
-            label="Last Performance"
-            performance={demo_performance}
-            variant="card"
-          />
+          <PerformanceHint label="Last Performance" performance={demo_performance} variant="card" />
           <Spacer size="md" />
-          <PerformanceComparison
-            current={demo_performance}
-            previous={previous_performance}
-          />
+          <PerformanceComparison current={demo_performance} previous={previous_performance} />
           <Spacer size="md" />
-          
+
           {/* Badges */}
           <View style={styles.row}>
             <Badge label="PR" variant="pr" />
@@ -407,7 +420,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Empty States
           </TextBase>
-          
+
           <GlassBase variant="light" style={{ height: 200 }}>
             <ListEmptyState
               title="No Exercises Found"
@@ -417,16 +430,16 @@ export const ComponentShowcaseScreen: React.FC = () => {
             />
           </GlassBase>
           <Spacer size="md" />
-          
+
           <GlassBase variant="light" style={{ height: 200 }}>
             <SearchEmptyState
               title="No Results Found"
-              search_query={search_query || "bench press"}
+              search_query={search_query || 'bench press'}
               on_clear_search={() => setSearchQuery('')}
             />
           </GlassBase>
           <Spacer size="md" />
-          
+
           <GlassBase variant="light" style={{ height: 200 }}>
             <ErrorEmptyState
               title="Connection Error"
@@ -441,7 +454,7 @@ export const ComponentShowcaseScreen: React.FC = () => {
           <TextBase variant="heading_3" style={styles.sectionHeader}>
             Timer Integration
           </TextBase>
-          
+
           <GlassBase variant="medium" style={styles.demoBox}>
             <TextBase variant="heading_1" style={{ textAlign: 'center' }}>
               {timer.display}
@@ -449,17 +462,14 @@ export const ComponentShowcaseScreen: React.FC = () => {
             <Spacer size="md" />
             <View style={styles.row}>
               <BigButton
-                label={timer.is_running ? "Pause" : "Play"}
-                icon={timer.is_running ? "pause" : "play"}
+                label={timer.is_running ? 'Pause' : 'Play'}
+                icon={timer.is_running ? 'pause' : 'play'}
                 onPress={timer.toggle}
-                variant="primary">
-                {timer.is_running ? "Pause" : "Play"}
+                variant="primary"
+              >
+                {timer.is_running ? 'Pause' : 'Play'}
               </BigButton>
-              <BigButton
-                label="Reset"
-                icon="refresh"
-                onPress={timer.reset}
-                variant="ghost">
+              <BigButton label="Reset" icon="refresh" onPress={timer.reset} variant="ghost">
                 Reset
               </BigButton>
             </View>
@@ -470,7 +480,8 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 onPress={timer.subtract_30_seconds}
                 variant="secondary"
                 full_width={false}
-                style={{ minWidth: 80 }}>
+                style={{ minWidth: 80 }}
+              >
                 -30s
               </BigButton>
               <BigButton
@@ -479,20 +490,16 @@ export const ComponentShowcaseScreen: React.FC = () => {
                 variant="secondary"
                 full_width={false}
                 style={{ minWidth: 80 }}
-              >
-              </BigButton>
+              />
             </View>
           </GlassBase>
         </View>
 
         <Spacer size="xxxl" />
-        </View>
+      </View>
 
       {/* Floating Action Button */}
-      <FloatingActionButton
-        on_press={() => {}}
-        visible={!show_modal}
-      />
+      <FloatingActionButton on_press={() => {}} visible={!show_modal} />
 
       {/* Demo Modal */}
       {show_modal && (

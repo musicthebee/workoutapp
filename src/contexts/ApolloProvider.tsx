@@ -15,9 +15,5 @@ interface ApolloProviderProps {
  * Wraps the app with Apollo Client for GraphQL
  */
 export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
-  return (
-    <BaseApolloProvider client={apolloClient}>
-      {children}
-    </BaseApolloProvider>
-  );
+  return <BaseApolloProvider client={apolloClient}>{children}</BaseApolloProvider>;
 };

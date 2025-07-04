@@ -1,6 +1,6 @@
 // src/components/molecules/display/PerformanceHint.tsx
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
@@ -41,19 +41,19 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   // Format performance text
   const format_performance = (): string => {
     const parts: string[] = [];
-    
+
     if (performance.reps !== undefined) {
       parts.push(`${performance.reps} reps`);
     }
-    
+
     if (performance.weight !== undefined) {
       parts.push(`${performance.weight} lbs`);
     }
-    
+
     if (performance.duration_seconds !== undefined) {
       const minutes = Math.floor(performance.duration_seconds / 60);
       const seconds = performance.duration_seconds % 60;
@@ -63,28 +63,30 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
         parts.push(`${seconds}s`);
       }
     }
-    
+
     if (performance.distance_meters !== undefined) {
       const km = (performance.distance_meters / 1000).toFixed(2);
       parts.push(`${km} km`);
     }
-    
+
     return parts.join(' × ');
   };
-  
+
   // Format date if provided
   const format_date = (date: string): string => {
     const performance_date = new Date(date);
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
+
     if (performance_date.toDateString() === today.toDateString()) {
       return 'Today';
     } else if (performance_date.toDateString() === yesterday.toDateString()) {
       return 'Yesterday';
     } else {
-      const days_ago = Math.floor((today.getTime() - performance_date.getTime()) / (1000 * 60 * 60 * 24));
+      const days_ago = Math.floor(
+        (today.getTime() - performance_date.getTime()) / (1000 * 60 * 60 * 24),
+      );
       if (days_ago < 7) {
         return `${days_ago} days ago`;
       } else {
@@ -92,12 +94,12 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
       }
     }
   };
-  
+
   const styles = StyleSheet.create({
     // Inline variant styles
     inlineContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.xs,
     },
     inlineLabel: {
@@ -106,17 +108,17 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
     inlineValue: {
       fontWeight: theme.typography.body_medium.font_weight,
     },
-    
+
     // Card variant styles
     cardContainer: {
-      padding: theme.spacing.md,
       borderRadius: theme.borders.radii.md,
       gap: theme.spacing.xs,
+      padding: theme.spacing.md,
     },
     cardHeader: {
+      alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
     },
     cardLabel: {
       color: theme.colors.text_secondary,
@@ -125,36 +127,36 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
       fontSize: theme.typography.body_large.font_size,
       fontWeight: theme.typography.body_large.font_weight,
     },
-    
+
     // Compact variant styles
     compactContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borders.radii.sm,
+      flexDirection: 'row',
       gap: theme.spacing.sm,
       padding: theme.spacing.sm,
-      borderRadius: theme.borders.radii.sm,
-      backgroundColor: theme.colors.surface,
     },
     compactContent: {
       flex: 1,
     },
     compactLabel: {
-      fontSize: theme.typography.caption.font_size,
       color: theme.colors.text_secondary,
+      fontSize: theme.typography.caption.font_size,
     },
     compactValue: {
       fontSize: theme.typography.body_small.font_size,
     },
-    
+
     // Common styles
     prBadge: {
-      flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: theme.colors.warning,
+      borderRadius: theme.borders.radii.full,
+      flexDirection: 'row',
       gap: theme.spacing.xxs,
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xxs,
-      borderRadius: theme.borders.radii.full,
-      backgroundColor: theme.colors.warning,
     },
     prText: {
       color: theme.colors.background,
@@ -168,13 +170,14 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
   });
 
   const performance_text = format_performance();
-  const accessible_label = accessibilityLabel || 
+  const accessible_label =
+    accessibilityLabel ||
     `${label}: ${performance_text}${performance.is_pr ? ', Personal Record' : ''}`;
 
   // Inline variant (simple text display)
   if (variant === 'inline') {
     return (
-      <View 
+      <View
         style={[styles.inlineContainer, style]}
         testID={testID}
         accessible={accessible}
@@ -188,18 +191,16 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
         </TextBase>
         {performance.is_pr && (
           <View style={styles.prBadge}>
-            <Ionicons 
-              name="trophy" 
-              size={theme.sizes.icons.xs} 
-              color={theme.colors.background}
-            />
-            <TextBase variant="caption" style={styles.prText}>PR</TextBase>
+            <Ionicons name="trophy" size={theme.sizes.icons.xs} color={theme.colors.background} />
+            <TextBase variant="caption" style={styles.prText}>
+              PR
+            </TextBase>
           </View>
         )}
       </View>
     );
   }
-  
+
   // Card variant (full glass card)
   if (variant === 'card') {
     return (
@@ -216,20 +217,18 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
           </TextBase>
           {performance.is_pr && (
             <View style={styles.prBadge}>
-              <Ionicons 
-                name="trophy" 
-                size={theme.sizes.icons.xs} 
-                color={theme.colors.background}
-              />
-              <TextBase variant="caption" style={styles.prText}>PR</TextBase>
+              <Ionicons name="trophy" size={theme.sizes.icons.xs} color={theme.colors.background} />
+              <TextBase variant="caption" style={styles.prText}>
+                PR
+              </TextBase>
             </View>
           )}
         </View>
-        
+
         <TextBase variant="heading_3" style={styles.cardValue}>
           {performance_text}
         </TextBase>
-        
+
         {show_date && performance.date && (
           <TextBase variant="caption" style={styles.dateText}>
             {format_date(performance.date)}
@@ -238,10 +237,10 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
       </GlassBase>
     );
   }
-  
+
   // Compact variant (small inline card)
   return (
-    <View 
+    <View
       style={[styles.compactContainer, style]}
       testID={testID}
       accessible={accessible}
@@ -255,13 +254,9 @@ export const PerformanceHint: React.FC<PerformanceHintProps> = ({
           {performance_text}
         </TextBase>
       </View>
-      
+
       {performance.is_pr && (
-        <Ionicons 
-          name="trophy" 
-          size={theme.sizes.icons.sm} 
-          color={theme.colors.warning}
-        />
+        <Ionicons name="trophy" size={theme.sizes.icons.sm} color={theme.colors.warning} />
       )}
     </View>
   );
@@ -290,24 +285,24 @@ export const PerformanceComparison: React.FC<PerformanceComparisonProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       gap: theme.spacing.md,
     },
-    section: {
-      flex: 1,
-    },
     divider: {
-      width: theme.borders.widths.thin,
       backgroundColor: theme.colors.divider,
       marginVertical: theme.spacing.xs,
+      width: theme.borders.widths.thin,
+    },
+    section: {
+      flex: 1,
     },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -322,9 +317,9 @@ export const PerformanceComparison: React.FC<PerformanceComparisonProps> = ({
           show_date={false}
         />
       </View>
-      
+
       <View style={styles.divider} />
-      
+
       <View style={styles.section}>
         <PerformanceHint
           label={previous_label}
@@ -367,7 +362,7 @@ export const Badge: React.FC<BadgeProps> = ({
     from: { scale: 0, opacity: 0 },
     duration: theme.animation.durations.normal.duration,
   });
-  
+
   const variant_config = {
     pr: {
       bg_color: theme.colors.warning,
@@ -387,35 +382,36 @@ export const Badge: React.FC<BadgeProps> = ({
     custom: {
       bg_color: color || theme.colors.primary,
       text_color: theme.colors.text_inverse,
-      icon: icon,
+      icon,
     },
   };
-  
+
   const config = variant_config[variant];
   const display_icon = icon || config.icon;
-  
+
   const styles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: config.bg_color,
+      borderRadius: theme.borders.radii.full,
+      flexDirection: 'row',
       gap: theme.spacing.xxs,
       paddingHorizontal: size === 'small' ? theme.spacing.sm : theme.spacing.md,
       paddingVertical: size === 'small' ? theme.spacing.xxs : theme.spacing.xs,
-      borderRadius: theme.borders.radii.full,
-      backgroundColor: config.bg_color,
     },
     text: {
       color: config.text_color,
-      fontSize: size === 'small' 
-        ? theme.typography.caption.font_size 
-        : theme.typography.body_small.font_size,
+      fontSize:
+        size === 'small'
+          ? theme.typography.caption.font_size
+          : theme.typography.body_small.font_size,
       fontWeight: theme.typography.body_medium.font_weight,
     },
   });
 
   return (
     <AnimatedView style={animatedStyle}>
-      <View 
+      <View
         style={[styles.container, style]}
         testID={testID}
         accessible={accessible}
@@ -423,9 +419,9 @@ export const Badge: React.FC<BadgeProps> = ({
         accessibilityRole="text"
       >
         {display_icon && (
-          <Ionicons 
-            name={display_icon as any} 
-            size={size === 'small' ? theme.sizes.icons.xs : theme.sizes.icons.xs} 
+          <Ionicons
+            name={display_icon as any}
+            size={size === 'small' ? theme.sizes.icons.xs : theme.sizes.icons.xs}
             color={config.text_color}
           />
         )}

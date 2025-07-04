@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewProps, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import type { SpacingValue } from '@/types';
@@ -52,7 +52,7 @@ export const Flex: React.FC<FlexProps> = ({
 }) => {
   const theme = useTheme();
   const gapValue = gap ? theme.spacing[gap] : undefined;
-  
+
   return (
     <View
       style={[

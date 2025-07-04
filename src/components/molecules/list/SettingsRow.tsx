@@ -1,6 +1,6 @@
 // src/components/molecules/list/SettingsRow.tsx
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Switch } from 'react-native';
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { TextBase } from '@/components/atoms';
@@ -25,68 +25,72 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
   const theme = useTheme();
 
   const styles = StyleSheet.create({
-    container: {
-      backgroundColor: theme.colors.surface,
-      borderTopLeftRadius: is_first ? theme.borders.radii.lg : 0,
-      borderTopRightRadius: is_first ? theme.borders.radii.lg : 0,
-      borderBottomLeftRadius: is_last ? theme.borders.radii.lg : 0,
-      borderBottomRightRadius: is_last ? theme.borders.radii.lg : 0,
-    },
-    pressable: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
-      minHeight: theme.sizes.touchTargets.medium,
-      opacity: item.disabled ? 0.5 : 1,
-    },
-    iconContainer: {
-      width: theme.sizes.icons.lg + theme.spacing.xs,
-      alignItems: 'center',
-      marginRight: theme.spacing.md,
-    },
-    contentContainer: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-    title: {
-      color: item.destructive ? theme.colors.error : theme.colors.text_primary,
-      marginBottom: item.subtitle ? theme.spacing.xxs : 0,
-    },
-    subtitle: {
-      color: theme.colors.text_secondary,
-    },
-    valueContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    valueText: {
-      color: theme.colors.text_secondary,
-    },
     badge: {
-      minWidth: theme.spacing.lg,
-      height: theme.spacing.lg,
-      borderRadius: theme.borders.radii.full,
-      backgroundColor: theme.colors.primary,
-      justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.borders.radii.full,
+      height: theme.spacing.lg,
+      justifyContent: 'center',
+      minWidth: theme.spacing.lg,
       paddingHorizontal: theme.spacing.xxs,
     },
     badgeText: {
       color: theme.colors.text_inverse,
       fontSize: theme.typography.caption.font_size - 2,
     },
+    container: {
+      backgroundColor: theme.colors.surface,
+      borderBottomLeftRadius: is_last ? theme.borders.radii.lg : 0,
+      borderBottomRightRadius: is_last ? theme.borders.radii.lg : 0,
+      borderTopLeftRadius: is_first ? theme.borders.radii.lg : 0,
+      borderTopRightRadius: is_first ? theme.borders.radii.lg : 0,
+    },
+    contentContainer: {
+      flex: 1,
+      justifyContent: 'center',
+    },
     divider: {
-      height: theme.borders.widths.hairline,
       backgroundColor: theme.colors.border,
-      marginLeft: item.icon ? theme.sizes.icons.lg + theme.spacing.lg + theme.spacing.md : theme.spacing.lg,
+      height: theme.borders.widths.hairline,
+      marginLeft: item.icon
+        ? theme.sizes.icons.lg + theme.spacing.lg + theme.spacing.md
+        : theme.spacing.lg,
+    },
+    iconContainer: {
+      alignItems: 'center',
+      marginRight: theme.spacing.md,
+      width: theme.sizes.icons.lg + theme.spacing.xs,
+    },
+    pressable: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      minHeight: theme.sizes.touchTargets.medium,
+      opacity: item.disabled ? 0.5 : 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+    },
+    subtitle: {
+      color: theme.colors.text_secondary,
+    },
+    title: {
+      color: item.destructive ? theme.colors.error : theme.colors.text_primary,
+      marginBottom: item.subtitle ? theme.spacing.xxs : 0,
+    },
+    valueContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    valueText: {
+      color: theme.colors.text_secondary,
     },
   });
 
   const renderIcon = () => {
-    if (!item.icon) return null;
-    
+    if (!item.icon) {
+      return null;
+    }
+
     return (
       <View style={styles.iconContainer}>
         <Icon
@@ -149,7 +153,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
                 {String(item.value)}
               </TextBase>
             )}
-            {(item.chevron !== false && item.type === 'navigation') && (
+            {item.chevron !== false && item.type === 'navigation' && (
               <Icon
                 name="chevron-forward"
                 size={theme.sizes.icons.sm}
@@ -165,24 +169,26 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
   };
 
   const handlePress = () => {
-    if (item.disabled) return;
-    
+    if (item.disabled) {
+      return;
+    }
+
     if (item.type === 'toggle' && item.on_toggle) {
-      item.on_toggle(!Boolean(item.value));
+      item.on_toggle(!item.value);
     } else if (item.on_press) {
       item.on_press();
     }
   };
 
-  const isPressable = !item.disabled && (
-    (item.type === 'toggle' && item.on_toggle) ||
-    (item.type !== 'toggle' && item.on_press)
-  );
+  const isPressable =
+    !item.disabled &&
+    ((item.type === 'toggle' && item.on_toggle) || (item.type !== 'toggle' && item.on_press));
 
   const accessibilityProps = {
     accessible,
-    accessibilityLabel: accessibilityLabel || `${item.title}${item.subtitle ? `, ${item.subtitle}` : ''}`,
-    accessibilityRole: item.type === 'toggle' ? 'switch' as const : 'button' as const,
+    accessibilityLabel:
+      accessibilityLabel || `${item.title}${item.subtitle ? `, ${item.subtitle}` : ''}`,
+    accessibilityRole: item.type === 'toggle' ? ('switch' as const) : ('button' as const),
     accessibilityState: {
       disabled: item.disabled,
       checked: item.type === 'toggle' ? Boolean(item.value) : undefined,
@@ -214,9 +220,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
           {content}
         </TouchableOpacity>
       ) : (
-        <View {...accessibilityProps}>
-          {content}
-        </View>
+        <View {...accessibilityProps}>{content}</View>
       )}
       {!is_last && show_divider && <View style={styles.divider} />}
     </View>

@@ -1,6 +1,6 @@
 // src/components/molecules/display/EmptyState.tsx
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
@@ -41,7 +41,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     type: 'combined',
     delay: 100,
   });
-  
+
   // Size configurations
   const size_config = {
     compact: {
@@ -69,14 +69,19 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       action_margin: theme.spacing.xxl,
     },
   };
-  
+
   const config = size_config[variant];
-  
+
   const styles = StyleSheet.create({
+    actionContainer: {
+      marginTop: config.action_margin,
+      maxWidth: 280,
+      width: '100%',
+    },
     container: {
+      alignItems: 'center',
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
       padding: config.padding,
     },
     content: {
@@ -87,53 +92,42 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       marginBottom: config.icon_margin,
       opacity: 0.3,
     },
-    title: {
-      textAlign: 'center',
-    },
     message: {
-      textAlign: 'center',
       color: theme.colors.text_secondary,
       marginTop: config.message_margin,
+      textAlign: 'center',
     },
-    actionContainer: {
-      marginTop: config.action_margin,
-      width: '100%',
-      maxWidth: 280,
+    title: {
+      textAlign: 'center',
     },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel || `${title}. ${message || ''}`}
     >
       <AnimatedView style={[styles.content, animatedStyle]}>
-        <Ionicons 
-          name={icon as any} 
-          size={config.icon_size} 
+        <Ionicons
+          name={icon as any}
+          size={config.icon_size}
           color={theme.colors.text_tertiary}
           style={styles.icon}
           testID={`${testID}-icon`}
         />
-        
-        <TextBase 
-          variant={config.title_variant} 
-          style={styles.title}
-        >
+
+        <TextBase variant={config.title_variant} style={styles.title}>
           {title}
         </TextBase>
-        
+
         {message && (
-          <TextBase 
-            variant="body_medium" 
-            style={styles.message}
-          >
+          <TextBase variant="body_medium" style={styles.message}>
             {message}
           </TextBase>
         )}
-        
+
         {action_label && on_action && (
           <View style={styles.actionContainer}>
             <BigButton
@@ -168,7 +162,7 @@ export const ListEmptyState: React.FC<ListEmptyStateProps> = ({
 }) => {
   const default_title = title || `No ${item_type} yet`;
   const default_message = message || `Add your first ${item_type.slice(0, -1)} to get started`;
-  
+
   return (
     <EmptyState
       {...props}
@@ -184,7 +178,8 @@ export const ListEmptyState: React.FC<ListEmptyStateProps> = ({
  * Search Empty State
  * Specialized variant for empty search results
  */
-interface SearchEmptyStateProps extends Omit<EmptyStateProps, 'icon' | 'action_label' | 'on_action'> {
+interface SearchEmptyStateProps
+  extends Omit<EmptyStateProps, 'icon' | 'action_label' | 'on_action'> {
   search_query?: string;
   on_clear_search?: () => void;
 }
@@ -197,12 +192,10 @@ export const SearchEmptyState: React.FC<SearchEmptyStateProps> = ({
   ...props
 }) => {
   const default_title = title || 'No results found';
-  const default_message = message || (
-    search_query 
-      ? `No matches for "${search_query}"`
-      : 'Try adjusting your search or filters'
-  );
-  
+  const default_message =
+    message ||
+    (search_query ? `No matches for "${search_query}"` : 'Try adjusting your search or filters');
+
   return (
     <EmptyState
       {...props}
@@ -237,7 +230,7 @@ export const ErrorEmptyState: React.FC<ErrorEmptyStateProps> = ({
   const default_title = title || 'Something went wrong';
   const default_message = message || error_message || 'Please try again later';
   const default_action_label = action_label || 'Try Again';
-  
+
   return (
     <EmptyState
       {...props}

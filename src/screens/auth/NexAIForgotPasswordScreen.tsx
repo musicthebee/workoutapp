@@ -1,35 +1,29 @@
 // src/screens/auth/NexAIForgotPasswordScreen.tsx
 import React, { useState } from 'react';
 import {
-  View,
+  Keyboard,
   KeyboardAvoidingView,
-  ActivityIndicator,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
-  Keyboard,
   TouchableWithoutFeedback,
-  Pressable,
+  View,
 } from 'react-native';
 import Animated, {
   FadeInDown,
   FadeInUp,
-  useSharedValue,
   useAnimatedStyle,
-  withSpring,
+  useSharedValue,
   withSequence,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import { GlassBase, TextBase } from '@/components/atoms';
 import { BigButton } from '@/components/molecules';
-import { 
-  AuthBackground, 
-  AuthFormCard, 
-  AuthInputField, 
-  AuthLink,
-} from '@/components/auth';
+import { AuthBackground, AuthFormCard, AuthInputField, AuthLink } from '@/components/auth';
 import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
 import { Haptics } from '@/utils/haptics';
@@ -38,48 +32,48 @@ interface NexAIForgotPasswordScreenProps {
   onBackToLogin?: () => void;
 }
 
-export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps> = ({ 
-  onBackToLogin 
+export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps> = ({
+  onBackToLogin,
 }) => {
   const theme = useTheme();
   const { reset_password } = useAuth();
-  
+
   // Form state
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [validationError, setValidationError] = useState<string>('');
   const [apiError, setApiError] = useState<string>('');
-  
+
   // Animation
   const iconScale = useSharedValue(1);
   const successScale = useSharedValue(0);
-  
+
   const validateEmail = (): boolean => {
     if (!email.trim()) {
       setValidationError('Email is required');
       return false;
     }
-    
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setValidationError('Please enter a valid email');
       return false;
     }
-    
+
     setValidationError('');
     return true;
   };
-  
+
   const handleResetPassword = async () => {
     if (!validateEmail()) {
       Haptics.error();
       return;
     }
-    
+
     setApiError('');
     setIsLoading(true);
     Haptics.light();
-    
+
     try {
       await reset_password(email.trim());
       Haptics.success();
@@ -95,33 +89,33 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
       setIsLoading(false);
     }
   };
-  
+
   const iconStyle = useAnimatedStyle(() => ({
     transform: [{ scale: iconScale.value }],
   }));
-  
+
   const successStyle = useAnimatedStyle(() => ({
     transform: [{ scale: successScale.value }],
     opacity: successScale.value,
   }));
-  
+
   React.useEffect(() => {
     // Pulse animation for icon
     iconScale.value = withSequence(
       withTiming(1.1, { duration: 1000 }),
-      withTiming(1, { duration: 1000 })
+      withTiming(1, { duration: 1000 }),
     );
-    
+
     const interval = setInterval(() => {
       iconScale.value = withSequence(
         withTiming(1.1, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
+        withTiming(1, { duration: 1000 }),
       );
     }, 2500);
-    
+
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
     <AuthBackground>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -135,17 +129,17 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
             keyboardShouldPersistTaps="handled"
           >
             {/* Back button */}
-            <Animated.View
-              entering={FadeInDown.springify()}
-              style={styles.backButtonContainer}
-            >
-              <Pressable onPress={onBackToLogin} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Animated.View entering={FadeInDown.springify()} style={styles.backButtonContainer}>
+              <Pressable
+                onPress={onBackToLogin}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 <GlassBase variant="light" style={styles.backButton}>
                   <Icon name="arrow-left" size={24} color={theme.colors.text_primary} />
                 </GlassBase>
               </Pressable>
             </Animated.View>
-            
+
             {!isSuccess ? (
               <>
                 {/* Icon */}
@@ -164,7 +158,7 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     </Animated.View>
                   </GlassBase>
                 </Animated.View>
-                
+
                 {/* Header */}
                 <Animated.View
                   entering={FadeInDown.delay(200).springify()}
@@ -173,20 +167,29 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                   <TextBase variant="heading_4" align="center">
                     Forgot Password?
                   </TextBase>
-                  <TextBase variant="body_small" color="secondary" align="center" style={styles.subtitle}>
+                  <TextBase
+                    variant="body_small"
+                    color="secondary"
+                    align="center"
+                    style={styles.subtitle}
+                  >
                     No worries! Enter your email and we'll send you reset instructions.
                   </TextBase>
                 </Animated.View>
-                
+
                 {/* Form */}
                 <AuthFormCard delay={300}>
                   <AuthInputField
                     label="Email Address"
                     value={email}
-                    onChangeText={(text) => {
+                    onChangeText={text => {
                       setEmail(text);
-                      if (validationError) setValidationError('');
-                      if (apiError) setApiError('');
+                      if (validationError) {
+                        setValidationError('');
+                      }
+                      if (apiError) {
+                        setApiError('');
+                      }
                     }}
                     placeholder="Enter your email"
                     icon="mail"
@@ -195,7 +198,7 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     delay={400}
                     editable={!isLoading}
                   />
-                  
+
                   <Animated.View entering={FadeInUp.delay(500).springify()}>
                     <BigButton
                       variant="primary"
@@ -204,10 +207,9 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                       loading={isLoading}
                       loading_text="Sending..."
                       style={styles.submitButton}
-                    >
-                    </BigButton>
+                    />
                   </Animated.View>
-                  
+
                   {/* Back to login link */}
                   <Animated.View
                     entering={FadeInUp.delay(600).springify()}
@@ -216,9 +218,7 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     <TextBase variant="body_medium" color="secondary">
                       Remember your password?{' '}
                     </TextBase>
-                    <AuthLink onPress={onBackToLogin!}>
-                      Sign In
-                    </AuthLink>
+                    <AuthLink onPress={onBackToLogin!}>Sign In</AuthLink>
                   </Animated.View>
                 </AuthFormCard>
               </>
@@ -234,23 +234,28 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                       <Icon name="check" size={32} color="#FFFFFF" />
                     </LinearGradient>
                   </View>
-                  
+
                   <TextBase variant="heading_3" align="center" style={styles.successTitle}>
                     Check Your Email
                   </TextBase>
-                  
+
                   <TextBase variant="body_medium" color="secondary" align="center">
                     We've sent password reset instructions to:
                   </TextBase>
-                  
+
                   <TextBase variant="body_large" align="center" style={styles.successEmail}>
                     {email}
                   </TextBase>
-                  
-                  <TextBase variant="body_small" color="tertiary" align="center" style={styles.successNote}>
+
+                  <TextBase
+                    variant="body_small"
+                    color="tertiary"
+                    align="center"
+                    style={styles.successNote}
+                  >
                     Didn't receive the email? Check your spam folder or try again in a few minutes.
                   </TextBase>
-                  
+
                   <BigButton
                     variant="primary"
                     label="Back to Sign In"
@@ -258,7 +263,7 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     full_width
                     style={styles.backToLoginButton}
                   />
-                  
+
                   <View style={styles.resendContainer}>
                     <TextBase variant="body_small" color="secondary">
                       Wrong email?{' '}
@@ -284,100 +289,100 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    alignItems: 'center',
+    borderRadius: 24,
+    height: 48,
+    justifyContent: 'center',
+    width: 48,
+  },
+  backButtonContainer: {
+    left: 24,
+    position: 'absolute',
+    top: 32,
+    zIndex: 1,
+  },
+  backToLoginButton: {
+    marginBottom: 16,
+  },
   container: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
-    justifyContent: 'center',
+  headerContainer: {
+    marginBottom: 32,
   },
-  backButtonContainer: {
-    position: 'absolute',
-    top: 32,
-    left: 24,
-    zIndex: 1,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+  iconCircle: {
     alignItems: 'center',
+    borderRadius: 44,
+    height: 88,
+    justifyContent: 'center',
+    width: 88,
   },
   iconContainer: {
     alignItems: 'center',
     marginBottom: 32,
   },
-  iconCircle: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   iconGradient: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 28,
+    height: 56,
+    justifyContent: 'center',
+    width: 56,
   },
-  headerContainer: {
-    marginBottom: 32,
+  loginLinkContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  resendContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+  },
+  submitButton: {
+    marginTop: 16,
   },
   subtitle: {
     marginTop: 8,
     paddingHorizontal: 20,
   },
-  submitButton: {
-    marginTop: 16,
-  },
-  loginLinkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  successCard: {
     alignItems: 'center',
-    marginTop: 24,
+    borderRadius: 24,
+    padding: 32,
+    width: '100%',
   },
   successContainer: {
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  successCard: {
-    padding: 32,
-    borderRadius: 24,
-    alignItems: 'center',
-    width: '100%',
+  successEmail: {
+    fontWeight: '600',
+    marginVertical: 16,
   },
   successIcon: {
     marginBottom: 24,
   },
   successIconGradient: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  successTitle: {
-    marginBottom: 16,
-  },
-  successEmail: {
-    marginVertical: 16,
-    fontWeight: '600',
+    borderRadius: 36,
+    height: 72,
+    justifyContent: 'center',
+    width: 72,
   },
   successNote: {
     marginBottom: 32,
     paddingHorizontal: 16,
   },
-  backToLoginButton: {
+  successTitle: {
     marginBottom: 16,
-  },
-  resendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

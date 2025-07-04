@@ -1,11 +1,6 @@
 // src/hooks/ui/animations.ts
-import { useEffect, useRef, useState, useCallback } from 'react';
-import {
-  Animated,
-  ViewStyle,
-  AccessibilityInfo,
-  Platform,
-} from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Platform, ViewStyle } from 'react-native';
 import { useTheme } from '@/hooks';
 
 /**
@@ -102,14 +97,14 @@ export const useEntranceAnimation = (options: EntranceAnimationOptions = {}) => 
 
   useEffect(() => {
     // Check accessibility settings
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+    AccessibilityInfo.isReduceMotionEnabled().then(enabled => {
       isReducedMotion.current = enabled;
     });
 
     // Start animation
     Animated.timing(animatedValue, {
       toValue: 1,
-      duration: isReducedMotion.current ? 0 : (typeof duration === 'number' ? duration : 300),
+      duration: isReducedMotion.current ? 0 : typeof duration === 'number' ? duration : 300,
       delay: isReducedMotion.current ? 0 : delay,
       useNativeDriver: true,
     }).start();
@@ -230,13 +225,13 @@ export const useStaggerAnimation = (options: StaggerAnimationOptions) => {
   } = options;
 
   const animatedValues = useRef(
-    Array.from({ length: itemCount }, () => new Animated.Value(0))
+    Array.from({ length: itemCount }, () => new Animated.Value(0)),
   ).current;
 
   useEffect(() => {
     const animations = animatedValues.map((value, index) => {
       const delay = Math.min(index * staggerDelay, maxDelay);
-      
+
       return Animated.timing(value, {
         toValue: 1,
         duration: typeof duration === 'number' ? duration : 300,
@@ -249,7 +244,9 @@ export const useStaggerAnimation = (options: StaggerAnimationOptions) => {
   }, [itemCount]);
 
   const getItemStyle = (index: number): Animated.AnimatedProps<ViewStyle> => {
-    if (index >= animatedValues.length) return {};
+    if (index >= animatedValues.length) {
+      return {};
+    }
 
     const animatedValue = animatedValues[index];
 
@@ -305,15 +302,9 @@ interface TransitionAnimationOptions {
   type?: 'fade' | 'crossFade' | 'slide';
 }
 
-export const useTransitionAnimation = (
-  state: any,
-  options: TransitionAnimationOptions = {}
-) => {
+export const useTransitionAnimation = (state: any, options: TransitionAnimationOptions = {}) => {
   const theme = useTheme();
-  const {
-    duration = theme.animation.durations.normal.duration,
-    type = 'fade',
-  } = options;
+  const { duration = theme.animation.durations.normal.duration, type = 'fade' } = options;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
   const previousState = useRef(state);
@@ -388,10 +379,7 @@ export const useTransitionAnimation = (
  * Value Change Animation Hook
  * For animating numeric value changes
  */
-export const useValueChangeAnimation = (
-  value: number,
-  duration: number = 300
-) => {
+export const useValueChangeAnimation = (value: number, duration: number = 300) => {
   const animatedValue = useRef(new Animated.Value(value)).current;
   const [displayValue, setDisplayValue] = useState(value);
 

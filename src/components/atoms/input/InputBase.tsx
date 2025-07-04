@@ -1,11 +1,5 @@
 import React, { forwardRef } from 'react';
-import {
-  TextInput,
-  TextInputProps,
-  StyleProp,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { StyleProp, TextInput, TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
 import { useTheme } from '@/theme/hooks/useTheme';
@@ -27,66 +21,67 @@ export interface InputBaseProps extends BaseComponentProps, Omit<TextInputProps,
  * Input Base Component
  * Pure text input with glass effect
  */
-export const InputBase = forwardRef<TextInput, InputBaseProps>(({
-  variant,
-  size,
-  hasError = false,
-  containerStyle,
-  inputStyle,
-  testID,
-  accessible = true,
-  accessibilityLabel,
-  placeholderTextColor,
-  ...textInputProps
-}, ref) => {
-  const theme = useTheme();
-  
-  // Get sizing using centralized utility (eliminates duplication)
-  const { height, paddingHorizontal, typography } = getComponentSizing('input', size, theme);
-  const typographyConfig = theme.typography[typography];
-  
-  // Keyboard type based on variant
-  const keyboardType = variant === 'numeric' ? 'numeric' : 'default';
-  
-  return (
-    <GlassBase
-      variant="light"
-      style={[
-        {
-          height,
-          paddingHorizontal,
-          borderWidth: theme.borders.widths.thin,
-          borderColor: hasError 
-            ? theme.colors.error 
-            : theme.colors.glass_border,
-          borderRadius: theme.borders.radii.md,
-        },
-        containerStyle,
-      ]}
-      testID={`${testID}-container`}
-    >
-      <TextInput
-        ref={ref}
+export const InputBase = forwardRef<TextInput, InputBaseProps>(
+  (
+    {
+      variant,
+      size,
+      hasError = false,
+      containerStyle,
+      inputStyle,
+      testID,
+      accessible = true,
+      accessibilityLabel,
+      placeholderTextColor,
+      ...textInputProps
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
+
+    // Get sizing using centralized utility (eliminates duplication)
+    const { height, paddingHorizontal, typography } = getComponentSizing('input', size, theme);
+    const typographyConfig = theme.typography[typography];
+
+    // Keyboard type based on variant
+    const keyboardType = variant === 'numeric' ? 'numeric' : 'default';
+
+    return (
+      <GlassBase
+        variant="light"
         style={[
           {
-            flex: 1,
-            fontSize: typographyConfig.font_size,
-            color: theme.colors.text_primary,
-            padding: 0, // Remove default padding
+            height,
+            paddingHorizontal,
+            borderWidth: theme.borders.widths.thin,
+            borderColor: hasError ? theme.colors.error : theme.colors.glass_border,
+            borderRadius: theme.borders.radii.md,
           },
-          inputStyle,
+          containerStyle,
         ]}
-        placeholderTextColor={
-          placeholderTextColor || theme.colors.text_tertiary
-        }
-        keyboardType={keyboardType}
-        testID={testID}
-        accessible={accessible}
-        accessibilityLabel={accessibilityLabel}
-        {...textInputProps}
-      />
-    </GlassBase>
-  );
-});
+        testID={`${testID}-container`}
+      >
+        <TextInput
+          ref={ref}
+          style={[
+            {
+              flex: 1,
+              fontSize: typographyConfig.font_size,
+              color: theme.colors.text_primary,
+              padding: 0, // Remove default padding
+            },
+            inputStyle,
+          ]}
+          placeholderTextColor={placeholderTextColor || theme.colors.text_tertiary}
+          keyboardType={keyboardType}
+          testID={testID}
+          accessible={accessible}
+          accessibilityLabel={accessibilityLabel}
+          {...textInputProps}
+        />
+      </GlassBase>
+    );
+  },
+);
 
 InputBase.displayName = 'InputBase';

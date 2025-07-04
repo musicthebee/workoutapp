@@ -13,7 +13,6 @@ export interface BaseComponentProps extends ViewProps {
   accessibilityRole?: ViewProps['accessibilityRole'];
 }
 
-
 // Common types
 export * from './common';
 

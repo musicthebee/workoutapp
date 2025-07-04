@@ -1,14 +1,14 @@
 // src/components/molecules/input/SearchInput.tsx
 import React, { useCallback, useRef, useState } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  Pressable, 
-  TextInput,
-  ViewStyle,
+import {
   ActivityIndicator,
-  Platform,
   Animated,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -56,13 +56,13 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const inputRef = useRef<TextInput>(null);
   const [, setIsFocused] = useState(false);
   const clearButtonAnimation = usePressAnimation({ scale: 0.8 });
-  
+
   const handle_clear = useCallback(() => {
     on_change_text('');
     on_clear?.();
     inputRef.current?.focus();
   }, [on_change_text, on_clear]);
-  
+
   const handle_focus = useCallback(() => {
     setIsFocused(true);
     on_focus?.();
@@ -72,7 +72,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     setIsFocused(false);
     on_blur?.();
   }, [on_blur]);
-  
+
   const size_config = {
     default: {
       height: theme.sizes.inputs.md,
@@ -90,31 +90,37 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       font_size: theme.typography.body_small.font_size,
     },
   };
-  
+
   const config = size_config[variant];
-  
+
   const styles = StyleSheet.create({
-    container: {
-      height: config.height,
-      flexDirection: 'row',
+    actionContainer: {
       alignItems: 'center',
-      paddingHorizontal: theme.spacing.md,
+      flexDirection: 'row',
+      marginLeft: theme.spacing.sm,
+    },
+    clearButton: {
+      marginLeft: theme.spacing.xs,
+      padding: theme.spacing.xs,
+    },
+    container: {
+      alignItems: 'center',
+      backgroundColor: variant === 'minimal' ? 'transparent' : undefined,
+      borderColor: theme.colors.glass_border,
       borderRadius: theme.borders.radii.md,
       borderWidth: variant === 'minimal' ? 0 : theme.borders.widths.thin,
-      borderColor: theme.colors.glass_border,
-      backgroundColor: variant === 'minimal' ? 'transparent' : undefined,
-    },
-    searchIcon: {
-      marginRight: theme.spacing.sm,
+      flexDirection: 'row',
+      height: config.height,
+      paddingHorizontal: theme.spacing.md,
     },
     input: {
+      color: theme.colors.text_primary,
       flex: 1,
       fontSize: config.font_size,
-      color: theme.colors.text_primary,
-      padding: 0,
-      textAlignVertical: 'center',
       includeFontPadding: false,
       lineHeight: config.font_size * 1.2,
+      padding: 0,
+      textAlignVertical: 'center',
       ...Platform.select({
         ios: {
           paddingVertical: theme.spacing.xs,
@@ -124,34 +130,31 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         },
       }),
     },
-    actionContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginLeft: theme.spacing.sm,
-    },
-    clearButton: {
-      padding: theme.spacing.xs,
-      marginLeft: theme.spacing.xs,
-    },
     loadingContainer: {
       marginLeft: theme.spacing.sm,
     },
+    searchIcon: {
+      marginRight: theme.spacing.sm,
+    },
   });
 
-  const glass_props = variant !== 'minimal' ? {
-    variant: 'light' as const,
-    style: [styles.container, style],
-  } : undefined;
+  const glass_props =
+    variant !== 'minimal'
+      ? {
+          variant: 'light' as const,
+          style: [styles.container, style],
+        }
+      : undefined;
 
   const content = (
     <>
-      <Ionicons 
-        name="search" 
-        size={config.icon_size} 
+      <Ionicons
+        name="search"
+        size={config.icon_size}
         color={theme.colors.text_tertiary}
         style={styles.searchIcon}
       />
-      
+
       <TextInput
         ref={inputRef}
         style={styles.input}
@@ -170,18 +173,18 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         accessible={accessible}
         accessibilityLabel={accessibilityLabel}
       />
-      
+
       <View style={styles.actionContainer}>
         {is_loading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator 
-              size="small" 
+            <ActivityIndicator
+              size="small"
               color={theme.colors.text_tertiary}
               testID={`${testID}-loading`}
             />
           </View>
         )}
-        
+
         {value.length > 0 && !is_loading && (
           <Pressable
             onPress={handle_clear}
@@ -195,9 +198,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
             accessibilityRole="button"
           >
             <Animated.View style={clearButtonAnimation.animatedStyle}>
-              <Ionicons 
-                name="close-circle" 
-                size={config.icon_size} 
+              <Ionicons
+                name="close-circle"
+                size={config.icon_size}
                 color={theme.colors.text_tertiary}
               />
             </Animated.View>
@@ -208,18 +211,10 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   );
 
   if (variant === 'minimal') {
-    return (
-      <View style={[styles.container, style]}>
-        {content}
-      </View>
-    );
+    return <View style={[styles.container, style]}>{content}</View>;
   }
 
-  return (
-    <GlassBase {...glass_props}>
-      {content}
-    </GlassBase>
-  );
+  return <GlassBase {...glass_props}>{content}</GlassBase>;
 };
 
 /**
@@ -238,40 +233,40 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   ...searchProps
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.sm,
     },
-    searchContainer: {
-      flex: 1,
-    },
-    filterButton: {
-      width: theme.sizes.touchTargets.medium,
-      height: theme.sizes.touchTargets.medium,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: theme.borders.radii.md,
-      position: 'relative',
-    },
     filterBadge: {
-      position: 'absolute',
-      top: theme.spacing.xs,
-      right: theme.spacing.xs,
-      minWidth: theme.spacing.md,
-      height: theme.spacing.md,
-      borderRadius: theme.borders.radii.full,
-      backgroundColor: theme.colors.primary,
-      justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.borders.radii.full,
+      height: theme.spacing.md,
+      justifyContent: 'center',
+      minWidth: theme.spacing.md,
       paddingHorizontal: theme.spacing.xxs,
+      position: 'absolute',
+      right: theme.spacing.xs,
+      top: theme.spacing.xs,
     },
     filterBadgeText: {
       color: theme.colors.text_inverse,
       fontSize: 10,
       fontWeight: theme.typography.body_medium.font_weight,
+    },
+    filterButton: {
+      alignItems: 'center',
+      borderRadius: theme.borders.radii.md,
+      height: theme.sizes.touchTargets.medium,
+      justifyContent: 'center',
+      position: 'relative',
+      width: theme.sizes.touchTargets.medium,
+    },
+    searchContainer: {
+      flex: 1,
     },
   });
 
@@ -280,7 +275,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <View style={styles.searchContainer}>
         <SearchInput {...searchProps} />
       </View>
-      
+
       {on_filter_press && (
         <Pressable
           onPress={on_filter_press}
@@ -290,9 +285,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           accessibilityRole="button"
         >
           <GlassBase variant="light" style={styles.filterButton}>
-            <Ionicons 
-              name="filter" 
-              size={theme.sizes.icons.md} 
+            <Ionicons
+              name="filter"
+              size={theme.sizes.icons.md}
               color={filter_count > 0 ? theme.colors.primary : theme.colors.text_primary}
             />
             {filter_count > 0 && (

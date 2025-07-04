@@ -1,6 +1,12 @@
 // src/theme/utils/glassMorphism.ts
 import { ViewStyle } from 'react-native';
-import { glassEffects, glassPresets as glassPresetTokens, gradients, borderWidths, shadows } from '../tokens/effects';
+import {
+  borderWidths,
+  glassEffects,
+  glassPresets as glassPresetTokens,
+  gradients,
+  shadows,
+} from '../tokens/effects';
 
 export interface GlassMorphismOptions {
   variant?: 'light' | 'medium' | 'heavy';
@@ -22,24 +28,24 @@ export const glassMorphism = ({
   customTint,
 }: GlassMorphismOptions = {}): ViewStyle => {
   const glass = glassEffects[variant];
-  
+
   const blur = blurAmount ?? glass.blur_amount;
   const tint = tintOpacity ?? glass.tint_opacity;
   const border = borderOpacity ?? glass.border_opacity;
   const shadow = shadowOpacity ?? glass.shadow_opacity;
-  
+
   // iOS: Full glass effect with borders and shadows
   // const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
   // const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
   const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.1})`;
   const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.2})`;
   const tintColor = isDark ? darkTint : lightTint;
-  
-  const borderColor = isDark 
-    // ? `rgba(255, 255, 255, ${border * 0.2})`
-    // : `rgba(255, 255, 255, ${border * 0.3})`;
-    ? `rgba(255, 255, 255, ${border * 0.15})`
-    : `rgba(255, 255, 255, ${border * 0.8})`; 
+
+  const borderColor = isDark
+    ? // ? `rgba(255, 255, 255, ${border * 0.2})`
+      // : `rgba(255, 255, 255, ${border * 0.3})`;
+      `rgba(255, 255, 255, ${border * 0.15})`
+    : `rgba(255, 255, 255, ${border * 0.8})`;
 
   return {
     backgroundColor: tintColor,
@@ -59,9 +65,12 @@ export const glassMorphism = ({
 // Helper functions that use centralized tokens from effects.ts
 
 // Glass preset utility functions (using centralized tokens)
-export const getGlassPreset = (preset: keyof typeof glassPresetTokens, isDark: boolean): ViewStyle => {
+export const getGlassPreset = (
+  preset: keyof typeof glassPresetTokens,
+  isDark: boolean,
+): ViewStyle => {
   const presetConfig = glassPresetTokens[preset];
-  return glassMorphism({ 
+  return glassMorphism({
     ...presetConfig,
     isDark,
   });
@@ -77,7 +86,7 @@ export const gradient = {
           ...config,
           colors: config.colors[isDark ? 'dark' : 'light'],
         },
-      ])
+      ]),
     );
   },
   orb: gradients.orb,

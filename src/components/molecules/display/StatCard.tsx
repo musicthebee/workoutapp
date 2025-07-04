@@ -1,10 +1,10 @@
 // src/components/molecules/display/StatCard.tsx
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { TextBase, AnimatedValue } from '@/components/atoms';
+import { AnimatedValue, TextBase } from '@/components/atoms';
 import { PressableGlass } from '@/components/atoms/glass/PressableGlass';
 import { useEntranceAnimation, useStaggerAnimation } from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
@@ -43,8 +43,11 @@ export const StatCard: React.FC<StatCardProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  const entranceAnimation = useEntranceAnimation({ type: 'scale', duration: theme.animation.durations.normal.duration });
-  
+  const entranceAnimation = useEntranceAnimation({
+    type: 'scale',
+    duration: theme.animation.durations.normal.duration,
+  });
+
   // Trend configuration
   const trend_config = {
     up: {
@@ -60,7 +63,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       color: theme.colors.text_secondary,
     },
   };
-  
+
   // Size configuration
   const size_config = {
     default: {
@@ -85,61 +88,62 @@ export const StatCard: React.FC<StatCardProps> = ({
       gap: theme.spacing.md,
     },
   };
-  
+
   const config = size_config[variant];
-  
+
   const styles = StyleSheet.create({
+    bottomRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
     container: {
-      padding: config.padding,
       borderRadius: theme.borders.radii.lg,
+      padding: config.padding,
     },
     content: {
       gap: config.gap,
     },
     header: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       justifyContent: 'space-between',
-    },
-    labelContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      flex: 1,
     },
     label: {
       color: theme.colors.text_secondary,
     },
-    valueContainer: {
-      flexDirection: 'row',
+    labelContainer: {
       alignItems: 'center',
+      flexDirection: 'row',
+      flex: 1,
       gap: theme.spacing.xs,
     },
-    bottomRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    value: {
-      fontSize: config.value_size,
-      lineHeight: config.value_size * 1.1,
-      fontWeight: theme.typography.heading_1.font_weight,
-      color: theme.colors.text_primary,
-    },
-    unit: {
-      fontSize: config.label_variant === 'body_small' 
-        ? theme.typography.caption.font_size 
-        : theme.typography.body_small.font_size,
-      color: theme.colors.text_secondary,
-      marginBottom: variant === 'prominent' ? theme.spacing.xs : 0,
-    },
     trendContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.xxs,
     },
     trendValue: {
       fontSize: theme.typography.caption.font_size,
+    },
+    unit: {
+      color: theme.colors.text_secondary,
+      fontSize:
+        config.label_variant === 'body_small'
+          ? theme.typography.caption.font_size
+          : theme.typography.body_small.font_size,
+      marginBottom: variant === 'prominent' ? theme.spacing.xs : 0,
+    },
+    value: {
+      color: theme.colors.text_primary,
+      fontSize: config.value_size,
+      fontWeight: theme.typography.heading_1.font_weight,
+      lineHeight: config.value_size * 1.1,
+    },
+    valueContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
     },
   });
 
@@ -148,9 +152,9 @@ export const StatCard: React.FC<StatCardProps> = ({
       <View style={styles.header}>
         <View style={styles.labelContainer}>
           {icon && (
-            <Ionicons 
-              name={icon as any} 
-              size={config.icon_size} 
+            <Ionicons
+              name={icon as any}
+              size={config.icon_size}
               color={theme.colors.text_secondary}
             />
           )}
@@ -159,11 +163,11 @@ export const StatCard: React.FC<StatCardProps> = ({
           </TextBase>
         </View>
       </View>
-      
+
       <View style={styles.bottomRow}>
         <View style={styles.valueContainer}>
           {animated && typeof value === 'number' ? (
-            <AnimatedValue 
+            <AnimatedValue
               value={value}
               style={styles.value}
               duration={theme.animation.durations.slow.duration}
@@ -179,21 +183,18 @@ export const StatCard: React.FC<StatCardProps> = ({
             </TextBase>
           )}
         </View>
-        
+
         {trend && (
           <View style={styles.trendContainer}>
-            <Ionicons 
-              name={trend_config[trend].icon} 
-              size={theme.sizes.icons.xs} 
+            <Ionicons
+              name={trend_config[trend].icon}
+              size={theme.sizes.icons.xs}
               color={trend_config[trend].color}
             />
             {trend_value && (
-              <TextBase 
-                variant="caption" 
-                style={[
-                  styles.trendValue,
-                  { color: trend_config[trend].color }
-                ]}
+              <TextBase
+                variant="caption"
+                style={[styles.trendValue, { color: trend_config[trend].color }]}
               >
                 {trend_value}
               </TextBase>
@@ -257,22 +258,22 @@ export const StatCardGrid: React.FC<StatCardGridProps> = ({
     staggerDelay: 50,
     type: 'scale',
   });
-  
+
   const styles = StyleSheet.create({
+    card: {
+      flex: 1,
+      maxWidth: columns === 2 ? '48%' : '32%',
+      minWidth: columns === 2 ? '45%' : '30%',
+    },
     container: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: theme.spacing.md,
     },
-    card: {
-      flex: 1,
-      minWidth: columns === 2 ? '45%' : '30%',
-      maxWidth: columns === 2 ? '48%' : '32%',
-    },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -320,26 +321,26 @@ export const MiniStat: React.FC<MiniStatProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.xs,
     },
     iconContainer: {
-      width: theme.sizes.touchTargets.small * 0.8,
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borders.radii.sm,
       height: theme.sizes.touchTargets.small * 0.8,
       justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: theme.borders.radii.sm,
-      backgroundColor: theme.colors.surface,
-    },
-    textContainer: {
-      gap: theme.spacing.xxxs,
+      width: theme.sizes.touchTargets.small * 0.8,
     },
     label: {
       color: theme.colors.text_secondary,
+    },
+    textContainer: {
+      gap: theme.spacing.xxxs,
     },
     value: {
       fontWeight: theme.typography.body_medium.font_weight,
@@ -347,7 +348,7 @@ export const MiniStat: React.FC<MiniStatProps> = ({
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -355,14 +356,10 @@ export const MiniStat: React.FC<MiniStatProps> = ({
     >
       {icon && (
         <View style={styles.iconContainer}>
-          <Ionicons 
-            name={icon} 
-            size={theme.sizes.icons.sm} 
-            color={theme.colors.text_secondary}
-          />
+          <Ionicons name={icon} size={theme.sizes.icons.sm} color={theme.colors.text_secondary} />
         </View>
       )}
-      
+
       <View style={styles.textContainer}>
         <TextBase variant="body_small" style={styles.label}>
           {label}

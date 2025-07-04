@@ -30,15 +30,15 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
       marginBottom: theme.spacing.sm,
       paddingHorizontal: theme.spacing.lg,
     },
-    title: {
-      color: theme.colors.text_primary,
-      marginBottom: section.subtitle ? theme.spacing.xxs : 0,
+    itemsContainer: {
+      backgroundColor: 'transparent',
     },
     subtitle: {
       color: theme.colors.text_secondary,
     },
-    itemsContainer: {
-      backgroundColor: 'transparent',
+    title: {
+      color: theme.colors.text_primary,
+      marginBottom: section.subtitle ? theme.spacing.xxs : 0,
     },
   });
 

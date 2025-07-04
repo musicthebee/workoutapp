@@ -42,13 +42,11 @@ export interface ErrorResponse {
 export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
 // Type guards
-export const isSuccessResponse = <T>(
-  response: ApiResponse<T>,
-): response is SuccessResponse<T> => response.success === true;
+export const isSuccessResponse = <T>(response: ApiResponse<T>): response is SuccessResponse<T> =>
+  response.success === true;
 
-export const isErrorResponse = <T>(
-  response: ApiResponse<T>,
-): response is ErrorResponse => response.success === false;
+export const isErrorResponse = <T>(response: ApiResponse<T>): response is ErrorResponse =>
+  response.success === false;
 
 // Exhaustive check helper
 export const exhaustiveCheck = (value: never): never => {

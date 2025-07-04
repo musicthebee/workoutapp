@@ -3,20 +3,20 @@
  * Combines all design tokens into a single theme object
  */
 
-import { lightThemeColors, darkThemeColors } from './tokens/colors';
-import { spacing, componentSpacing, touchTargets, iconSizes } from './tokens/spacing';
+import { darkThemeColors, lightThemeColors } from './tokens/colors';
+import { componentSpacing, iconSizes, spacing, touchTargets } from './tokens/spacing';
 import { typographyPresets } from './tokens/typography';
 import {
-  glassEffects,
-  skiaBlurEffects,
   animationDurations,
-  animationSprings,
   animationEasings,
+  animationSprings,
   borderRadii,
   borderWidths,
-  shadows,
-  zIndices,
+  glassEffects,
   gradients,
+  shadows,
+  skiaBlurEffects,
+  zIndices,
 } from './tokens/effects';
 
 // Theme interface

@@ -1,5 +1,5 @@
 // src/hooks/utility/useTimer.ts
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type TimerMode = 'countdown' | 'stopwatch';
 export type TimerFormat = 'mm:ss' | 'hh:mm:ss' | 'seconds';
@@ -52,30 +52,32 @@ export const useTimer = (options: UseTimerOptions = {}) => {
   }, [on_complete, on_tick]);
 
   // Format time based on format option
-  const format_time = useCallback((seconds: number): string => {
-    if (format === 'seconds') {
-      return seconds.toString();
-    }
+  const format_time = useCallback(
+    (seconds: number): string => {
+      if (format === 'seconds') {
+        return seconds.toString();
+      }
 
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
 
-    if (format === 'hh:mm:ss') {
-      return [
-        hours.toString().padStart(2, '0'),
-        minutes.toString().padStart(2, '0'),
-        secs.toString().padStart(2, '0'),
-      ].join(':');
-    }
+      if (format === 'hh:mm:ss') {
+        return [
+          hours.toString().padStart(2, '0'),
+          minutes.toString().padStart(2, '0'),
+          secs.toString().padStart(2, '0'),
+        ].join(':');
+      }
 
-    // mm:ss format
-    const total_minutes = Math.floor(seconds / 60);
-    return [
-      total_minutes.toString().padStart(2, '0'),
-      secs.toString().padStart(2, '0'),
-    ].join(':');
-  }, [format]);
+      // mm:ss format
+      const total_minutes = Math.floor(seconds / 60);
+      return [total_minutes.toString().padStart(2, '0'), secs.toString().padStart(2, '0')].join(
+        ':',
+      );
+    },
+    [format],
+  );
 
   // Timer logic
   useEffect(() => {
@@ -83,7 +85,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
       interval_ref.current = setInterval(() => {
         setState(prev => {
           let new_seconds: number;
-          
+
           if (mode === 'countdown') {
             new_seconds = Math.max(0, prev.seconds - 1);
           } else {
@@ -97,7 +99,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
 
           // Check completion for countdown
           const is_complete = mode === 'countdown' && new_seconds === 0;
-          
+
           if (is_complete && on_complete_ref.current) {
             on_complete_ref.current();
           }
@@ -191,7 +193,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     display: format_time(state.seconds),
     is_running: state.is_running,
     is_complete: state.is_complete,
-    
+
     // Controls
     start,
     pause,
@@ -199,7 +201,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     stop,
     reset,
     toggle: state.is_running ? pause : start,
-    
+
     // Time manipulation
     set_seconds,
     add_seconds,
@@ -207,11 +209,12 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     subtract_minute,
     add_30_seconds,
     subtract_30_seconds,
-    
+
     // Computed values
-    progress: mode === 'countdown' && initial_seconds > 0
-      ? (initial_seconds - state.seconds) / initial_seconds
-      : 0,
+    progress:
+      mode === 'countdown' && initial_seconds > 0
+        ? (initial_seconds - state.seconds) / initial_seconds
+        : 0,
   };
 };
 
@@ -219,19 +222,21 @@ export const useTimer = (options: UseTimerOptions = {}) => {
  * Hook for managing multiple timers
  * Useful for interval training or circuit workouts
  */
-export const useMultiTimer = (timer_configs: Array<{
-  name: string;
-  duration: number;
-  rest?: number;
-}>) => {
+export const useMultiTimer = (
+  timer_configs: Array<{
+    name: string;
+    duration: number;
+    rest?: number;
+  }>,
+) => {
   const [current_index, setCurrentIndex] = useState(0);
   const [is_rest_phase, setIsRestPhase] = useState(false);
   const [is_complete, setIsComplete] = useState(false);
 
   const current_config = timer_configs[current_index];
-  const current_duration = is_rest_phase 
-    ? (current_config?.rest || 0)
-    : (current_config?.duration || 0);
+  const current_duration = is_rest_phase
+    ? current_config?.rest || 0
+    : current_config?.duration || 0;
 
   const timer = useTimer({
     mode: 'countdown',

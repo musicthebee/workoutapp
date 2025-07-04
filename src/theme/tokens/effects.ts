@@ -7,22 +7,22 @@
 // Glass morphism effects - Based on NexAI approach
 export const glassEffects = {
   light: {
-    blur_amount: 10,      // Lower blur for subtle effect
-    tint_opacity: 0.3,    // Low opacity for maximum translucency
-    border_opacity: 0.2,  // Visible but subtle border
-    shadow_opacity: 0.1,  // Light shadow
+    blur_amount: 10, // Lower blur for subtle effect
+    tint_opacity: 0.3, // Low opacity for maximum translucency
+    border_opacity: 0.2, // Visible but subtle border
+    shadow_opacity: 0.1, // Light shadow
   },
   medium: {
-    blur_amount: 20,      // Medium blur for balanced effect
-    tint_opacity: 0.5,    // Moderate opacity
+    blur_amount: 20, // Medium blur for balanced effect
+    tint_opacity: 0.5, // Moderate opacity
     border_opacity: 0.15, // Subtle border
     shadow_opacity: 0.15, // Medium shadow
   },
   heavy: {
-    blur_amount: 30,      // High blur for strong effect
-    tint_opacity: 0.7,    // Higher opacity but still translucent
-    border_opacity: 0.1,  // Very subtle border
-    shadow_opacity: 0.2,  // Stronger shadow
+    blur_amount: 30, // High blur for strong effect
+    tint_opacity: 0.7, // Higher opacity but still translucent
+    border_opacity: 0.1, // Very subtle border
+    shadow_opacity: 0.2, // Stronger shadow
   },
 } as const;
 
@@ -55,7 +55,7 @@ export const animationConfig = {
       ambient: { duration: 3000 },
     },
   },
-  
+
   // Complex animations
   sequences: {
     fadeInScale: {
@@ -122,7 +122,7 @@ export const gradients = {
       end: { x: 0.3, y: 1 },
     },
   },
-  
+
   // Orb gradients
   orb: {
     primary: {
@@ -141,13 +141,13 @@ export const gradients = {
       end: { x: 1, y: 1 },
     },
   },
-  
+
   // Color gradients
   primary: ['#6366F1', '#4F46E5', '#4338CA'],
   secondary: ['#F97316', '#EA580C', '#DC2626'],
   accent: ['#8B5CF6', '#7C3AED', '#6D28D9'],
   success: ['#10B981', '#059669', '#047857'],
-  
+
   // Special effects
   shimmer: ['transparent', 'rgba(255,255,255,0.3)', 'transparent'],
   glow: ['transparent', 'rgba(255,255,255,0.2)', 'transparent'],
@@ -197,7 +197,7 @@ export const shadows = {
   },
   md: {
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.10,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
@@ -209,7 +209,7 @@ export const shadows = {
   },
   xl: {
     shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.20,
+    shadowOpacity: 0.2,
     shadowRadius: 24,
     elevation: 12,
   },

@@ -1,6 +1,6 @@
 // src/components/molecules/modal/ModalHeader.tsx
 import React from 'react';
-import { View, StyleSheet, Pressable, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
@@ -37,8 +37,24 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
+    actionButton: {
+      marginRight: theme.spacing.xs,
+    },
+    actionText: {
+      color: action_disabled ? theme.colors.text_disabled : theme.colors.primary,
+    },
+    backButton: {
+      marginLeft: theme.spacing.xs,
+    },
+    button: {
+      alignItems: 'center',
+      height: theme.sizes.touchTargets.small,
+      justifyContent: 'center',
+      minWidth: theme.sizes.touchTargets.small,
+      paddingHorizontal: theme.spacing.sm,
+    },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -49,35 +65,19 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
       borderBottomWidth: variant === 'minimal' ? 0 : theme.borders.widths.hairline,
       borderBottomColor: theme.colors.border,
     },
+    disabledButton: {
+      opacity: 0.5,
+    },
     prominentContainer: {
       height: theme.sizes.touchTargets.large, // 80pt for prominent
       backgroundColor: theme.colors.surface,
     },
-    button: {
-      minWidth: theme.sizes.touchTargets.small,
-      height: theme.sizes.touchTargets.small,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: theme.spacing.sm,
-    },
-    backButton: {
-      marginLeft: theme.spacing.xs,
-    },
-    actionButton: {
-      marginRight: theme.spacing.xs,
+    title: {
+      textAlign: 'center',
     },
     titleContainer: {
       flex: 1,
       paddingHorizontal: theme.spacing.md,
-    },
-    title: {
-      textAlign: 'center',
-    },
-    actionText: {
-      color: action_disabled ? theme.colors.text_disabled : theme.colors.primary,
-    },
-    disabledButton: {
-      opacity: 0.5,
     },
   });
 
@@ -85,12 +85,8 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
   const title_variant = variant === 'prominent' ? 'heading_3' : 'heading_4';
 
   return (
-    <View 
-      style={[
-        styles.container,
-        variant === 'prominent' && styles.prominentContainer,
-        style,
-      ]}
+    <View
+      style={[styles.container, variant === 'prominent' && styles.prominentContainer, style]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
@@ -98,7 +94,7 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
     >
       {/* Back button or spacer */}
       {on_back ? (
-        <Pressable 
+        <Pressable
           style={[styles.button, styles.backButton]}
           onPress={on_back}
           testID={`${testID}-back`}
@@ -107,20 +103,20 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
           accessibilityRole="button"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons 
-            name={back_icon} 
-            size={theme.sizes.icons.md} 
+          <Ionicons
+            name={back_icon}
+            size={theme.sizes.icons.md}
             color={theme.colors.text_primary}
           />
         </Pressable>
       ) : (
         <View style={styles.button} />
       )}
-      
+
       {/* Title */}
       <View style={styles.titleContainer}>
-        <TextBase 
-          variant={title_variant} 
+        <TextBase
+          variant={title_variant}
           style={styles.title}
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -128,15 +124,11 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
           {title}
         </TextBase>
       </View>
-      
+
       {/* Action button or spacer */}
       {on_action ? (
-        <Pressable 
-          style={[
-            styles.button, 
-            styles.actionButton,
-            action_disabled && styles.disabledButton,
-          ]}
+        <Pressable
+          style={[styles.button, styles.actionButton, action_disabled && styles.disabledButton]}
           onPress={on_action}
           disabled={action_disabled}
           testID={`${testID}-action`}
@@ -146,10 +138,7 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
           accessibilityState={{ disabled: action_disabled }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <TextBase 
-            variant="body_medium" 
-            style={styles.actionText}
-          >
+          <TextBase variant="body_medium" style={styles.actionText}>
             {action_label}
           </TextBase>
         </Pressable>
@@ -164,25 +153,18 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
  * Close-only Modal Header
  * Simplified variant with just close button
  */
-export const ModalHeaderClose: React.FC<Omit<ModalHeaderProps, 'on_action' | 'action_label' | 'back_icon'>> = ({
-  on_back,
-  ...props
-}) => {
-  return (
-    <ModalHeader
-      {...props}
-      on_back={on_back}
-      back_icon="close"
-      variant="minimal"
-    />
-  );
+export const ModalHeaderClose: React.FC<
+  Omit<ModalHeaderProps, 'on_action' | 'action_label' | 'back_icon'>
+> = ({ on_back, ...props }) => {
+  return <ModalHeader {...props} on_back={on_back} back_icon="close" variant="minimal" />;
 };
 
 /**
  * Modal Header with Multiple Actions
  * For modals that need more than one action
  */
-interface ModalHeaderMultipleActionsProps extends Omit<ModalHeaderProps, 'on_action' | 'action_label'> {
+interface ModalHeaderMultipleActionsProps
+  extends Omit<ModalHeaderProps, 'on_action' | 'action_label'> {
   actions: Array<{
     label: string;
     on_press: () => void;
@@ -196,17 +178,17 @@ export const ModalHeaderMultipleActions: React.FC<ModalHeaderMultipleActionsProp
   ...props
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
-    actionsContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-      marginRight: theme.spacing.xs,
-    },
     actionButton: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
+    },
+    actionsContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
+      marginRight: theme.spacing.xs,
     },
     dangerText: {
       color: theme.colors.error,

@@ -1,7 +1,7 @@
 // src/hooks/useAuth.ts
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { authService } from '@/services/auth.service';
-import type { AuthState, SignInData, SignUpData, AuthError } from '@/types/auth';
+import type { AuthError, AuthState, SignInData, SignUpData } from '@/types/auth';
 
 /**
  * Primary auth hook for the application
@@ -13,7 +13,7 @@ export function useAuth() {
 
   useEffect(() => {
     // Subscribe to auth state changes
-    const unsubscribe = authService.subscribe((newState) => {
+    const unsubscribe = authService.subscribe(newState => {
       setState(newState);
       // Clear error on successful auth state change
       if (newState.is_authenticated) {
@@ -86,14 +86,14 @@ export function useAuth() {
     is_loading: state.is_loading,
     is_initializing: state.is_initializing,
     error,
-    
+
     // Auth methods
     sign_in,
     sign_up,
     sign_out,
     reset_password,
     send_verification_email,
-    
+
     // Utility
     should_redirect: !state.is_initializing && !state.is_authenticated,
   };
@@ -151,10 +151,13 @@ export function useLogin(): {
   error: AuthError | null;
 } {
   const { sign_in, is_loading, error } = useAuth();
-  
-  const mutate = useCallback(async (data: SignInData): Promise<void> => {
-    await sign_in(data);
-  }, [sign_in]);
+
+  const mutate = useCallback(
+    async (data: SignInData): Promise<void> => {
+      await sign_in(data);
+    },
+    [sign_in],
+  );
 
   return {
     mutate,

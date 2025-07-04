@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -28,8 +28,7 @@ const AuthFlow: React.FC = () => {
   const { user, is_loading } = useAuth();
   const [authState, setAuthState] = useState<AuthState>('splash');
   const [showSplash, setShowSplash] = useState(true);
-  
-  
+
   // Update auth state when authentication changes
   useEffect(() => {
     if (!is_loading && !showSplash) {
@@ -41,7 +40,7 @@ const AuthFlow: React.FC = () => {
       }
     }
   }, [user, is_loading, showSplash, authState]);
-  
+
   // Handle splash screen completion
   const handleSplashComplete = (): void => {
     setShowSplash(false);
@@ -51,12 +50,12 @@ const AuthFlow: React.FC = () => {
       setAuthState('login');
     }
   };
-  
+
   // Always show splash screen initially
   if (showSplash) {
     return <NexAISplashScreen onAnimationComplete={handleSplashComplete} />;
   }
-  
+
   // Show authentication screens
   if (!user && authState !== 'authenticated') {
     switch (authState) {
@@ -67,21 +66,13 @@ const AuthFlow: React.FC = () => {
             onRegister={() => setAuthState('register')}
           />
         );
-      
+
       case 'register':
-        return (
-          <NexAIRegisterScreen
-            onLogin={() => setAuthState('login')}
-          />
-        );
-      
+        return <NexAIRegisterScreen onLogin={() => setAuthState('login')} />;
+
       case 'forgot-password':
-        return (
-          <NexAIForgotPasswordScreen
-            onBackToLogin={() => setAuthState('login')}
-          />
-        );
-      
+        return <NexAIForgotPasswordScreen onBackToLogin={() => setAuthState('login')} />;
+
       default:
         return (
           <NexAILoginScreen
@@ -91,7 +82,7 @@ const AuthFlow: React.FC = () => {
         );
     }
   }
-  
+
   // Show main app navigation
   return (
     <NavigationContainer>
@@ -111,11 +102,7 @@ const App: React.FC = () => {
         <ApolloProvider>
           <ThemeProvider>
             <GlassVariantProvider>
-              <StatusBar 
-                barStyle="light-content" 
-                backgroundColor="transparent" 
-                translucent 
-              />
+              <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
               <AuthFlow />
             </GlassVariantProvider>
           </ThemeProvider>

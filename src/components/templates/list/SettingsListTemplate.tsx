@@ -1,6 +1,6 @@
 // src/components/templates/list/SettingsListTemplate.tsx
 import React from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { TextBase } from '@/components/atoms';
@@ -29,45 +29,45 @@ export const SettingsListTemplate: React.FC<SettingsListTemplateProps> = ({
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: theme.colors.background,
-    },
-    header: {
-      paddingHorizontal: 0,
-      paddingTop: 0,
-      paddingBottom: 0,
-    },
-    scrollContainer: {
       flex: 1,
     },
-    scrollContent: {
-      paddingHorizontal: 0,
-      paddingBottom: theme.spacing.md,
-      flexGrow: 1,
-    },
-    loadingContainer: {
+    emptyContainer: {
+      alignItems: 'center',
       flex: 1,
       justifyContent: 'center',
+      padding: theme.spacing.xl,
+    },
+    footer: {
+      backgroundColor: theme.colors.background,
+      borderTopColor: theme.colors.border,
+      borderTopWidth: theme.borders.widths.hairline,
+      paddingBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.lg,
+    },
+    header: {
+      paddingBottom: 0,
+      paddingHorizontal: 0,
+      paddingTop: 0,
+    },
+    loadingContainer: {
       alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
       padding: theme.spacing.xl,
     },
     loadingText: {
       color: theme.colors.text_secondary,
       marginTop: theme.spacing.md,
     },
-    emptyContainer: {
+    scrollContainer: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: theme.spacing.xl,
     },
-    footer: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.lg,
+    scrollContent: {
+      flexGrow: 1,
       paddingBottom: theme.spacing.md,
-      borderTopWidth: theme.borders.widths.hairline,
-      borderTopColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      paddingHorizontal: 0,
     },
   });
 
@@ -112,7 +112,12 @@ export const SettingsListTemplate: React.FC<SettingsListTemplateProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']} {...accessibilityProps} {...props}>
+    <SafeAreaView
+      style={styles.container}
+      edges={['top', 'left', 'right']}
+      {...accessibilityProps}
+      {...props}
+    >
       {/* Header */}
       {header && <View style={styles.header}>{header}</View>}
 

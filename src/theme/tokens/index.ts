@@ -6,7 +6,7 @@
 // Export all color tokens
 export * from './colors';
 
-// Export all spacing tokens  
+// Export all spacing tokens
 export * from './spacing';
 
 // Export all typography tokens

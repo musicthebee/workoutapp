@@ -1,11 +1,11 @@
 // src/screens/ProfileScreen.tsx
 import React from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
 import { useAuth } from '@/hooks/useAuth';
-import { TextBase, GlassBase } from '@/components/atoms';
+import { GlassBase, TextBase } from '@/components/atoms';
 import { SettingsListTemplate } from '@/components/templates';
 import type { SettingsSection } from '@/types';
 
@@ -19,72 +19,68 @@ export const ProfileScreen: React.FC = () => {
   const { user, sign_out } = useAuth();
 
   const styles = StyleSheet.create({
+    avatar: {
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.spacing.lg,
+      height: theme.spacing.xxl,
+      justifyContent: 'center',
+      marginRight: theme.spacing.md,
+      width: theme.spacing.xxl,
+    },
+    email: {
+      color: theme.colors.text_secondary,
+    },
     header: {
+      marginBottom: 0,
+      marginTop: 0,
+      paddingBottom: 0,
       paddingHorizontal: theme.spacing.sm,
       paddingTop: 0,
-      paddingBottom: 0,
-      marginTop: 0,
-      marginBottom: 0,
     },
     headerContent: {
-      padding: theme.spacing.md,
       borderRadius: theme.borders.radii.lg,
-      marginTop: 0,
       marginBottom: 0,
-    },
-    userInfoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    avatar: {
-      width: theme.spacing.xxl,
-      height: theme.spacing.xxl,
-      borderRadius: theme.spacing.lg,
-      backgroundColor: theme.colors.primary,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: theme.spacing.md,
-    },
-    userTextContainer: {
-      flex: 1,
+      marginTop: 0,
+      padding: theme.spacing.md,
     },
     name: {
       color: theme.colors.text_primary,
       marginBottom: theme.spacing.xxs,
     },
-    email: {
-      color: theme.colors.text_secondary,
-    },
     quickActionsContainer: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingBottom: theme.spacing.lg,
       gap: theme.spacing.sm,
+      paddingBottom: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    userInfoRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    userTextContainer: {
+      flex: 1,
     },
   });
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await sign_out();
+          } catch (error) {
+            console.error('Logout error:', error);
+            Alert.alert('Error', 'Failed to logout. Please try again.');
+          }
         },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await sign_out();
-            } catch (error) {
-              console.error('Logout error:', error);
-              Alert.alert('Error', 'Failed to logout. Please try again.');
-            }
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleSettingsPress = () => {
@@ -131,7 +127,7 @@ export const ProfileScreen: React.FC = () => {
           subtitle: 'Receive workout reminders',
           icon: 'notifications-outline',
           value: true,
-          on_toggle: (value) => {
+          on_toggle: value => {
             console.log('Notifications toggled:', value);
             // TODO: Update notification preferences
           },
@@ -174,11 +170,7 @@ export const ProfileScreen: React.FC = () => {
         {/* User Info Row - Avatar + Name/Email */}
         <View style={styles.userInfoRow}>
           <View style={styles.avatar}>
-            <Icon 
-              name="person" 
-              size={theme.sizes.icons.md} 
-              color={theme.colors.text_inverse} 
-            />
+            <Icon name="person" size={theme.sizes.icons.md} color={theme.colors.text_inverse} />
           </View>
           <View style={styles.userTextContainer}>
             <TextBase variant="body_large" style={styles.name}>
@@ -189,11 +181,9 @@ export const ProfileScreen: React.FC = () => {
             </TextBase>
           </View>
         </View>
-
       </GlassBase>
     </View>
   );
-
 
   return (
     <SettingsListTemplate

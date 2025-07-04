@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
-import { TextInput, StyleProp, TextStyle } from 'react-native';
-import Animated, {
-  useAnimatedProps,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { StyleProp, TextInput, TextStyle } from 'react-native';
+import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import type { BaseComponentProps } from '@/types';
@@ -34,16 +30,15 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
 }) => {
   const theme = useTheme();
   const animatedValue = useSharedValue(0);
-  
+
   useEffect(() => {
     // Ensure value is a valid number
     const numericValue = typeof value === 'number' && !isNaN(value) ? value : 0;
-    animatedValue.value = withTiming(
-      numericValue,
-      { duration: duration || theme.animation.durations.normal.duration }
-    );
+    animatedValue.value = withTiming(numericValue, {
+      duration: duration || theme.animation.durations.normal.duration,
+    });
   }, [value, duration, animatedValue, theme]);
-  
+
   // Create a worklet-compatible format function
   const animatedProps = useAnimatedProps(() => {
     'worklet';
@@ -56,7 +51,7 @@ export const AnimatedValue: React.FC<AnimatedValueProps> = ({
       defaultValue: formattedValue,
     };
   });
-  
+
   return (
     <AnimatedTextInput
       editable={false}

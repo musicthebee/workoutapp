@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewProps, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import type { SpacingValue } from '@/types';
@@ -18,19 +18,13 @@ export interface GridProps extends ViewProps {
  * Grid Component
  * Pure grid layout using flexbox with wrap
  */
-export const Grid: React.FC<GridProps> = ({
-  columns,
-  gap,
-  style,
-  children,
-  ...viewProps
-}) => {
+export const Grid: React.FC<GridProps> = ({ columns, gap, style, children, ...viewProps }) => {
   const theme = useTheme();
   const gapValue = gap ? theme.spacing[gap] : 0;
-  
+
   // Calculate item width as percentage
   const itemWidth = `${100 / columns}%`;
-  
+
   return (
     <View
       style={[

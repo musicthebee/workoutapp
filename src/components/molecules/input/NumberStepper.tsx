@@ -1,12 +1,16 @@
 // src/components/molecules/input/NumberStepper.tsx
 import React, { useCallback } from 'react';
-import { View, StyleSheet, Pressable, ViewStyle, Animated } from 'react-native';
+import { Animated, Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { useTheme } from '@/hooks';
-import { TextBase, GlassBase, Spacer } from '@/components/atoms';
+import { GlassBase, Spacer, TextBase } from '@/components/atoms';
 import { PressableGlass } from '@/components/atoms/glass/PressableGlass';
-import { usePressAnimation, useValueChangeAnimation, useStaggerAnimation } from '@/hooks/ui/animations';
+import {
+  usePressAnimation,
+  useStaggerAnimation,
+  useValueChangeAnimation,
+} from '@/hooks/ui/animations';
 import type { BaseComponentProps } from '@/types';
 
 interface NumberStepperProps extends BaseComponentProps {
@@ -46,25 +50,29 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
   const decreaseAnimation = usePressAnimation({ scale: 0.9 });
   const increaseAnimation = usePressAnimation({ scale: 0.9 });
   const animatedValue = useValueChangeAnimation(value, 150);
-  
+
   // Handle decrease
   const decrease = useCallback((): void => {
     const new_value = value - increment;
-    if (min !== undefined && new_value < min) return;
+    if (min !== undefined && new_value < min) {
+      return;
+    }
     on_value_change(new_value);
   }, [value, increment, min, on_value_change]);
-  
+
   // Handle increase
   const increase = useCallback((): void => {
     const new_value = value + increment;
-    if (max !== undefined && new_value > max) return;
+    if (max !== undefined && new_value > max) {
+      return;
+    }
     on_value_change(new_value);
   }, [value, increment, max, on_value_change]);
-  
+
   // Check if buttons should be disabled
   const can_decrease = !disabled && (min === undefined || value > min);
   const can_increase = !disabled && (max === undefined || value < max);
-  
+
   // Size configurations
   const size_config = {
     default: {
@@ -86,52 +94,52 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
       gap: theme.spacing.md,
     },
   };
-  
+
   const config = size_config[variant];
-  
+
   const styles = StyleSheet.create({
-    container: {
-      alignItems: 'center',
-    },
-    label: {
-      textAlign: 'center',
-      color: theme.colors.text_secondary,
-    },
-    controls: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: config.gap,
-    },
     button: {
-      width: config.button_size,
-      height: config.button_size,
-      justifyContent: 'center',
       alignItems: 'center',
       borderRadius: theme.borders.radii.lg,
+      height: config.button_size,
+      justifyContent: 'center',
+      width: config.button_size,
     },
     buttonDisabled: {
       opacity: 0.3,
     },
-    valueContainer: {
-      minWidth: config.button_size,
+    container: {
       alignItems: 'center',
     },
-    value: {
-      fontSize: config.value_font_size,
-      lineHeight: config.value_font_size * 1.1,
-      fontWeight: theme.typography.heading_1.font_weight,
-      color: theme.colors.text_primary,
+    controls: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: config.gap,
+    },
+    label: {
+      color: theme.colors.text_secondary,
       textAlign: 'center',
     },
     unit: {
-      fontSize: theme.typography.body_small.font_size,
       color: theme.colors.text_secondary,
+      fontSize: theme.typography.body_small.font_size,
       marginTop: -theme.spacing.xs,
+    },
+    value: {
+      color: theme.colors.text_primary,
+      fontSize: config.value_font_size,
+      fontWeight: theme.typography.heading_1.font_weight,
+      lineHeight: config.value_font_size * 1.1,
+      textAlign: 'center',
+    },
+    valueContainer: {
+      alignItems: 'center',
+      minWidth: config.button_size,
     },
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -145,9 +153,9 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
           <Spacer size="md" />
         </>
       )}
-      
+
       <View style={styles.controls}>
-        <Pressable 
+        <Pressable
           onPress={decrease}
           onPressIn={decreaseAnimation.handlePressIn}
           onPressOut={decreaseAnimation.handlePressOut}
@@ -161,20 +169,13 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
           <Animated.View style={decreaseAnimation.animatedStyle}>
             <GlassBase
               variant="light"
-              style={[
-                styles.button,
-                !can_decrease && styles.buttonDisabled,
-              ]}
+              style={[styles.button, !can_decrease && styles.buttonDisabled]}
             >
-              <Ionicons 
-                name="remove" 
-                size={config.icon_size} 
-                color={theme.colors.text_primary}
-              />
+              <Ionicons name="remove" size={config.icon_size} color={theme.colors.text_primary} />
             </GlassBase>
           </Animated.View>
         </Pressable>
-        
+
         <View style={styles.valueContainer}>
           <TextBase variant="heading_3" style={styles.value}>
             {animatedValue}
@@ -185,8 +186,8 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
             </TextBase>
           )}
         </View>
-        
-        <Pressable 
+
+        <Pressable
           onPress={increase}
           onPressIn={increaseAnimation.handlePressIn}
           onPressOut={increaseAnimation.handlePressOut}
@@ -200,16 +201,9 @@ export const NumberStepper: React.FC<NumberStepperProps> = ({
           <Animated.View style={increaseAnimation.animatedStyle}>
             <GlassBase
               variant="light"
-              style={[
-                styles.button,
-                !can_increase && styles.buttonDisabled,
-              ]}
+              style={[styles.button, !can_increase && styles.buttonDisabled]}
             >
-              <Ionicons 
-                name="add" 
-                size={config.icon_size} 
-                color={theme.colors.text_primary}
-              />
+              <Ionicons name="add" size={config.icon_size} color={theme.colors.text_primary} />
             </GlassBase>
           </Animated.View>
         </Pressable>
@@ -250,8 +244,19 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
     type: 'scale',
     duration: 150,
   });
-  
+
   const styles = StyleSheet.create({
+    button: {
+      alignItems: 'center',
+      borderRadius: variant === 'pills' ? theme.borders.radii.full : theme.borders.radii.md,
+      height: theme.sizes.touchTargets.small,
+      justifyContent: 'center',
+      minWidth: theme.sizes.touchTargets.medium,
+      paddingHorizontal: theme.spacing.md,
+    },
+    buttonSelected: {
+      backgroundColor: theme.colors.primary as string,
+    },
     container: {
       gap: theme.spacing.sm,
     },
@@ -261,20 +266,9 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
     },
     row: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.sm,
       justifyContent: 'center',
-      flexWrap: 'wrap',
-    },
-    button: {
-      minWidth: theme.sizes.touchTargets.medium,
-      height: theme.sizes.touchTargets.small,
-      paddingHorizontal: theme.spacing.md,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: variant === 'pills' ? theme.borders.radii.full : theme.borders.radii.md,
-    },
-    buttonSelected: {
-      backgroundColor: theme.colors.primary as string,
     },
     text: {
       color: theme.colors.text_primary,
@@ -285,7 +279,7 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
   });
 
   return (
-    <View 
+    <View
       style={[styles.container, style]}
       testID={testID}
       accessible={accessible}
@@ -299,29 +293,23 @@ export const QuickSelectRow: React.FC<QuickSelectRowProps> = ({
       <View style={styles.row}>
         {values.map((value, index) => {
           const is_selected = value === selected_value;
-          
+
           return (
             <AnimatedView key={value} style={getItemStyle(index)}>
               <PressableGlass
                 variant={is_selected ? 'medium' : 'light'}
                 onPress={() => on_select(value)}
                 press_scale={0.95}
-                glass_style={[
-                  styles.button,
-                  is_selected ? styles.buttonSelected : undefined,
-                ]}
+                glass_style={[styles.button, is_selected ? styles.buttonSelected : {}]}
                 testID={`${testID}-value-${value}`}
                 accessible={true}
                 accessibilityLabel={`Select ${value}`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: is_selected }}
               >
-                <TextBase 
-                  variant="body_medium" 
-                  style={[
-                    styles.text,
-                    is_selected && styles.textSelected,
-                  ]}
+                <TextBase
+                  variant="body_medium"
+                  style={[styles.text, is_selected && styles.textSelected]}
                 >
                   {value}
                 </TextBase>

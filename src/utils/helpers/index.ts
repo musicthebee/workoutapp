@@ -1,5 +1,5 @@
 // Component utilities
 export * from './componentSizing';
 
-// Theme utilities  
+// Theme utilities
 export * from './themeHelpers';

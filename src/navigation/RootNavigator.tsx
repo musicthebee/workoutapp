@@ -7,16 +7,29 @@ import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
 import type { RootStackParamList, TabParamList } from '@/types';
 
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 // Import the showcase screens
-import { AtomsShowcaseScreen, WorkoutExampleScreen, GlassShowcaseScreen, ComponentShowcaseScreen, ProfileScreen } from '@/screens';
+import {
+  AtomsShowcaseScreen,
+  ComponentShowcaseScreen,
+  GlassShowcaseScreen,
+  ProfileScreen,
+  WorkoutExampleScreen,
+} from '@/screens';
 
 // Placeholder screens - to be implemented
 const PlaceholderScreen: React.FC<{ title: string }> = ({ title }) => {
   const theme = useTheme();
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+      }}
+    >
       <Text style={{ color: theme.colors.text_primary }}>{title}</Text>
     </View>
   );
@@ -31,13 +44,13 @@ const Tab = createBottomTabNavigator<TabParamList>();
  */
 const TabNavigator: React.FC = () => {
   const theme = useTheme();
-  
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: string = 'home';
-          
+
           switch (route.name) {
             case 'HomeTab':
               iconName = focused ? 'home' : 'home-outline';
@@ -55,7 +68,7 @@ const TabNavigator: React.FC = () => {
               iconName = focused ? 'person' : 'person-outline';
               break;
           }
-          
+
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: theme.colors.primary,
@@ -68,31 +81,23 @@ const TabNavigator: React.FC = () => {
         headerShown: false,
       })}
     >
-      <Tab.Screen 
-        name="HomeTab" 
+      <Tab.Screen
+        name="HomeTab"
         component={AtomsShowcaseScreen}
         options={{ title: 'Components' }}
       />
-      <Tab.Screen 
-        name="ExercisesTab" 
+      <Tab.Screen
+        name="ExercisesTab"
         component={WorkoutExampleScreen}
         options={{ title: 'Example' }}
       />
-      <Tab.Screen 
-        name="WorkoutsTab" 
-        component={GlassShowcaseScreen}
-        options={{ title: 'Glass' }}
-      />
-      <Tab.Screen 
-        name="HistoryTab" 
+      <Tab.Screen name="WorkoutsTab" component={GlassShowcaseScreen} options={{ title: 'Glass' }} />
+      <Tab.Screen
+        name="HistoryTab"
         component={ComponentShowcaseScreen}
         options={{ title: 'Components V2' }}
       />
-      <Tab.Screen 
-        name="ProfileTab" 
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
-      />
+      <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   );
 };
@@ -103,17 +108,17 @@ const TabNavigator: React.FC = () => {
 export const RootNavigator: React.FC = () => {
   const theme = useTheme();
   const { user, is_loading } = useAuth();
-  
+
   // Show loading screen while checking auth
   if (is_loading) {
     return <PlaceholderScreen title="Loading..." />;
   }
-  
+
   // Show auth screen if not logged in (this should not happen with auto-login)
   if (!user) {
     return <PlaceholderScreen title="Logging in..." />;
   }
-  
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -134,63 +139,59 @@ export const RootNavigator: React.FC = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="Tabs" 
-        component={TabNavigator}
-        options={{ headerShown: false }}
-      />
-      
+      <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
+
       {/* Detail Screens */}
-      <Stack.Screen 
-        name="ExerciseDetail" 
+      <Stack.Screen
+        name="ExerciseDetail"
         component={() => <PlaceholderScreen title="Exercise Detail" />}
         options={{ title: 'Exercise' }}
       />
-      <Stack.Screen 
-        name="WorkoutDetail" 
+      <Stack.Screen
+        name="WorkoutDetail"
         component={() => <PlaceholderScreen title="Workout Detail" />}
         options={{ title: 'Workout' }}
       />
-      <Stack.Screen 
-        name="WorkoutBuilder" 
+      <Stack.Screen
+        name="WorkoutBuilder"
         component={() => <PlaceholderScreen title="Workout Builder" />}
         options={{ title: 'Build Workout' }}
       />
-      <Stack.Screen 
-        name="ActiveWorkout" 
+      <Stack.Screen
+        name="ActiveWorkout"
         component={() => <PlaceholderScreen title="Active Workout" />}
         options={{ headerShown: false }}
       />
-      
+
       {/* Modal Screens */}
-      <Stack.Screen 
-        name="ExerciseEditModal" 
+      <Stack.Screen
+        name="ExerciseEditModal"
         component={() => <PlaceholderScreen title="Edit Exercise" />}
-        options={{ 
+        options={{
           presentation: 'modal',
           title: 'Edit Exercise',
         }}
       />
-      <Stack.Screen 
-        name="SetLoggerModal" 
+      <Stack.Screen
+        name="SetLoggerModal"
         component={() => <PlaceholderScreen title="Log Set" />}
-        options={{ 
+        options={{
           presentation: 'modal',
           title: 'Log Set',
         }}
       />
-      <Stack.Screen 
-        name="RestTimerModal" 
+      <Stack.Screen
+        name="RestTimerModal"
         component={() => <PlaceholderScreen title="Rest Timer" />}
-        options={{ 
+        options={{
           presentation: 'modal',
           headerShown: false,
         }}
       />
-      <Stack.Screen 
-        name="ExercisePickerModal" 
+      <Stack.Screen
+        name="ExercisePickerModal"
         component={() => <PlaceholderScreen title="Pick Exercise" />}
-        options={{ 
+        options={{
           presentation: 'modal',
           title: 'Add Exercise',
         }}

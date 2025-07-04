@@ -90,7 +90,7 @@ export type CacheUpdater<T> = (cache: T) => T;
 
 // Type guards
 export const hasGraphQLErrors = <T>(
-  response: GraphQLResponse<T>
+  response: GraphQLResponse<T>,
 ): response is GraphQLResponse<T> & { errors: ReadonlyArray<GraphQLError> } => {
   return Boolean(response.errors && response.errors.length > 0);
 };
@@ -111,7 +111,7 @@ export const createApiError = (
   code: string,
   message: string,
   statusCode?: number,
-  details?: unknown
+  details?: unknown,
 ): ApiError => ({
   code,
   message,
@@ -120,7 +120,9 @@ export const createApiError = (
 });
 
 export const extractGraphQLError = (errors: ReadonlyArray<GraphQLError>): string => {
-  if (errors.length === 0) return 'Unknown GraphQL error';
+  if (errors.length === 0) {
+    return 'Unknown GraphQL error';
+  }
   return errors.map(e => e.message).join(', ');
 };
 

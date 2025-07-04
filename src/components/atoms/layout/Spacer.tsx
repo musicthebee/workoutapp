@@ -16,13 +16,10 @@ export interface SpacerProps {
  * Spacer Component
  * Pure spacing component using theme values
  */
-export const Spacer: React.FC<SpacerProps> = ({ 
-  size, 
-  horizontal = false 
-}) => {
+export const Spacer: React.FC<SpacerProps> = ({ size, horizontal = false }) => {
   const theme = useTheme();
   const spacing = theme.spacing[size];
-  
+
   return (
     <View
       style={{

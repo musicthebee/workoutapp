@@ -1,33 +1,33 @@
 // src/screens/auth/NexAIRegisterScreen.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-  Keyboard,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import Animated, {
   FadeInDown,
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
 import { NexAILogo } from '@/components/brand/NexAILogo';
 import { TextBase } from '@/components/atoms';
 import { BigButton } from '@/components/molecules';
-import { 
-  AuthBackground, 
-  AuthFormCard, 
-  AuthInputField, 
+import {
+  AuthBackground,
   AuthError,
+  AuthFormCard,
+  AuthInputField,
   AuthLink,
   PasswordStrengthIndicator,
 } from '@/components/auth';
-import { useTheme } from '@/theme/hooks/useTheme';
+// import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
 import { Haptics } from '@/utils/haptics';
 import type { SignUpData } from '@/types/auth';
@@ -37,9 +37,9 @@ interface NexAIRegisterScreenProps {
 }
 
 export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogin }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const { sign_up, is_loading, error: authError } = useAuth();
-  
+
   // Form state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -53,74 +53,74 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
     password?: string;
     confirmPassword?: string;
   }>({});
-  
+
   // Animation
   const errorShake = useSharedValue(0);
-  
+
   // Clear validation errors when user types
   useEffect(() => {
     if (firstName && validationErrors.firstName) {
       setValidationErrors(prev => ({ ...prev, firstName: undefined }));
     }
   }, [firstName]);
-  
+
   useEffect(() => {
     if (lastName && validationErrors.lastName) {
       setValidationErrors(prev => ({ ...prev, lastName: undefined }));
     }
   }, [lastName]);
-  
+
   useEffect(() => {
     if (email && validationErrors.email) {
       setValidationErrors(prev => ({ ...prev, email: undefined }));
     }
   }, [email]);
-  
+
   useEffect(() => {
     if (password && validationErrors.password) {
       setValidationErrors(prev => ({ ...prev, password: undefined }));
     }
   }, [password]);
-  
+
   useEffect(() => {
     if (confirmPassword && validationErrors.confirmPassword) {
       setValidationErrors(prev => ({ ...prev, confirmPassword: undefined }));
     }
   }, [confirmPassword]);
-  
+
   const validateForm = (): boolean => {
     const errors: typeof validationErrors = {};
-    
+
     if (!firstName.trim()) {
       errors.firstName = 'First name is required';
     }
-    
+
     if (!lastName.trim()) {
       errors.lastName = 'Last name is required';
     }
-    
+
     if (!email.trim()) {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Please enter a valid email';
     }
-    
+
     if (!password) {
       errors.password = 'Password is required';
     } else if (password.length < 8) {
       errors.password = 'Password must be at least 8 characters';
     }
-    
+
     if (!confirmPassword) {
       errors.confirmPassword = 'Please confirm your password';
     } else if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords do not match';
     }
-    
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
-  
+
   const handleRegister = async () => {
     if (!validateForm()) {
       Haptics.error();
@@ -128,11 +128,11 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
         withTiming(-10, { duration: 50 }),
         withTiming(10, { duration: 100 }),
         withTiming(-10, { duration: 100 }),
-        withTiming(0, { duration: 50 })
+        withTiming(0, { duration: 50 }),
       );
       return;
     }
-    
+
     Haptics.light();
     try {
       const signUpData: SignUpData = {
@@ -141,7 +141,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
         first_name: firstName.trim(),
         last_name: lastName.trim(),
       };
-      
+
       await sign_up(signUpData);
       Haptics.success();
     } catch (error) {
@@ -150,15 +150,15 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
         withTiming(-10, { duration: 50 }),
         withTiming(10, { duration: 100 }),
         withTiming(-10, { duration: 100 }),
-        withTiming(0, { duration: 50 })
+        withTiming(0, { duration: 50 }),
       );
     }
   };
-  
+
   const formStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: errorShake.value }],
   }));
-  
+
   return (
     <AuthBackground>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -172,15 +172,12 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
             keyboardShouldPersistTaps="handled"
           >
             {/* Logo */}
-            <Animated.View 
-              entering={FadeInDown.springify()}
-              style={styles.logoContainer}
-            >
+            <Animated.View entering={FadeInDown.springify()} style={styles.logoContainer}>
               <NexAILogo size={120} animated={false} variant="default" showGlow={false} />
             </Animated.View>
-            
+
             {/* Header text */}
-            <Animated.View 
+            <Animated.View
               entering={FadeInDown.delay(100).springify()}
               style={styles.headerContainer}
             >
@@ -191,7 +188,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                 Start your fitness evolution
               </TextBase>
             </Animated.View>
-            
+
             {/* Registration form */}
             <Animated.View style={formStyle}>
               <AuthFormCard delay={200}>
@@ -208,7 +205,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                       autoCapitalize="words"
                     />
                   </View>
-                  
+
                   <View style={styles.nameField}>
                     <AuthInputField
                       label="Last Name"
@@ -221,7 +218,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                     />
                   </View>
                 </View>
-                
+
                 <AuthInputField
                   label="Email"
                   value={email}
@@ -232,7 +229,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                   error={validationErrors.email}
                   delay={400}
                 />
-                
+
                 <AuthInputField
                   label="Password"
                   value={password}
@@ -244,11 +241,9 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                   error={validationErrors.password}
                   delay={450}
                 />
-                
-                {password.length > 0 && (
-                  <PasswordStrengthIndicator password={password} />
-                )}
-                
+
+                {password.length > 0 && <PasswordStrengthIndicator password={password} />}
+
                 <AuthInputField
                   label="Confirm Password"
                   value={confirmPassword}
@@ -260,16 +255,16 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                   error={validationErrors.confirmPassword}
                   delay={500}
                 />
-                
+
                 {/* Error display */}
                 {authError && (
-                  <AuthError 
-                    message={authError.message || 'Registration failed. Please try again.'} 
+                  <AuthError
+                    message={authError.message || 'Registration failed. Please try again.'}
                   />
                 )}
-                
+
                 {/* Register button */}
-                <Animated.View 
+                <Animated.View
                   entering={FadeInDown.delay(600).springify()}
                   style={styles.buttonContainer}
                 >
@@ -284,7 +279,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
                 </Animated.View>
               </AuthFormCard>
             </Animated.View>
-            
+
             {/* Sign in link */}
             <Animated.View
               entering={FadeInDown.delay(800).springify()}
@@ -293,9 +288,7 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
               <TextBase variant="body_medium" color="secondary">
                 Already have an account?{' '}
               </TextBase>
-              <AuthLink onPress={onLogin!}>
-                Sign In
-              </AuthLink>
+              <AuthLink onPress={onLogin!}>Sign In</AuthLink>
             </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -305,39 +298,39 @@ export const NexAIRegisterScreen: React.FC<NexAIRegisterScreenProps> = ({ onLogi
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: 16,
+  },
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    marginBottom: 12,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  nameField: {
+    flex: 1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    gap: 12,
   },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingVertical: 32,
   },
-  logoContainer: {
+  signinContainer: {
     alignItems: 'center',
-    marginBottom: 12,
-  },
-  headerContainer: {
-    marginBottom: 12,
-  },
-  nameRow: {
     flexDirection: 'row',
-    gap: 12,
-  },
-  nameField: {
-    flex: 1,
-  },
-  buttonContainer: {
-    marginTop: 16,
+    justifyContent: 'center',
+    marginTop: 24,
   },
   termsContainer: {
     marginTop: 16,
     paddingHorizontal: 16,
-  },
-  signinContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
   },
 });

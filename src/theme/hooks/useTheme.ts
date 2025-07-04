@@ -9,11 +9,11 @@ import type { Theme } from '../index';
  */
 export const useTheme = (): Theme => {
   const context = useContext(ThemeContext);
-  
+
   if (!context) {
     throw new Error('useTheme must be used within ThemeProvider');
   }
-  
+
   return context.theme;
 };
 
@@ -27,11 +27,11 @@ export const useThemeControls = (): {
   toggleTheme: () => void;
 } => {
   const context = useContext(ThemeContext);
-  
+
   if (!context) {
     throw new Error('useThemeControls must be used within ThemeProvider');
   }
-  
+
   return context;
 };
 

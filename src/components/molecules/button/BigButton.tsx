@@ -1,18 +1,19 @@
 // src/components/molecules/button/BigButton.tsx
 import React from 'react';
-import { StyleSheet, ViewStyle, ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { ButtonBase, TextBase, type ButtonBaseProps } from '@/components/atoms';
+import { ButtonBase, type ButtonBaseProps, TextBase } from '@/components/atoms';
 import { useTheme } from '@/hooks';
 
-interface BigButtonProps extends Omit<ButtonBaseProps, 'size'> {
+interface BigButtonProps extends Omit<ButtonBaseProps, 'size' | 'children'> {
   label: string;
   icon?: string;
   icon_position?: 'left' | 'right';
   loading_text?: string;
   full_width?: boolean;
   style?: ViewStyle;
+  children?: React.ReactNode;
 }
 
 /**
@@ -34,7 +35,7 @@ export const BigButton: React.FC<BigButtonProps> = ({
   ...buttonProps
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     button: {
       height: theme.sizes.touchTargets.large, // 80pt minimum
@@ -43,22 +44,21 @@ export const BigButton: React.FC<BigButtonProps> = ({
       minWidth: full_width ? undefined : theme.spacing.xxxxxl * 2,
     },
     content: {
-      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      flexDirection: 'row',
       gap: theme.spacing.sm,
+      justifyContent: 'center',
+    },
+    icon: {
+      marginHorizontal: theme.spacing.xs,
     },
     text: {
       color: variant === 'ghost' 
         ? (disabled ? theme.colors.text_disabled : theme.colors.primary)
         : theme.colors.text_inverse,
     },
-    icon: {
-      marginHorizontal: theme.spacing.xs,
-    },
   });
 
-  
   return (
     <ButtonBase
       {...buttonProps}
@@ -71,39 +71,56 @@ export const BigButton: React.FC<BigButtonProps> = ({
       <View style={styles.content}>
         {/* Loading indicator */}
         {loading && (
-          <ActivityIndicator 
-            size="small" 
-            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === 'ghost' || variant === 'secondary'
+                ? theme.colors.primary
+                : theme.colors.text_primary
+            }
           />
         )}
-        
+
         {/* Left icon */}
         {!loading && icon && icon_position === 'left' && (
-          <Ionicons 
-            name={icon as any} 
-            size={theme.sizes.icons.md} 
-            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
+          <Ionicons
+            name={icon as any}
+            size={theme.sizes.icons.md}
+            color={
+              variant === 'ghost' || variant === 'secondary'
+                ? theme.colors.primary
+                : theme.colors.text_primary
+            }
             style={styles.icon}
           />
         )}
-        
+
         {/* Button text */}
-        <TextBase 
+        <TextBase
           variant="button_large"
           style={[
             styles.text,
-            { color: variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary }
+            {
+              color:
+                variant === 'ghost' || variant === 'secondary'
+                  ? theme.colors.primary
+                  : theme.colors.text_primary,
+            },
           ]}
         >
-          {loading ? loading_text : (children || label)}
+          {loading ? loading_text : children || label}
         </TextBase>
-        
+
         {/* Right icon */}
         {!loading && icon && icon_position === 'right' && (
-          <Ionicons 
-            name={icon as any} 
-            size={theme.sizes.icons.md} 
-            color={variant === 'ghost' || variant === 'secondary' ? theme.colors.primary : theme.colors.text_primary}
+          <Ionicons
+            name={icon as any}
+            size={theme.sizes.icons.md}
+            color={
+              variant === 'ghost' || variant === 'secondary'
+                ? theme.colors.primary
+                : theme.colors.text_primary
+            }
             style={styles.icon}
           />
         )}
@@ -141,23 +158,8 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
-    container: {
-      minWidth: theme.sizes.touchTargets.large,
-      height: theme.sizes.touchTargets.huge,
-      paddingHorizontal: theme.spacing.sm,
-      overflow: 'visible',
-    },
-    content: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
-    },
-    iconContainer: {
-      position: 'relative',
-    },
     badge: {
       position: 'absolute',
       top: -theme.spacing.sm,
@@ -174,9 +176,24 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
       color: theme.colors.text_inverse,
       fontSize: theme.typography.caption.font_size - 2,
     },
+    container: {
+      minWidth: theme.sizes.touchTargets.large,
+      height: theme.sizes.touchTargets.huge,
+      paddingHorizontal: theme.spacing.sm,
+      overflow: 'visible',
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+    },
+    iconContainer: {
+      position: 'relative',
+    },
     label: {
-      textAlign: 'center',
       color: variant === 'primary' ? theme.colors.text_inverse : theme.colors.primary,
+      textAlign: 'center',
     },
   });
 
@@ -192,9 +209,9 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
     >
       <View style={styles.content}>
         <View style={styles.iconContainer}>
-          <Ionicons 
-            name={icon as any} 
-            size={theme.sizes.icons.xl} 
+          <Ionicons
+            name={icon as any}
+            size={theme.sizes.icons.xl}
             color={variant === 'primary' ? theme.colors.text_inverse : theme.colors.primary}
           />
           {badge !== undefined && badge !== 0 && (
@@ -237,22 +254,22 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   accessibilityLabel = 'Add exercise',
 }) => {
   const theme = useTheme();
-  
-  if (!visible) return null;
-  
+
+  if (!visible) {return null;}
+
   const styles = StyleSheet.create({
     container: {
-      position: 'absolute',
-      bottom: theme.spacing.xl,
-      right: theme.spacing.xl,
-      width: theme.sizes.touchTargets.large,
-      height: theme.sizes.touchTargets.large,
       borderRadius: theme.borders.radii.full,
+      bottom: theme.spacing.xl,
       elevation: theme.shadows.lg.elevation,
+      height: theme.sizes.touchTargets.large,
+      position: 'absolute',
+      right: theme.spacing.xl,
       shadowColor: theme.colors.shadow,
       shadowOffset: theme.shadows.lg.shadowOffset,
       shadowOpacity: theme.shadows.lg.shadowOpacity,
       shadowRadius: theme.shadows.lg.shadowRadius,
+      width: theme.sizes.touchTargets.large,
     },
   });
 
@@ -266,9 +283,9 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
-      <Ionicons 
-        name={icon} 
-        size={theme.sizes.icons.lg} 
+      <Ionicons
+        name={icon}
+        size={theme.sizes.icons.lg}
         color={theme.colors.text_inverse}
       />
     </ButtonBase>

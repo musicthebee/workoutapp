@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useColorScheme, ColorSchemeName } from 'react-native';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import { ColorSchemeName, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { createTheme, type Theme } from '@/theme';
@@ -65,7 +65,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const toggleTheme = async (): Promise<void> => {
     const newScheme: ColorSchemeName = colorScheme === 'dark' ? 'light' : 'dark';
     setColorScheme(newScheme);
-    
+
     // Save preference
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newScheme || 'light');
@@ -89,9 +89,5 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return null;
   }
 
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };

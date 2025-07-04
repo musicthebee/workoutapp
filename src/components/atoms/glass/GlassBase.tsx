@@ -1,12 +1,6 @@
 // src/components/atoms/glass/GlassBase.tsx
 import React from 'react';
-import {
-  View,
-  StyleProp,
-  ViewStyle,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated from 'react-native-reanimated';
@@ -45,17 +39,17 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
   const theme = useTheme();
   const isDark = theme.isDark;
   const { selectedVariant } = useGlassVariant();
-  
+
   // Use prop variant if provided, otherwise use global selected variant
   const variant = propVariant || selectedVariant;
-  
+
   // Use the glass animation hooks that were previously unused
   const glassEffects = useGlassEffects({
     shimmer,
     glow,
     breathing: animated,
   });
-  
+
   // Enhanced Android glass styles with borders, elevation, and shadows
   const getAndroidGlassStyle = (): ViewStyle => {
     // Solid backgrounds to prevent banding
@@ -136,18 +130,13 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
   };
 
   // Get platform-specific glass styles
-  const glassStyles = Platform.OS === 'android' 
-    ? getAndroidGlassStyle()
-    : glassMorphism({ variant, isDark });
+  const glassStyles =
+    Platform.OS === 'android' ? getAndroidGlassStyle() : glassMorphism({ variant, isDark });
   const blurAmount = theme.glass[variant].blur_amount;
-  
+
   // Flatten style to get dimensions
-  const flatStyle = StyleSheet.flatten([
-    styles.base,
-    glassStyles,
-    style,
-  ]);
-  
+  const flatStyle = StyleSheet.flatten([styles.base, glassStyles, style]);
+
   const borderRadius = (flatStyle.borderRadius as number) || theme.borders.radii.md;
 
   // Platform-specific rendering with shared logic
@@ -156,7 +145,7 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
       // iOS: Use BlurView with gradient overlay
       const glassGradients = gradient.glass(isDark);
       const gradientConfig = glassGradients[variant];
-      
+
       return (
         <>
           <BlurView
@@ -176,13 +165,13 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
         </>
       );
     }
-    
+
     // Android: Enhanced glass with gradients
     const gradientConfig = getAndroidGradientConfig();
     return (
       <>
         {/* Inner shadow for depth */}
-        <View 
+        <View
           style={{
             position: 'absolute',
             top: 0,
@@ -193,9 +182,9 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
             borderWidth: theme.borders.widths.thin,
             borderColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)',
           }}
-          pointerEvents="none" 
+          pointerEvents="none"
         />
-        
+
         {/* Glass gradient overlay */}
         <LinearGradient
           colors={gradientConfig.colors}
@@ -210,18 +199,14 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
 
   return (
     <Animated.View
-      style={[
-        styles.container,
-        flatStyle,
-        animated && glassEffects.breathing.animatedStyle,
-      ]}
+      style={[styles.container, flatStyle, animated && glassEffects.breathing.animatedStyle]}
       testID={testID}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
     >
       {/* Platform-specific background layer */}
       {renderPlatformLayer()}
-      
+
       {/* Glow effect using hooks */}
       {glow && (
         <Animated.View
@@ -231,15 +216,13 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
             {
               borderRadius,
               borderWidth: 1,
-              borderColor: isDark
-                ? 'rgba(255, 255, 255, 0.2)'
-                : 'rgba(255, 255, 255, 0.4)',
+              borderColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.4)',
             },
           ]}
           pointerEvents="none"
         />
       )}
-      
+
       {/* Shimmer effect using hooks */}
       {shimmer && (
         <Animated.View
@@ -251,33 +234,27 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
           pointerEvents="none"
         >
           <LinearGradient
-            colors={[
-              'transparent',
-              'rgba(255,255,255,0.3)',
-              'transparent',
-            ]}
+            colors={['transparent', 'rgba(255,255,255,0.3)', 'transparent']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFillObject}
           />
         </Animated.View>
       )}
-      
+
       {/* Content */}
-      <View style={styles.content}>
-        {children}
-      </View>
+      <View style={styles.content}>{children}</View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-  },
   base: {
     borderRadius: 12,
     overflow: 'hidden' as const,
+  },
+  container: {
+    position: 'relative',
   },
   content: {
     position: 'relative',

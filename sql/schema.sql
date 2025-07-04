@@ -106,7 +106,7 @@ CREATE TABLE exercise (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT check_measurement_values CHECK (
         (measurement_type = 'reps' AND default_reps IS NOT NULL AND default_duration IS NULL) OR
-        (measurement_type IN ('time', 'distance') AND default_duration IS NOT NULL AND default_reps IS NULL)
+        (measurement_type IN ('duration', 'distance') AND default_duration IS NOT NULL AND default_reps IS NULL)
     )
 );
 
@@ -139,7 +139,7 @@ CREATE TABLE workout (
 CREATE TABLE workout_exercise (
     workout_id UUID REFERENCES workout(id) ON DELETE CASCADE,
     exercise_id UUID REFERENCES exercise(id) ON DELETE CASCADE,
-    exercise_order NUMERIC(10, 6) NOT NULL  -- For fractional ordering
+    exercise_order NUMERIC(10, 6) NOT NULL,  -- For fractional ordering
     -- These can override exercise defaults
     sets INTEGER NOT NULL,
     reps INTEGER,
@@ -225,11 +225,12 @@ CREATE INDEX idx_workout_performance_dates ON workout_performance(user_id, compl
 
 CREATE INDEX idx_user_weight_history_user ON user_weight_history(user_id, recorded_at DESC);
 
+DROP FUNCTION copy_exercise_for_user(uuid,uuid);
 -- Helper function to copy library exercise to user
 CREATE OR REPLACE FUNCTION copy_exercise_for_user(
     p_user_id UUID,
     p_exercise_id UUID
-) RETURNS UUID AS $$
+) RETURNS SETOF exercise AS $$
 DECLARE
     v_new_id UUID;
     v_source_exercise exercise;
@@ -244,7 +245,8 @@ BEGIN
     AND source_id = COALESCE(v_source_exercise.source_id, p_exercise_id);
     
     IF v_new_id IS NOT NULL THEN
-        RETURN v_new_id; -- Already exists
+        RETURN QUERY SELECT * FROM exercise WHERE id = v_new_id; -- Return existing
+        RETURN;
     END IF;
     
     -- Create the copy
@@ -262,15 +264,16 @@ BEGIN
     WHERE id = p_exercise_id
     RETURNING id INTO v_new_id;
     
-    RETURN v_new_id;
+    RETURN QUERY SELECT * FROM exercise WHERE id = v_new_id;
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION copy_workout_for_user(uuid,uuid);
 -- Helper function to copy library workout to user
 CREATE OR REPLACE FUNCTION copy_workout_for_user(
     p_user_id UUID,
     p_workout_id UUID
-) RETURNS UUID AS $$
+) RETURNS SETOF workout AS $$
 DECLARE
     v_new_workout_id UUID;
     v_new_exercise_id UUID;
@@ -287,7 +290,8 @@ BEGIN
     AND source_id = COALESCE(v_source_workout.source_id, p_workout_id);
     
     IF v_new_workout_id IS NOT NULL THEN
-        RETURN v_new_workout_id; -- Already exists
+        RETURN QUERY SELECT * FROM workout WHERE id = v_new_workout_id; -- Return existing
+        RETURN;
     END IF;
     
     -- Create workout copy
@@ -308,7 +312,7 @@ BEGIN
     LOOP
         -- Copy the exercise if it's a library exercise
         IF EXISTS (SELECT 1 FROM exercise WHERE id = r.exercise_id AND user_id IS NULL) THEN
-            v_new_exercise_id := copy_exercise_for_user(p_user_id, r.exercise_id);
+            SELECT id INTO v_new_exercise_id FROM copy_exercise_for_user(p_user_id, r.exercise_id);
         ELSE
             v_new_exercise_id := r.exercise_id; -- Already a user exercise
         END IF;
@@ -324,7 +328,7 @@ BEGIN
         );
     END LOOP;
     
-    RETURN v_new_workout_id;
+    RETURN QUERY SELECT * FROM workout WHERE id = v_new_workout_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -363,7 +367,7 @@ CREATE OR REPLACE FUNCTION search_exercises_semantic(
     category exercise_category,
     similarity FLOAT,
     exercise_type TEXT
-) AS $
+) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
@@ -384,4 +388,4 @@ BEGIN
     ORDER BY e.embedding <=> p_query_embedding
     LIMIT p_limit;
 END;
-$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;

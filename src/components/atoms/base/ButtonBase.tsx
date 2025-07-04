@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Pressable,
-  PressableProps,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { GlassBase } from '@/components/atoms/glass/GlassBase';
@@ -47,16 +42,16 @@ export const ButtonBase: React.FC<ButtonBaseProps> = ({
 }) => {
   const theme = useTheme();
   const { animatedStyle, onPressIn, onPressOut } = usePressAnimation();
-  
+
   // Map button variant to glass variant
   const glassVariant = variant === 'ghost' ? 'light' : 'medium';
-  
+
   // Get sizing using centralized utility (eliminates duplication)
   const { height, paddingHorizontal } = getComponentSizing('button', size, theme);
-  
+
   // Determine if button is interactive
   const isDisabled = disabled || loading;
-  
+
   return (
     <Pressable
       onPress={onPress}

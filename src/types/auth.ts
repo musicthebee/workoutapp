@@ -37,7 +37,7 @@ export interface SignInData {
 }
 
 // Auth error codes
-export type AuthErrorCode = 
+export type AuthErrorCode =
   | 'auth/user-not-found'
   | 'auth/wrong-password'
   | 'auth/email-already-in-use'
@@ -54,11 +54,7 @@ export type AuthErrorCode =
 
 // Auth error class
 export class AuthError extends Error {
-  constructor(
-    public code: AuthErrorCode,
-    message: string,
-    public originalError?: any
-  ) {
+  constructor(public code: AuthErrorCode, message: string, public originalError?: any) {
     super(message);
     this.name = 'AuthError';
   }
@@ -66,11 +62,7 @@ export class AuthError extends Error {
   static from(error: any): AuthError {
     // Handle Firebase auth errors
     if (error?.code && error?.message) {
-      return new AuthError(
-        error.code as AuthErrorCode,
-        error.message,
-        error
-      );
+      return new AuthError(error.code as AuthErrorCode, error.message, error);
     }
 
     // If it's already an AuthError, return it
@@ -82,7 +74,7 @@ export class AuthError extends Error {
     return new AuthError(
       'auth/unknown',
       error?.message || 'An authentication error occurred',
-      error
+      error,
     );
   }
 }

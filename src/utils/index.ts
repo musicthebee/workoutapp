@@ -6,7 +6,7 @@ export * from './helpers';
 // Constants (when implemented)
 // export * from './constants';
 
-// Formatters (when implemented) 
+// Formatters (when implemented)
 // export * from './formatters';
 
 // Validators (when implemented)

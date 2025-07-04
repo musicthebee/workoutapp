@@ -1,12 +1,12 @@
 // src/components/molecules/modal/ModalTemplate.tsx
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
   ViewStyle,
 } from 'react-native';
 
@@ -43,47 +43,47 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: theme.colors.background,
+      flex: 1,
+    },
+    content: {
+      flex: 1,
+    },
+    footer: {
+      backgroundColor: theme.colors.background,
+      borderTopColor: theme.colors.border,
+      borderTopWidth: theme.borders.widths.hairline,
+      paddingBottom: Platform.OS === 'ios' ? theme.spacing.lg : theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.md,
+      zIndex: theme.zIndices.sticky,
+    },
+    footerGlass: {
+      bottom: 0,
+      left: 0,
+      position: 'absolute',
+      right: 0,
     },
     header: {
       height: theme.sizes.touchTargets.medium, // 60pt standard modal header
       zIndex: theme.zIndices.sticky,
     },
-    content: {
+    nonScrollContent: {
       flex: 1,
+      padding: theme.spacing.lg,
     },
     scrollContent: {
       padding: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
     },
-    nonScrollContent: {
-      flex: 1,
-      padding: theme.spacing.lg,
-    },
-    footer: {
-      paddingHorizontal: theme.spacing.md,
-      paddingTop: theme.spacing.md,
-      paddingBottom: Platform.OS === 'ios' ? theme.spacing.lg : theme.spacing.md,
-      backgroundColor: theme.colors.background,
-      borderTopWidth: theme.borders.widths.hairline,
-      borderTopColor: theme.colors.border,
-      zIndex: theme.zIndices.sticky,
-    },
-    footerGlass: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
   });
 
   // Content component based on scrollable prop
   const content = scrollable ? (
-    <ScrollView 
+    <ScrollView
       style={styles.content}
       contentContainerStyle={[styles.scrollContent, content_style]}
       showsVerticalScrollIndicator={false}
@@ -93,40 +93,30 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.nonScrollContent, content_style]}>
-      {children}
-    </View>
+    <View style={[styles.nonScrollContent, content_style]}>{children}</View>
   );
 
   // Wrapped content with keyboard avoiding if needed
   const wrapped_content = keyboard_avoiding ? (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={header ? theme.sizes.touchTargets.medium : 0}
     >
       {header && <View style={styles.header}>{header}</View>}
       {content}
-      {footer && (
-        <View style={[styles.footer, footer_style]}>
-          {footer}
-        </View>
-      )}
+      {footer && <View style={[styles.footer, footer_style]}>{footer}</View>}
     </KeyboardAvoidingView>
   ) : (
     <View style={styles.container}>
       {header && <View style={styles.header}>{header}</View>}
       {content}
-      {footer && (
-        <View style={[styles.footer, footer_style]}>
-          {footer}
-        </View>
-      )}
+      {footer && <View style={[styles.footer, footer_style]}>{footer}</View>}
     </View>
   );
 
   return (
-    <SafeAreaView 
+    <SafeAreaView
       style={styles.container}
       testID={testID}
       accessible={accessible}
@@ -148,17 +138,17 @@ export const ModalTemplateWithGlassFooter: React.FC<ModalTemplateProps> = ({
   ...props
 }) => {
   const theme = useTheme();
-  
+
   const glass_footer_style = StyleSheet.create({
     footer: {
+      paddingBottom: Platform.OS === 'ios' ? theme.spacing.xl : theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      paddingBottom: Platform.OS === 'ios' ? theme.spacing.xl : theme.spacing.md,
     },
   });
 
   const footer_component = footer ? (
-    <GlassBase 
+    <GlassBase
       variant={glass_variant}
       style={[
         {
@@ -172,9 +162,7 @@ export const ModalTemplateWithGlassFooter: React.FC<ModalTemplateProps> = ({
         footer_style,
       ]}
     >
-      <View style={glass_footer_style.footer}>
-        {footer}
-      </View>
+      <View style={glass_footer_style.footer}>{footer}</View>
     </GlassBase>
   ) : null;
 

@@ -1,23 +1,11 @@
 // src/components/auth/AuthFormComponents.tsx
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ViewStyle,
-  Pressable,
-  TextInput,
-  Platform,
-} from 'react-native';
-import Animated, {
-  FadeInUp,
-  Layout,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import { Platform, Pressable, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+import Animated, { FadeInUp, Layout, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Feather';
-import { GlassBase, TextBase, InputBase, BigButton } from '@/components/atoms';
+import { GlassBase, TextBase } from '@/components/atoms';
 import { useTheme } from '@/theme/hooks/useTheme';
-import type { InputSize, TextColor } from '@/types';
+import type { TextColor } from '@/types';
 
 // Type definitions
 interface AuthFormCardProps {
@@ -56,20 +44,10 @@ interface AuthLinkProps {
 }
 
 // Auth Form Card - Glass container for forms
-export const AuthFormCard: React.FC<AuthFormCardProps> = ({ 
-  children, 
-  style,
-  delay = 0,
-}) => {
+export const AuthFormCard: React.FC<AuthFormCardProps> = ({ children, style, delay = 0 }) => {
   return (
-    <Animated.View
-      entering={FadeInUp.delay(delay).springify()}
-      layout={Layout.springify()}
-    >
-      <GlassBase
-        variant="medium"
-        style={[styles.formCard, style]}
-      >
+    <Animated.View entering={FadeInUp.delay(delay).springify()} layout={Layout.springify()}>
+      <GlassBase variant="medium" style={[styles.formCard, style]}>
         {children}
       </GlassBase>
     </Animated.View>
@@ -93,43 +71,33 @@ export const AuthInputField: React.FC<AuthInputFieldProps> = ({
   const theme = useTheme();
   const [showPassword, setShowPassword] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
-  
+
   const inputType = type === 'password' && !showPassword ? 'password' : type;
-  
+
   const containerStyle = useAnimatedStyle(() => {
     return {
       borderColor: withSpring(
-        error 
-          ? theme.colors.error 
-          : isFocused 
-          ? theme.colors.primary 
-          : theme.colors.glass_border
+        error ? theme.colors.error : isFocused ? theme.colors.primary : theme.colors.glass_border,
       ),
       borderWidth: withSpring(isFocused ? 2 : 1),
     };
   });
-  
+
   return (
     <Animated.View
       entering={FadeInUp.delay(delay).springify()}
       layout={Layout.springify()}
       style={styles.inputGroup}
     >
-      <TextBase 
-        variant="body_small" 
-        color="secondary" 
-        style={styles.inputLabel}
-      >
+      <TextBase variant="body_small" color="secondary" style={styles.inputLabel}>
         {label}
       </TextBase>
-      
+
       <Animated.View
         style={[
           styles.inputWrapper,
           {
-            backgroundColor: theme.isDark 
-              ? 'rgba(255, 255, 255, 0.05)' 
-              : 'rgba(0, 0, 0, 0.02)',
+            backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
           },
           containerStyle,
         ]}
@@ -142,7 +110,7 @@ export const AuthInputField: React.FC<AuthInputFieldProps> = ({
             style={styles.inputIcon}
           />
         )}
-        
+
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -154,12 +122,9 @@ export const AuthInputField: React.FC<AuthInputFieldProps> = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           editable={editable}
-          style={[
-            styles.input,
-            { color: theme.colors.text_primary }
-          ]}
+          style={[styles.input, { color: theme.colors.text_primary }]}
         />
-        
+
         {showPasswordToggle && type === 'password' && (
           <Pressable
             onPress={() => setShowPassword(!showPassword)}
@@ -174,12 +139,9 @@ export const AuthInputField: React.FC<AuthInputFieldProps> = ({
           </Pressable>
         )}
       </Animated.View>
-      
+
       {error && (
-        <Animated.View 
-          entering={FadeInUp.springify()}
-          style={styles.errorContainer}
-        >
+        <Animated.View entering={FadeInUp.springify()} style={styles.errorContainer}>
           <TextBase variant="caption" color="error">
             {error}
           </TextBase>
@@ -192,17 +154,14 @@ export const AuthInputField: React.FC<AuthInputFieldProps> = ({
 // Auth Error Display
 export const AuthError: React.FC<AuthErrorProps> = ({ message, onDismiss }) => {
   const theme = useTheme();
-  
+
   return (
-    <Animated.View
-      entering={FadeInUp.springify()}
-      layout={Layout.springify()}
-    >
+    <Animated.View entering={FadeInUp.springify()} layout={Layout.springify()}>
       <GlassBase
         variant="light"
         style={[
           styles.errorBox,
-          { backgroundColor: theme.isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)' }
+          { backgroundColor: theme.isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)' },
         ]}
       >
         <Icon name="alert-circle" size={16} color={theme.colors.error} />
@@ -220,31 +179,46 @@ export const AuthError: React.FC<AuthErrorProps> = ({ message, onDismiss }) => {
 };
 
 // Password Strength Indicator
-export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({ password }) => {
+export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
+  password,
+}) => {
   const theme = useTheme();
-  
+
   const calculateStrength = (): { score: number; label: string; color: string } => {
     let score = 0;
-    if (password.length >= 8) score += 25;
-    if (password.length >= 12) score += 25;
-    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score += 25;
-    if (/[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) score += 25;
-    
-    if (score <= 25) return { score, label: 'Weak', color: theme.colors.error };
-    if (score <= 50) return { score, label: 'Fair', color: '#FFA502' };
-    if (score <= 75) return { score, label: 'Good', color: '#FECA57' };
+    if (password.length >= 8) {
+      score += 25;
+    }
+    if (password.length >= 12) {
+      score += 25;
+    }
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) {
+      score += 25;
+    }
+    if (/[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+      score += 25;
+    }
+
+    if (score <= 25) {
+      return { score, label: 'Weak', color: theme.colors.error };
+    }
+    if (score <= 50) {
+      return { score, label: 'Fair', color: '#FFA502' };
+    }
+    if (score <= 75) {
+      return { score, label: 'Good', color: '#FECA57' };
+    }
     return { score, label: 'Strong', color: theme.colors.success };
   };
-  
+
   const strength = calculateStrength();
-  
-  if (password.length === 0) return null;
-  
+
+  if (password.length === 0) {
+    return null;
+  }
+
   return (
-    <Animated.View
-      entering={FadeInUp.springify()}
-      style={styles.strengthContainer}
-    >
+    <Animated.View entering={FadeInUp.springify()} style={styles.strengthContainer}>
       <View style={[styles.strengthBar, { backgroundColor: theme.colors.glass_border }]}>
         <Animated.View
           style={[
@@ -265,9 +239,9 @@ export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps>
 
 // Auth Link Component
 export const AuthLink: React.FC<AuthLinkProps> = ({ children, onPress, color = 'info' }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [isPressed, setIsPressed] = React.useState(false);
-  
+
   const linkStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -278,7 +252,7 @@ export const AuthLink: React.FC<AuthLinkProps> = ({ children, onPress, color = '
       opacity: withSpring(isPressed ? 0.7 : 1),
     };
   });
-  
+
   return (
     <Pressable
       onPress={onPress}
@@ -287,15 +261,15 @@ export const AuthLink: React.FC<AuthLinkProps> = ({ children, onPress, color = '
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
       <Animated.View style={linkStyle}>
-        <TextBase 
-          variant="body_medium" 
-          color={color} 
+        <TextBase
+          variant="body_medium"
+          color={color}
           style={[
             styles.link,
             {
               // Modern mobile design - blue color is sufficient link indicator
               // textDecorationLine: 'underline', // Commented out for cleaner look
-            }
+            },
           ]}
         >
           {children}
@@ -313,12 +287,9 @@ interface AuthDividerProps {
 
 export const AuthDivider: React.FC<AuthDividerProps> = ({ text = 'OR', delay = 0 }) => {
   const theme = useTheme();
-  
+
   return (
-    <Animated.View
-      entering={FadeInUp.delay(delay).springify()}
-      style={styles.dividerContainer}
-    >
+    <Animated.View entering={FadeInUp.delay(delay).springify()} style={styles.dividerContainer}>
       <View style={[styles.dividerLine, { backgroundColor: theme.colors.border }]} />
       <TextBase variant="caption" color="tertiary" style={styles.dividerText}>
         {text}
@@ -329,78 +300,9 @@ export const AuthDivider: React.FC<AuthDividerProps> = ({ text = 'OR', delay = 0
 };
 
 const styles = StyleSheet.create({
-  formCard: {
-    borderRadius: 24,
-    padding: 24,
-    backgroundColor: 'transparent',
-    // Remove overflow: 'hidden' to allow proper glass effect rendering
-    // Glass effects are handled by GlassBase component
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 56,
-    borderWidth: 1,
-    // Removed overflow: 'hidden' to ensure proper icon positioning
-  },
-  inputIcon: {
-    marginRight: 12,
-    // Fixed positioning
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    height: '100%',
-    paddingVertical: Platform.OS === 'ios' ? 0 : 8, // Platform-specific padding
-  },
-  passwordToggle: {
-    marginLeft: 12,
-    padding: 4, // Add padding for better touch target
-  },
-  errorContainer: {
-    marginTop: 6,
-    paddingHorizontal: 4,
-  },
-  errorBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-    gap: 8,
-  },
-  errorText: {
-    flex: 1,
-  },
-  strengthContainer: {
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  strengthBar: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  strengthFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  link: {
-    fontWeight: '600',
-    letterSpacing: 0.1,
-  },
   dividerContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginVertical: 24,
   },
   dividerLine: {
@@ -409,5 +311,74 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: 16,
+  },
+  errorBox: {
+    alignItems: 'center',
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 8,
+    padding: 12,
+  },
+  errorContainer: {
+    marginTop: 6,
+    paddingHorizontal: 4,
+  },
+  errorText: {
+    flex: 1,
+  },
+  formCard: {
+    backgroundColor: 'transparent',
+    borderRadius: 24,
+    padding: 24,
+    // Remove overflow: 'hidden' to allow proper glass effect rendering
+    // Glass effects are handled by GlassBase component
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    height: '100%',
+    paddingVertical: Platform.OS === 'ios' ? 0 : 8, // Platform-specific padding
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputIcon: {
+    marginRight: 12,
+    // Fixed positioning
+  },
+  inputLabel: {
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  inputWrapper: {
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    height: 56,
+    paddingHorizontal: 16,
+    // Removed overflow: 'hidden' to ensure proper icon positioning
+  },
+  link: {
+    fontWeight: '600',
+    letterSpacing: 0.1,
+  },
+  passwordToggle: {
+    marginLeft: 12,
+    padding: 4, // Add padding for better touch target
+  },
+  strengthBar: {
+    borderRadius: 2,
+    height: 4,
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  strengthContainer: {
+    marginBottom: 4,
+    marginTop: 8,
+  },
+  strengthFill: {
+    borderRadius: 2,
+    height: '100%',
   },
 });

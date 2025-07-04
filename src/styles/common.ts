@@ -1,5 +1,5 @@
 // src/styles/common.ts
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { Theme } from '@/theme';
 
 /**
@@ -14,81 +14,81 @@ export const createCommonStyles = (theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
     } as ViewStyle,
-    
+
     flexContainer: {
       flex: 1,
     } as ViewStyle,
-    
+
     rowContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     } as ViewStyle,
-    
+
     rowBetween: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
     } as ViewStyle,
-    
+
     // Spacing patterns
     gapSm: {
       gap: theme.spacing.sm,
     } as ViewStyle,
-    
+
     gapMd: {
       gap: theme.spacing.md,
     } as ViewStyle,
-    
+
     gapLg: {
       gap: theme.spacing.lg,
     } as ViewStyle,
-    
+
     // Padding patterns
     paddingSm: {
       padding: theme.spacing.sm,
     } as ViewStyle,
-    
+
     paddingMd: {
       padding: theme.spacing.md,
     } as ViewStyle,
-    
+
     paddingLg: {
       padding: theme.spacing.lg,
     } as ViewStyle,
-    
+
     paddingHorizontalMd: {
       paddingHorizontal: theme.spacing.md,
     } as ViewStyle,
-    
+
     paddingHorizontalLg: {
       paddingHorizontal: theme.spacing.lg,
     } as ViewStyle,
-    
+
     // Text styles
     textCenter: {
       textAlign: 'center',
     } as TextStyle,
-    
+
     textSecondary: {
       color: theme.colors.text_secondary,
     } as TextStyle,
-    
+
     textTertiary: {
       color: theme.colors.text_tertiary,
     } as TextStyle,
-    
+
     // Common component patterns
     pill: {
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.borders.radii.full,
     } as ViewStyle,
-    
+
     card: {
       padding: theme.spacing.lg,
       borderRadius: theme.borders.radii.lg,
     } as ViewStyle,
-    
+
     button: {
       height: theme.sizes.touchTargets.medium,
       paddingHorizontal: theme.spacing.md,
@@ -96,7 +96,7 @@ export const createCommonStyles = (theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
     } as ViewStyle,
-    
+
     buttonLarge: {
       height: theme.sizes.touchTargets.large,
       paddingHorizontal: theme.spacing.xl,
@@ -104,21 +104,21 @@ export const createCommonStyles = (theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
     } as ViewStyle,
-    
+
     // State styles
     disabled: {
       opacity: 0.5,
     } as ViewStyle,
-    
+
     selected: {
       backgroundColor: theme.colors.primary,
     } as ViewStyle,
-    
+
     // Layout helpers
     absoluteFill: {
       ...StyleSheet.absoluteFillObject,
     } as ViewStyle,
-    
+
     shadow: {
       ...theme.shadows.md,
     } as ViewStyle,
@@ -140,12 +140,12 @@ export const commonCombinations = {
     ...createCommonStyles(theme).centeredContainer,
     ...createCommonStyles(theme).paddingLg,
   }),
-  
+
   rowGap: (theme: Theme): ViewStyle => ({
     ...createCommonStyles(theme).rowContainer,
     ...createCommonStyles(theme).gapMd,
   }),
-  
+
   cardPadded: (theme: Theme): ViewStyle => ({
     ...createCommonStyles(theme).card,
     ...createCommonStyles(theme).paddingLg,

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, TextProps, StyleProp, TextStyle } from 'react-native';
+import { StyleProp, Text, TextProps, TextStyle } from 'react-native';
 
 import { useTheme } from '@/theme/hooks/useTheme';
 import { getTextStyle } from '@/utils/helpers';
-import type { BaseComponentProps, TextVariant, TextColor } from '@/types';
+import type { BaseComponentProps, TextColor, TextVariant } from '@/types';
 
 /**
  * Text Base Props
@@ -32,14 +32,14 @@ export const TextBase: React.FC<TextBaseProps> = ({
   ...restProps
 }) => {
   const theme = useTheme();
-  
+
   // Use centralized theme helper (eliminates duplication)
   const textStyle = getTextStyle(variant, color, align, theme);
-  
+
   if (!textStyle) {
     return null;
   }
-  
+
   return (
     <Text
       style={[textStyle, style]}

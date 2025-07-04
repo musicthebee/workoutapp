@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react';
-import type { ViewStyle, TextStyle, AccessibilityRole } from 'react-native';
+import type { AccessibilityRole, TextStyle, ViewStyle } from 'react-native';
 
 /**
  * UI component prop types
@@ -34,17 +34,17 @@ export interface SpacingProps {
 }
 
 // Spacing values from theme
-export type SpacingValue = 
-  | 'xxxs' 
-  | 'xxs' 
-  | 'xs' 
-  | 'sm' 
-  | 'md' 
-  | 'lg' 
-  | 'xl' 
-  | 'xxl' 
-  | 'xxxl' 
-  | 'xxxxl' 
+export type SpacingValue =
+  | 'xxxs'
+  | 'xxs'
+  | 'xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | 'xxl'
+  | 'xxxl'
+  | 'xxxxl'
   | 'xxxxxl';
 
 // Animation props
@@ -106,27 +106,27 @@ export type InputSize = 'sm' | 'md' | 'lg';
 export type InputVariant = 'default' | 'search' | 'numeric';
 
 // Text variants matching theme typography
-export type TextVariant = 
-  | 'heading_1' 
-  | 'heading_2' 
-  | 'heading_3' 
+export type TextVariant =
+  | 'heading_1'
+  | 'heading_2'
+  | 'heading_3'
   | 'heading_4'
-  | 'body_large' 
-  | 'body_medium' 
+  | 'body_large'
+  | 'body_medium'
   | 'body_small'
-  | 'button_large' 
-  | 'button_medium' 
+  | 'button_large'
+  | 'button_medium'
   | 'button_small'
   | 'caption';
 
 // Text color options
-export type TextColor = 
-  | 'primary' 
-  | 'secondary' 
-  | 'tertiary' 
-  | 'inverse' 
-  | 'error' 
-  | 'success' 
+export type TextColor =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'inverse'
+  | 'error'
+  | 'success'
   | 'warning'
   | 'info';
 

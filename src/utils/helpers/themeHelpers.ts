@@ -22,7 +22,7 @@ export const getTextColor = (color: TextColor, theme: Theme): string => {
     warning: theme.colors.warning,
     info: theme.colors.info,
   };
-  
+
   return colorMap[color];
 };
 
@@ -32,12 +32,12 @@ export const getTextColor = (color: TextColor, theme: Theme): string => {
  */
 export const getTypographyConfig = (variant: TypographyPreset, theme: Theme) => {
   const typography = theme.typography[variant];
-  
+
   if (!typography) {
     console.warn(`Typography variant "${variant}" not found in theme`);
     return null;
   }
-  
+
   return typography;
 };
 
@@ -49,14 +49,14 @@ export const getTextStyle = (
   variant: TypographyPreset,
   color: TextColor,
   align: 'left' | 'center' | 'right',
-  theme: Theme
+  theme: Theme,
 ) => {
   const typography = getTypographyConfig(variant, theme);
-  
+
   if (!typography) {
     return null;
   }
-  
+
   return {
     fontSize: typography.font_size,
     lineHeight: typography.font_size * typography.line_height,
@@ -74,7 +74,7 @@ export const getTextStyle = (
 export const getSemanticColor = (
   type: 'success' | 'error' | 'warning' | 'info',
   variant: 'main' | 'light' | 'dark',
-  theme: Theme
+  theme: Theme,
 ): string => {
   const colorKey = `${type}_${variant}` as keyof typeof theme.colors;
   return theme.colors[colorKey] || theme.colors[type];

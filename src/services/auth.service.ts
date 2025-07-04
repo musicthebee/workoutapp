@@ -1,12 +1,15 @@
 // src/services/auth.service.ts
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification } from '@react-native-firebase/auth';
-import { getFirestore, doc, setDoc, serverTimestamp } from '@react-native-firebase/firestore';
-import type { 
-  AuthUser, 
-  AuthState, 
-  SignUpData, 
-  SignInData
-} from '@/types/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+} from '@react-native-firebase/auth';
+import { doc, getFirestore, serverTimestamp, setDoc } from '@react-native-firebase/firestore';
+import type { AuthState, AuthUser, SignInData, SignUpData } from '@/types/auth';
 import { AuthError } from '@/types/auth';
 
 type AuthStateListener = (state: AuthState) => void;
@@ -49,7 +52,7 @@ class AuthService {
     try {
       this.unsubscribe_firebase = onAuthStateChanged(
         this.auth!,
-        this.handle_auth_state_change.bind(this)
+        this.handle_auth_state_change.bind(this),
       );
       console.log('AuthService: Auth listener set up successfully');
     } catch (error) {
@@ -71,7 +74,7 @@ class AuthService {
           display_name: firebase_user.displayName || undefined,
           photo_url: firebase_user.photoURL || undefined,
           email_verified: firebase_user.emailVerified,
-          created_at: firebase_user.metadata.creationTime 
+          created_at: firebase_user.metadata.creationTime
             ? new Date(firebase_user.metadata.creationTime)
             : new Date(),
           updated_at: firebase_user.metadata.lastSignInTime
@@ -133,7 +136,7 @@ class AuthService {
    */
   subscribe(listener: AuthStateListener): () => void {
     this.listeners.add(listener);
-    
+
     // Immediately call with current state
     listener(this.current_state);
 
@@ -163,12 +166,12 @@ class AuthService {
   async sign_up(data: SignUpData): Promise<void> {
     try {
       this.update_state({ is_loading: true });
-      
+
       // Create user with email and password
       const credential = await createUserWithEmailAndPassword(
         this.auth!,
         data.email,
-        data.password
+        data.password,
       );
 
       // Update display name
@@ -192,7 +195,7 @@ class AuthService {
 
       // Send verification email
       await sendEmailVerification(credential.user);
-      
+
       // Auth state listener will handle the state update
     } catch (error: any) {
       this.update_state({ is_loading: false });
@@ -206,9 +209,9 @@ class AuthService {
   async sign_in(data: SignInData): Promise<void> {
     try {
       this.update_state({ is_loading: true });
-      
+
       await signInWithEmailAndPassword(this.auth!, data.email, data.password);
-      
+
       // Auth state listener will handle the state update
     } catch (error: any) {
       this.update_state({ is_loading: false });
@@ -288,7 +291,7 @@ class AuthService {
       }
 
       const token_result = await current_user.getIdTokenResult(force_refresh);
-      
+
       return {
         token: token_result.token,
         claims: token_result.claims,
@@ -304,7 +307,7 @@ class AuthService {
    */
   private map_firebase_error(error: any): AuthError {
     const code = error?.code || 'auth/unknown';
-    
+
     // Map Firebase error codes to user-friendly messages
     const errorMessages: Record<string, string> = {
       'auth/email-already-in-use': 'An account with this email already exists',
@@ -317,12 +320,13 @@ class AuthService {
       'auth/too-many-requests': 'Too many failed attempts. Please try again later',
       'auth/network-request-failed': 'Network error. Please check your connection',
       'auth/invalid-credential': 'The email or password is incorrect',
-      'auth/account-exists-with-different-credential': 'An account already exists with the same email',
+      'auth/account-exists-with-different-credential':
+        'An account already exists with the same email',
       'auth/requires-recent-login': 'Please sign in again to complete this action',
     };
 
     const message = errorMessages[code] || error?.message || 'An authentication error occurred';
-    
+
     return new AuthError(code as any, message, error);
   }
 

@@ -1,5 +1,11 @@
 import type { UUID } from '../common';
-import type { MuscleGroup, ExerciseCategory, WorkoutCategory, Equipment, Difficulty } from '../database/models';
+import type {
+  Difficulty,
+  Equipment,
+  ExerciseCategory,
+  MuscleGroup,
+  WorkoutCategory,
+} from '../database/models';
 
 /**
  * Types for filtering and searching data
@@ -42,13 +48,25 @@ export interface HistoryFilters {
 }
 
 // Helper to check if filters are active
-export const hasActiveFilters = (filters: ExerciseFilters | WorkoutFilters | HistoryFilters): boolean => {
+export const hasActiveFilters = (
+  filters: ExerciseFilters | WorkoutFilters | HistoryFilters,
+): boolean => {
   return Object.values(filters).some(value => {
-    if (value === undefined || value === null) return false;
-    if (typeof value === 'boolean') return value;
-    if (typeof value === 'string') return value.length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
+    if (value === undefined || value === null) {
+      return false;
+    }
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      return value.length > 0;
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+    if (typeof value === 'object') {
+      return Object.keys(value).length > 0;
+    }
     return true;
   });
 };

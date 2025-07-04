@@ -133,7 +133,7 @@ export const typographyPresets = {
     font_weight: fontWeights.medium,
     letter_spacing: letterSpacing.widest,
   },
-  
+
   // Workout-specific
   workout_timer: {
     font_size: fontSizes.xxxxxl,
@@ -161,4 +161,4 @@ export type FontWeight = keyof typeof fontWeights;
 export type LineHeight = keyof typeof lineHeights;
 export type LetterSpacing = keyof typeof letterSpacing;
 export type TypographyPreset = keyof typeof typographyPresets;
-export type Typography = typeof typographyPresets[TypographyPreset];
+export type Typography = (typeof typographyPresets)[TypographyPreset];

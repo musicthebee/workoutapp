@@ -18,7 +18,7 @@ export const getPaddingHorizontal = (size: ComponentSize, theme: Theme): number 
     md: theme.spacing.md,
     lg: theme.spacing.lg,
   };
-  
+
   return spacingMap[size];
 };
 
@@ -32,7 +32,7 @@ export const getTypographyVariant = (size: ComponentSize) => {
     md: 'body_medium' as const,
     lg: 'body_large' as const,
   };
-  
+
   return typographyMap[size];
 };
 
@@ -42,11 +42,9 @@ export const getTypographyVariant = (size: ComponentSize) => {
 export const getComponentHeight = (
   type: 'button' | 'input',
   size: ComponentSize,
-  theme: Theme
+  theme: Theme,
 ): number => {
-  return type === 'button' 
-    ? theme.sizes.buttons[size]
-    : theme.sizes.inputs[size];
+  return type === 'button' ? theme.sizes.buttons[size] : theme.sizes.inputs[size];
 };
 
 /**
@@ -56,7 +54,7 @@ export const getComponentHeight = (
 export const getComponentSizing = (
   type: 'button' | 'input',
   size: ComponentSize,
-  theme: Theme
+  theme: Theme,
 ) => ({
   height: getComponentHeight(type, size, theme),
   paddingHorizontal: getPaddingHorizontal(size, theme),

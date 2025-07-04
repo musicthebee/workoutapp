@@ -15,7 +15,7 @@ export type RootStackParamList = {
   readonly WorkoutDetail: { workout_id: string };
   readonly WorkoutBuilder: { workout_id?: string };
   readonly ActiveWorkout: { workout_id?: string }; // Can start empty!
-  readonly ExerciseEditModal: { 
+  readonly ExerciseEditModal: {
     exercise_id?: string;
     workout_id?: string;
     onSave?: (exercise_id: string) => void;
@@ -51,14 +51,15 @@ export type TabParamList = {
 };
 
 // Screen prop types
-export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  StackScreenProps<RootStackParamList, T>;
+export type RootStackScreenProps<T extends keyof RootStackParamList> = StackScreenProps<
+  RootStackParamList,
+  T
+>;
 
-export type TabScreenProps<T extends keyof TabParamList> =
-  CompositeScreenProps<
-    BottomTabScreenProps<TabParamList, T>,
-    RootStackScreenProps<keyof RootStackParamList>
-  >;
+export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, T>,
+  RootStackScreenProps<keyof RootStackParamList>
+>;
 
 // Navigation prop types for hooks
 export type UseNavigationProp = RootStackScreenProps<keyof RootStackParamList>['navigation'];

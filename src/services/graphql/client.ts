@@ -1,9 +1,9 @@
-import { 
-  ApolloClient, 
-  InMemoryCache, 
-  createHttpLink, 
+import {
+  ApolloClient,
   ApolloLink,
-  NormalizedCacheObject 
+  createHttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -26,7 +26,7 @@ const authLink = setContext(async (_, { headers }) => {
   // Get auth token from storage
   const token = await AsyncStorage.getItem('auth_token');
   const userId = await AsyncStorage.getItem('user_id');
-  
+
   return {
     headers: {
       ...headers,
@@ -44,14 +44,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
       console.error(
-        `GraphQL error: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}`
+        `GraphQL error: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}`,
       );
     });
   }
 
   if (networkError) {
     console.error(`Network error: ${networkError}`);
-    
+
     // Handle auth errors
     if ('statusCode' in networkError && networkError.statusCode === 401) {
       // Clear auth and redirect to login
@@ -76,12 +76,12 @@ const cache = new InMemoryCache({
         },
       },
     },
-    
+
     // Exercise uses composite key (id + user_id)
     exercise: {
       keyFields: ['id', 'user_id'],
     },
-    
+
     // Query type policies
     Query: {
       fields: {

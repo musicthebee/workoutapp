@@ -1,12 +1,9 @@
 import React from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import { StyleProp, View, ViewStyle } from 'react-native';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/hooks/useTheme';
-import type { BaseComponentProps, ProgressVariant, ProgressSize } from '@/types';
+import type { BaseComponentProps, ProgressSize, ProgressVariant } from '@/types';
 
 /**
  * Progress Base Props
@@ -32,26 +29,23 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  
+
   // Size mapping using theme tokens
   const sizeMap = {
     sm: { height: theme.spacing.xxs, width: theme.spacing.xxxxxl + theme.spacing.xxs },
     md: { height: theme.spacing.xs, width: theme.spacing.xxxxxl * 2 + theme.spacing.lg },
     lg: { height: theme.spacing.sm, width: theme.spacing.xxxxxl * 3 + theme.spacing.xl },
   };
-  
+
   const dimensions = sizeMap[size];
-  
+
   // Clamp progress between 0 and 1
   const clampedProgress = Math.max(0, Math.min(1, progress));
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
-    width: withSpring(
-      dimensions.width * clampedProgress,
-      theme.animation.springs.smooth
-    ),
+    width: withSpring(dimensions.width * clampedProgress, theme.animation.springs.smooth),
   }));
-  
+
   // For now, only linear variant
   if (variant === 'linear') {
     return (
@@ -89,7 +83,7 @@ export const ProgressBase: React.FC<ProgressBaseProps> = ({
       </View>
     );
   }
-  
+
   // TODO: Implement circular variant
   return null;
 };

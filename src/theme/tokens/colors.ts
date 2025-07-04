@@ -66,42 +66,42 @@ export const lightThemeColors = {
   // Primary brand colors
   primary: baseColors.primary_500,
   secondary: baseColors.secondary_500,
-  
+
   // Semantic colors
   success: baseColors.success_main,
   warning: baseColors.warning_main,
   error: baseColors.error_main,
   info: baseColors.info_main,
-  
+
   // Backgrounds
   background: baseColors.neutral_50,
   surface: baseColors.neutral_0,
   elevated: baseColors.neutral_0,
-  
+
   // Borders
   border: baseColors.neutral_200,
   divider: baseColors.neutral_100,
-  
+
   // Text colors
   text_primary: baseColors.neutral_900,
   text_secondary: baseColors.neutral_700,
   text_tertiary: baseColors.neutral_500,
   text_disabled: baseColors.neutral_400,
   text_inverse: baseColors.neutral_0,
-  
+
   // Glass effects
   glass_light: 'rgba(255, 255, 255, 0.7)',
   glass_medium: 'rgba(255, 255, 255, 0.5)',
   glass_heavy: 'rgba(255, 255, 255, 0.3)',
   glass_border: 'rgba(255, 255, 255, 0.2)',
-  
+
   // Shadows
   shadow: 'rgba(0, 0, 0, 0.1)',
-  
+
   // Special states
   overlay: 'rgba(0, 0, 0, 0.5)',
   scrim: 'rgba(0, 0, 0, 0.32)',
-  
+
   // Semantic extended
   success_light: baseColors.success_light,
   success_dark: baseColors.success_dark,
@@ -111,7 +111,7 @@ export const lightThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
-  
+
   // Additional semantic colors
   muted: baseColors.neutral_400,
   danger: baseColors.error_main,
@@ -122,42 +122,42 @@ export const darkThemeColors = {
   // Primary brand colors
   primary: baseColors.primary_400,
   secondary: baseColors.secondary_400,
-  
+
   // Semantic colors
   success: baseColors.success_main,
   warning: baseColors.warning_main,
   error: baseColors.error_main,
   info: baseColors.info_main,
-  
+
   // Backgrounds
   background: baseColors.neutral_900,
   surface: baseColors.neutral_800,
   elevated: baseColors.neutral_800,
-  
+
   // Borders
   border: baseColors.neutral_700,
   divider: baseColors.neutral_800,
-  
+
   // Text colors
   text_primary: baseColors.neutral_0,
   text_secondary: baseColors.neutral_200,
   text_tertiary: baseColors.neutral_400,
   text_disabled: baseColors.neutral_600,
   text_inverse: baseColors.neutral_900,
-  
+
   // Glass effects
   glass_light: 'rgba(0, 0, 0, 0.7)',
   glass_medium: 'rgba(0, 0, 0, 0.5)',
   glass_heavy: 'rgba(0, 0, 0, 0.3)',
   glass_border: 'rgba(255, 255, 255, 0.1)',
-  
+
   // Shadows
   shadow: 'rgba(0, 0, 0, 0.3)',
-  
+
   // Special states
   overlay: 'rgba(0, 0, 0, 0.7)',
   scrim: 'rgba(0, 0, 0, 0.5)',
-  
+
   // Semantic extended
   success_light: baseColors.success_light,
   success_dark: baseColors.success_dark,
@@ -167,7 +167,7 @@ export const darkThemeColors = {
   error_dark: baseColors.error_dark,
   info_light: baseColors.info_light,
   info_dark: baseColors.info_dark,
-  
+
   // Additional semantic colors
   muted: baseColors.neutral_400,
   danger: baseColors.error_main,
