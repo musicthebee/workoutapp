@@ -8,9 +8,6 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  TextInput,
-  TouchableOpacity,
-  Text,
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
@@ -22,13 +19,14 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/Feather';
-import LinearGradient from 'react-native-linear-gradient';
 import { NexAILogo } from '@/components/brand/NexAILogo';
-import { TextBase, ButtonBase, GlassBase } from '@/components/atoms';
+import { TextBase } from '@/components/atoms';
 import { BigButton } from '@/components/molecules';
 import { 
   AuthBackground, 
+  AuthFormCard,
+  AuthInputField,
+  AuthError,
   AuthDivider,
   AuthLink,
 } from '@/components/auth';
@@ -54,8 +52,6 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
   // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [focusedField, setFocusedField] = useState<'email' | 'password' | null>(null);
   const [validationErrors, setValidationErrors] = useState<{
     email?: string;
     password?: string;
@@ -89,22 +85,24 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
   const validateForm = (): boolean => {
     const errors: typeof validationErrors = {};
     
+    // Email validation
     if (!email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Please enter a valid email';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errors.email = 'Please enter a valid email address';
     }
     
+    // Password validation
     if (!password) {
       errors.password = 'Password is required';
-    } else if (password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
     }
     
     setValidationErrors(errors);
     
     if (Object.keys(errors).length > 0) {
-      Haptics.light();
+      Haptics.error();
       errorShake.value = withSequence(
         withTiming(-10, { duration: 50 }),
         withTiming(10, { duration: 100 }),
@@ -117,14 +115,29 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
     return true;
   };
   
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateForm()) return;
     
-    Haptics.medium();
-    Keyboard.dismiss();
-    
-    const signInData: SignInData = { email, password };
-    login(signInData);
+    try {
+      Haptics.medium();
+      Keyboard.dismiss();
+      
+      const signInData: SignInData = { 
+        email: email.trim(), 
+        password 
+      };
+      
+      await login(signInData);
+      Haptics.success();
+    } catch (error) {
+      Haptics.error();
+      errorShake.value = withSequence(
+        withTiming(-10, { duration: 50 }),
+        withTiming(10, { duration: 100 }),
+        withTiming(-10, { duration: 100 }),
+        withTiming(0, { duration: 50 })
+      );
+    }
   };
   
   const handleSocialLogin = (provider: 'google' | 'apple') => {
@@ -174,115 +187,30 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
             {/* Form Card */}
             <Animated.View 
               style={[styles.formContainer, formStyle, errorStyle]}
-              entering={FadeInUp.delay(400).springify()}
             >
-              <GlassBase variant="medium" style={styles.glassCard}>
-                {/* Email Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text_secondary }]}>
-                    Email
-                  </Text>
-                  <View style={[
-                    styles.inputWrapper,
-                    {
-                      backgroundColor: theme.isDark 
-                        ? 'rgba(255, 255, 255, 0.05)' 
-                        : 'rgba(0, 0, 0, 0.02)',
-                      borderColor: focusedField === 'email' 
-                        ? theme.colors.primary 
-                        : validationErrors.email 
-                        ? theme.colors.error
-                        : theme.colors.glass_border,
-                      borderWidth: focusedField === 'email' ? 2 : 1,
-                    },
-                  ]}>
-                    <Icon
-                      name="mail"
-                      size={20}
-                      color={validationErrors.email ? theme.colors.error : theme.colors.text_tertiary}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={[styles.input, { color: theme.colors.text_primary }]}
-                      placeholder="your@email.com"
-                      placeholderTextColor={theme.colors.text_tertiary}
-                      value={email}
-                      onChangeText={setEmail}
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField(null)}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      textContentType="emailAddress"
-                    />
-                  </View>
-                  {validationErrors.email && (
-                    <Animated.View entering={FadeInUp.springify()}>
-                      <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                        {validationErrors.email}
-                      </Text>
-                    </Animated.View>
-                  )}
-                </View>
+              <AuthFormCard delay={400}>
+                <AuthInputField
+                  label="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="your@email.com"
+                  icon="mail"
+                  type="email"
+                  error={validationErrors.email}
+                  delay={300}
+                />
                 
-                {/* Password Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text_secondary }]}>
-                    Password
-                  </Text>
-                  <View style={[
-                    styles.inputWrapper,
-                    {
-                      backgroundColor: theme.isDark 
-                        ? 'rgba(255, 255, 255, 0.05)' 
-                        : 'rgba(0, 0, 0, 0.02)',
-                      borderColor: focusedField === 'password' 
-                        ? theme.colors.primary 
-                        : validationErrors.password 
-                        ? theme.colors.error
-                        : theme.colors.glass_border,
-                      borderWidth: focusedField === 'password' ? 2 : 1,
-                    },
-                  ]}>
-                    <Icon
-                      name="lock"
-                      size={20}
-                      color={validationErrors.password ? theme.colors.error : theme.colors.text_tertiary}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={[styles.input, { color: theme.colors.text_primary }]}
-                      placeholder="Enter your password"
-                      placeholderTextColor={theme.colors.text_tertiary}
-                      value={password}
-                      onChangeText={setPassword}
-                      onFocus={() => setFocusedField('password')}
-                      onBlur={() => setFocusedField(null)}
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      textContentType="password"
-                    />
-                    <TouchableOpacity
-                      onPress={() => setShowPassword(!showPassword)}
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      style={styles.passwordToggle}
-                    >
-                      <Icon
-                        name={showPassword ? 'eye' : 'eye-off'}
-                        size={20}
-                        color={theme.colors.text_tertiary}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  {validationErrors.password && (
-                    <Animated.View entering={FadeInUp.springify()}>
-                      <Text style={[styles.errorText, { color: theme.colors.error }]}>
-                        {validationErrors.password}
-                      </Text>
-                    </Animated.View>
-                  )}
-                </View>
+                <AuthInputField
+                  label="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Enter your password"
+                  icon="lock"
+                  type="password"
+                  showPasswordToggle
+                  error={validationErrors.password}
+                  delay={400}
+                />
                 
                 {/* Forgot Password */}
                 <Animated.View 
@@ -311,58 +239,25 @@ export const NexAILoginScreen: React.FC<NexAILoginScreenProps> = ({
                 
                 {/* Error Display */}
                 {authError && (
-                  <Animated.View 
-                    entering={FadeInUp.springify()}
-                    style={[styles.errorContainer, { backgroundColor: theme.isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)' }]}
-                  >
-                    <Icon name="alert-circle" size={16} color={theme.colors.error} />
-                    <Text style={[styles.errorMessageText, { color: theme.colors.error }]}>
-                      {authError?.message || 'Invalid email or password'}
-                    </Text>
-                  </Animated.View>
+                  <AuthError 
+                    message={authError?.message || 'Invalid email or password'} 
+                  />
                 )}
                 
-                {/* Divider */}
-                <AuthDivider text="OR" delay={700} />
-                
-                {/* Social Login
-                <Animated.View 
-                  entering={FadeInUp.delay(800).springify()}
-                  style={styles.socialContainer}
-                >
-                  <ButtonBase
-                    onPress={() => handleSocialLogin('google')}
-                    variant="secondary"
-                    size="lg"
-                    style={styles.socialButton}
-                  >
-                    <Icon name="chrome" size={24} color={theme.colors.text_primary} />
-                  </ButtonBase>
-                  
-                  <ButtonBase
-                    onPress={() => handleSocialLogin('apple')}
-                    variant="secondary"
-                    size="lg"
-                    style={styles.socialButton}
-                  >
-                    <Icon name="smartphone" size={24} color={theme.colors.text_primary} />
-                  </ButtonBase>
-                </Animated.View>
-                */}
-                
-                {/* Sign up link */}
-                <Animated.View 
-                  entering={FadeInUp.delay(900).springify()}
-                  style={styles.signupContainer}
-                >
-                  <TextBase variant="body_medium" color="secondary">
-                    Don't have an account?{' '}
-                  </TextBase>
-                  <AuthLink onPress={onRegister!} color="primary">
-                    Sign Up
-                  </AuthLink>
-                </Animated.View>
-              </GlassBase>
+              </AuthFormCard>
+            </Animated.View>
+            
+            {/* Sign up link */}
+            <Animated.View 
+              entering={FadeInUp.delay(900).springify()}
+              style={styles.signupContainer}
+            >
+              <TextBase variant="body_medium" color="secondary">
+                Don't have an account?{' '}
+              </TextBase>
+              <AuthLink onPress={onRegister!} color="primary">
+                Sign Up
+              </AuthLink>
             </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -380,7 +275,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 32,
     justifyContent: 'center',
-    minHeight: SCREEN_HEIGHT - 100, // Ensure content fits without scrolling
+    minHeight: SCREEN_HEIGHT - 100,
   },
   logoContainer: {
     alignItems: 'center',
@@ -392,46 +287,6 @@ const styles = StyleSheet.create({
   formContainer: {
     marginBottom: 24,
   },
-  glassCard: {
-    borderRadius: 24,
-    padding: 24,
-    // Glass effect is handled by GlassBase component
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 56,
-    borderWidth: 1,
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    height: '100%',
-    paddingVertical: 0, // Ensure text is vertically centered
-  },
-  passwordToggle: {
-    marginLeft: 12,
-    padding: 4,
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
-  },
   forgotContainer: {
     alignItems: 'flex-end',
     marginBottom: 24,
@@ -439,31 +294,10 @@ const styles = StyleSheet.create({
   loginButton: {
     marginTop: 8,
   },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 16,
-    padding: 12,
-    borderRadius: 8,
-  },
-  errorMessageText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  socialContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  socialButton: {
-    width: 56,
-    paddingHorizontal: 0,
-  },
   signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 2,
+    marginTop: 24,
   },
 });
