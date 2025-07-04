@@ -1,32 +1,38 @@
 // src/screens/auth/NexAIForgotPasswordScreen.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
   Platform,
   ScrollView,
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
+  Pressable,
 } from 'react-native';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-  withRepeat,
   FadeInDown,
   FadeInUp,
-  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
 } from 'react-native-reanimated';
-import LinearGradient from 'react-native-linear-gradient';
-import { useTheme } from '@/theme/hooks/useTheme';
-import { glassMorphism } from '@/theme/utils/glassMorphism';
 import Icon from 'react-native-vector-icons/Feather';
+import LinearGradient from 'react-native-linear-gradient';
+import { GlassBase, TextBase } from '@/components/atoms';
+import { BigButton } from '@/components/molecules';
+import { 
+  AuthBackground, 
+  AuthFormCard, 
+  AuthInputField, 
+  AuthLink,
+} from '@/components/auth';
+import { useTheme } from '@/theme/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { Haptics } from '@/utils/haptics';
 
 interface NexAIForgotPasswordScreenProps {
   onBackToLogin?: () => void;
@@ -38,91 +44,60 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
   const theme = useTheme();
   const { reset_password } = useAuth();
   
+  // Form state
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [validationError, setValidationError] = useState<string>('');
+  const [apiError, setApiError] = useState<string>('');
   
-  // Animation values
-  const iconScale = useSharedValue(0);
-  const iconRotation = useSharedValue(0);
-  const formScale = useSharedValue(0.9);
-  const formOpacity = useSharedValue(0);
+  // Animation
+  const iconScale = useSharedValue(1);
   const successScale = useSharedValue(0);
-  const pulseScale = useSharedValue(1);
   
-  useEffect(() => {
-    // Icon entrance animation
-    iconScale.value = withSpring(1, {
-      damping: 12,
-      stiffness: 100,
-    });
-    
-    // Icon rotation animation
-    iconRotation.value = withRepeat(
-      withTiming(360, {
-        duration: 20000,
-        easing: Easing.linear,
-      }),
-      -1,
-      false
-    );
-    
-    // Form entrance animation
-    formScale.value = withSpring(1, {
-      damping: 15,
-      stiffness: 100,
-    });
-    
-    formOpacity.value = withTiming(1, {
-      duration: 800,
-      easing: Easing.out(Easing.cubic),
-    });
-    
-    // Pulse animation for icon
-    pulseScale.value = withRepeat(
-      withTiming(1.1, {
-        duration: 2000,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      -1,
-      true
-    );
-  }, []);
-  
-  useEffect(() => {
-    if (isSuccess) {
-      successScale.value = withSpring(1, {
-        damping: 10,
-        stiffness: 100,
-      });
+  const validateEmail = (): boolean => {
+    if (!email.trim()) {
+      setValidationError('Email is required');
+      return false;
     }
-  }, [isSuccess]);
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setValidationError('Please enter a valid email');
+      return false;
+    }
+    
+    setValidationError('');
+    return true;
+  };
   
   const handleResetPassword = async () => {
-    if (!email.trim()) return;
+    if (!validateEmail()) {
+      Haptics.error();
+      return;
+    }
     
+    setApiError('');
     setIsLoading(true);
+    Haptics.light();
+    
     try {
       await reset_password(email.trim());
+      Haptics.success();
       setIsSuccess(true);
-    } catch (error) {
-      console.error('Reset password error:', error);
+      successScale.value = withSpring(1, {
+        damping: 12,
+        stiffness: 100,
+      });
+    } catch (error: any) {
+      Haptics.error();
+      setApiError(error.message || 'Failed to send reset email. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Animated styles
   const iconStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: iconScale.value * pulseScale.value },
-      { rotate: `${iconRotation.value}deg` },
-    ],
-  }));
-  
-  const formStyle = useAnimatedStyle(() => ({
-    opacity: formOpacity.value,
-    transform: [{ scale: formScale.value }],
+    transform: [{ scale: iconScale.value }],
   }));
   
   const successStyle = useAnimatedStyle(() => ({
@@ -130,39 +105,32 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
     opacity: successScale.value,
   }));
   
+  React.useEffect(() => {
+    // Pulse animation for icon
+    iconScale.value = withSequence(
+      withTiming(1.1, { duration: 1000 }),
+      withTiming(1, { duration: 1000 })
+    );
+    
+    const interval = setInterval(() => {
+      iconScale.value = withSequence(
+        withTiming(1.1, { duration: 1000 }),
+        withTiming(1, { duration: 1000 })
+      );
+    }, 2500);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        {/* Animated gradient background */}
-        <LinearGradient
-          colors={theme.isDark
-            ? ['#0A0A14', '#14141F', '#1A1A2E']
-            : ['#FAFBFF', '#F0F2FF', '#E8EBFF']
-          }
-          style={StyleSheet.absoluteFillObject}
-        />
-        
-        {/* Gradient orbs */}
-        <View style={[styles.gradientOrb, styles.gradientOrbLeft]}>
-          <LinearGradient
-            colors={['rgba(139, 92, 246, 0.3)', 'rgba(139, 92, 246, 0)']}
-            style={styles.orb}
-          />
-        </View>
-        
-        <View style={[styles.gradientOrb, styles.gradientOrbRight]}>
-          <LinearGradient
-            colors={['rgba(99, 102, 241, 0.3)', 'rgba(99, 102, 241, 0)']}
-            style={styles.orb}
-          />
-        </View>
-        
+    <AuthBackground>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          style={styles.keyboardAvoid}
+          style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView
-            contentContainerStyle={[styles.scrollContent, { justifyContent: 'center' }]}
+            contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
@@ -171,137 +139,93 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
               entering={FadeInDown.springify()}
               style={styles.backButtonContainer}
             >
-              <TouchableOpacity 
-                style={[
-                  styles.circleBackButton,
-                  glassMorphism({ variant: 'light', isDark: theme.isDark }),
-                ]}
-                onPress={onBackToLogin}
-              >
-                <Icon name="arrow-left" size={24} color={theme.colors.text_primary} />
-              </TouchableOpacity>
-            </Animated.View>
-            
-            {/* Icon */}
-            <Animated.View
-              entering={FadeInDown.delay(100).springify()}
-              style={styles.iconContainer}
-            >
-              <View style={[
-                styles.iconCircle,
-                glassMorphism({ variant: 'medium', isDark: theme.isDark }),
-              ]}>
-                <Animated.View style={iconStyle}>
-                  <LinearGradient
-                    colors={[theme.colors.primary, theme.colors.secondary]}
-                    style={styles.iconGradient}
-                  >
-                    <Icon name="lock" size={32} color="#FFFFFF" />
-                  </LinearGradient>
-                </Animated.View>
-              </View>
+              <Pressable onPress={onBackToLogin} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <GlassBase variant="light" style={styles.backButton}>
+                  <Icon name="arrow-left" size={24} color={theme.colors.text_primary} />
+                </GlassBase>
+              </Pressable>
             </Animated.View>
             
             {!isSuccess ? (
               <>
-                {/* Title */}
+                {/* Icon */}
+                <Animated.View
+                  entering={FadeInDown.delay(100).springify()}
+                  style={styles.iconContainer}
+                >
+                  <GlassBase variant="medium" style={styles.iconCircle}>
+                    <Animated.View style={iconStyle}>
+                      <LinearGradient
+                        colors={[theme.colors.primary, theme.colors.secondary]}
+                        style={styles.iconGradient}
+                      >
+                        <Icon name="lock" size={32} color="#FFFFFF" />
+                      </LinearGradient>
+                    </Animated.View>
+                  </GlassBase>
+                </Animated.View>
+                
+                {/* Header */}
                 <Animated.View
                   entering={FadeInDown.delay(200).springify()}
-                  style={styles.centerContent}
+                  style={styles.headerContainer}
                 >
-                  <Text style={[styles.forgotTitle, { color: theme.colors.text_primary }]}>
+                  <TextBase variant="heading_4" align="center">
                     Forgot Password?
-                  </Text>
-                  <Text style={[styles.forgotSubtitle, { color: theme.colors.text_secondary }]}>
+                  </TextBase>
+                  <TextBase variant="body_small" color="secondary" align="center" style={styles.subtitle}>
                     No worries! Enter your email and we'll send you reset instructions.
-                  </Text>
+                  </TextBase>
                 </Animated.View>
                 
                 {/* Form */}
-                <Animated.View style={[styles.forgotFormContainer, formStyle]}>
-                  <View style={[
-                    styles.glassCard,
-                    glassMorphism({ variant: 'medium', isDark: theme.isDark }),
-                  ]}>
-                    {/* Email input */}
-                    <Animated.View entering={FadeInUp.delay(400).springify()}>
-                      <Text style={[styles.inputLabel, { color: theme.colors.text_secondary }]}>
-                        Email Address
-                      </Text>
-                      <View style={[
-                        styles.inputContainer,
-                        {
-                          backgroundColor: theme.isDark 
-                            ? 'rgba(255, 255, 255, 0.05)'
-                            : 'rgba(0, 0, 0, 0.02)',
-                          borderColor: theme.colors.glass_border,
-                        },
-                      ]}>
-                        <Icon
-                          name="mail"
-                          size={20}
-                          color={theme.colors.text_tertiary}
-                        />
-                        <TextInput
-                          style={[styles.input, { color: theme.colors.text_primary }]}
-                          placeholder="Enter your email"
-                          placeholderTextColor={theme.colors.text_tertiary}
-                          value={email}
-                          onChangeText={setEmail}
-                          keyboardType="email-address"
-                          autoCapitalize="none"
-                          editable={!isLoading}
-                        />
-                      </View>
-                    </Animated.View>
-                    
-                    {/* Submit button */}
-                    <Animated.View entering={FadeInUp.delay(500).springify()}>
-                      <TouchableOpacity
-                        onPress={handleResetPassword}
-                        disabled={isLoading || !email.trim()}
-                        activeOpacity={0.8}
-                      >
-                        <LinearGradient
-                          colors={[theme.colors.primary, theme.colors.secondary]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }}
-                          style={[
-                            styles.submitButton,
-                            (isLoading || !email.trim()) && styles.submitButtonDisabled
-                          ]}
-                        >
-                          <Text style={styles.submitButtonText}>
-                            {isLoading ? 'Sending...' : 'Send Reset Instructions'}
-                          </Text>
-                        </LinearGradient>
-                      </TouchableOpacity>
-                    </Animated.View>
-                  </View>
-                </Animated.View>
-                
-                {/* Back to login link */}
-                <Animated.View
-                  entering={FadeInUp.delay(600).springify()}
-                  style={styles.backToLoginContainer}
-                >
-                  <Text style={[styles.backToLoginText, { color: theme.colors.text_secondary }]}>
-                    Remember your password?{' '}
-                  </Text>
-                  <TouchableOpacity onPress={onBackToLogin}>
-                    <Text style={[styles.backToLoginLink, { color: theme.colors.primary }]}>
+                <AuthFormCard delay={300}>
+                  <AuthInputField
+                    label="Email Address"
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      if (validationError) setValidationError('');
+                      if (apiError) setApiError('');
+                    }}
+                    placeholder="Enter your email"
+                    icon="mail"
+                    type="email"
+                    error={validationError || apiError}
+                    delay={400}
+                    editable={!isLoading}
+                  />
+                  
+                  <Animated.View entering={FadeInUp.delay(500).springify()}>
+                    <BigButton
+                      variant="primary"
+                      label="Reset Password"
+                      onPress={handleResetPassword}
+                      loading={isLoading}
+                      loading_text="Sending..."
+                      style={styles.submitButton}
+                    >
+                    </BigButton>
+                  </Animated.View>
+                  
+                  {/* Back to login link */}
+                  <Animated.View
+                    entering={FadeInUp.delay(600).springify()}
+                    style={styles.loginLinkContainer}
+                  >
+                    <TextBase variant="body_medium" color="secondary">
+                      Remember your password?{' '}
+                    </TextBase>
+                    <AuthLink onPress={onBackToLogin!} color="primary">
                       Sign In
-                    </Text>
-                  </TouchableOpacity>
-                </Animated.View>
+                    </AuthLink>
+                  </Animated.View>
+                </AuthFormCard>
               </>
             ) : (
               /* Success state */
               <Animated.View style={[styles.successContainer, successStyle]}>
-                <View style={[
-                  styles.successCard,
-                  glassMorphism({ variant: 'light', isDark: theme.isDark }),
-                ]}>
+                <GlassBase variant="light" style={styles.successCard}>
                   <View style={styles.successIcon}>
                     <LinearGradient
                       colors={['#26DE81', '#0BE881']}
@@ -311,58 +235,52 @@ export const NexAIForgotPasswordScreen: React.FC<NexAIForgotPasswordScreenProps>
                     </LinearGradient>
                   </View>
                   
-                  <Text style={[styles.successTitle, { color: theme.colors.text_primary }]}>
+                  <TextBase variant="heading_3" align="center" style={styles.successTitle}>
                     Check Your Email
-                  </Text>
+                  </TextBase>
                   
-                  <Text style={[styles.successText, { color: theme.colors.text_secondary }]}>
+                  <TextBase variant="body_medium" color="secondary" align="center">
                     We've sent password reset instructions to:
-                  </Text>
+                  </TextBase>
                   
-                  <Text style={[styles.successEmail, { color: theme.colors.text_primary }]}>
+                  <TextBase variant="body_large" align="center" style={styles.successEmail}>
                     {email}
-                  </Text>
+                  </TextBase>
                   
-                  <Text style={[styles.successNote, { color: theme.colors.text_tertiary }]}>
+                  <TextBase variant="body_small" color="tertiary" align="center" style={styles.successNote}>
                     Didn't receive the email? Check your spam folder or try again in a few minutes.
-                  </Text>
+                  </TextBase>
                   
-                  <TouchableOpacity
-                    onPress={onBackToLogin}
-                    activeOpacity={0.8}
-                    style={styles.backButton}
-                  >
-                    <LinearGradient
-                      colors={[theme.colors.primary, theme.colors.secondary]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.backButtonGradient}
-                    >
-                      <Text style={styles.backButtonText}>Back to Sign In</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
+                  <BigButton
+                    variant="primary"
+                    label="Back to Sign In"
+                    onPress={onBackToLogin!}
+                    full_width
+                    style={styles.backToLoginButton}
+                  />
                   
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsSuccess(false);
-                      setEmail('');
-                    }}
-                    style={styles.resendContainer}
-                  >
-                    <Text style={[styles.resendText, { color: theme.colors.text_secondary }]}>
+                  <View style={styles.resendContainer}>
+                    <TextBase variant="body_small" color="secondary">
                       Wrong email?{' '}
-                    </Text>
-                    <Text style={[styles.resendLink, { color: theme.colors.primary }]}>
+                    </TextBase>
+                    <AuthLink
+                      onPress={() => {
+                        setIsSuccess(false);
+                        setEmail('');
+                        successScale.value = 0;
+                      }}
+                      color="primary"
+                    >
                       Try again
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                    </AuthLink>
+                  </View>
+                </GlassBase>
               </Animated.View>
             )}
           </ScrollView>
         </KeyboardAvoidingView>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </AuthBackground>
   );
 };
 
@@ -370,39 +288,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  keyboardAvoid: {
-    flex: 1,
-  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingVertical: 32,
-  },
-  gradientOrb: {
-    position: 'absolute',
-    opacity: 0.3,
-  },
-  gradientOrbLeft: {
-    top: 100,
-    left: -150,
-    width: 300,
-    height: 300,
-  },
-  gradientOrbRight: {
-    bottom: 100,
-    right: -150,
-    width: 350,
-    height: 350,
-  },
-  orb: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 999,
+    justifyContent: 'center',
   },
   backButtonContainer: {
-    marginBottom: 32,
+    position: 'absolute',
+    top: 32,
+    left: 24,
+    zIndex: 1,
   },
-  circleBackButton: {
+  backButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -427,79 +325,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  centerContent: {
-    alignItems: 'center',
+  headerContainer: {
     marginBottom: 32,
   },
-  forgotTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  forgotSubtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+  subtitle: {
+    marginTop: 8,
     paddingHorizontal: 20,
   },
-  forgotFormContainer: {
-    marginBottom: 24,
-  },
-  glassCard: {
-    borderRadius: 24,
-    padding: 24,
-  },
-  inputLabel: {
-    fontSize: 14,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 56,
-    borderWidth: 1,
-    gap: 12,
-    marginBottom: 24,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    height: '100%',
-  },
   submitButton: {
-    height: 56,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 16,
   },
-  submitButtonDisabled: {
-    opacity: 0.5,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  backToLoginContainer: {
+  loginLinkContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backToLoginText: {
-    fontSize: 14,
-  },
-  backToLoginLink: {
-    fontSize: 14,
-    fontWeight: '600',
+    marginTop: 24,
   },
   successContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   successCard: {
-    borderRadius: 24,
     padding: 32,
+    borderRadius: 24,
     alignItems: 'center',
     width: '100%',
   },
@@ -514,51 +363,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   successTitle: {
-    fontSize: 24,
-    fontWeight: '700',
     marginBottom: 16,
-  },
-  successText: {
-    fontSize: 16,
-    marginBottom: 8,
-    textAlign: 'center',
   },
   successEmail: {
-    fontSize: 18,
+    marginVertical: 16,
     fontWeight: '600',
-    marginBottom: 24,
   },
   successNote: {
-    fontSize: 14,
-    textAlign: 'center',
     marginBottom: 32,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
-  backButton: {
-    width: '100%',
+  backToLoginButton: {
     marginBottom: 16,
-  },
-  backButtonGradient: {
-    height: 56,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
   },
   resendContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  resendText: {
-    fontSize: 14,
-  },
-  resendLink: {
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

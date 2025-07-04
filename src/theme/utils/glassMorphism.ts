@@ -29,14 +29,18 @@ export const glassMorphism = ({
   const shadow = shadowOpacity ?? glass.shadow_opacity;
   
   // iOS: Full glass effect with borders and shadows
-  const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
-  const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
+  // const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.7})`;
+  // const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.5})`;
+  const lightTint = customTint || `rgba(255, 255, 255, ${tint * 0.1})`;
+  const darkTint = customTint || `rgba(10, 10, 20, ${tint * 0.2})`;
   const tintColor = isDark ? darkTint : lightTint;
   
   const borderColor = isDark 
-    ? `rgba(255, 255, 255, ${border * 0.2})`
-    : `rgba(255, 255, 255, ${border * 0.3})`;
-  
+    // ? `rgba(255, 255, 255, ${border * 0.2})`
+    // : `rgba(255, 255, 255, ${border * 0.3})`;
+    ? `rgba(255, 255, 255, ${border * 0.15})`
+    : `rgba(255, 255, 255, ${border * 0.8})`; 
+
   return {
     backgroundColor: tintColor,
     // @ts-ignore - custom property for blur configuration

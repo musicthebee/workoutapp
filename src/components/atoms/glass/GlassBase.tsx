@@ -61,16 +61,22 @@ export const GlassBase: React.FC<GlassBaseProps> = ({
     // Solid backgrounds to prevent banding
     const solidBackgrounds = {
       light: {
-        dark: '#1a1a1a',
-        light: '#ffffff',
+        // dark: '#1a1a1a',
+        // light: '#ffffff',
+        dark: 'rgba(26, 26, 26, 0.65)',
+        light: 'rgba(255, 255, 255, 0.55)',
       },
       medium: {
-        dark: '#1f1f1f',
-        light: '#fafafa',
+        // dark: '#1f1f1f',
+        // light: '#fafafa',
+        dark: 'rgba(31, 31, 31, 0.7)',
+        light: 'rgba(250, 250, 250, 0.65)',
       },
       heavy: {
-        dark: '#242424',
-        light: '#f5f5f5',
+        // dark: '#242424',
+        // light: '#f5f5f5',
+        dark: 'rgba(36, 36, 36, 0.75)',
+        light: 'rgba(245, 245, 245, 0.7)',
       },
     };
 
